@@ -1,244 +1,68 @@
+
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - Librería Logos</title>
+    <title>Sopa de Letras Logos</title>
     <style>
-        :root {
-            --primary-color: #2e7d32; /* Verde Librería */
-            --accent-color: #4CAF50;
-            --highlight-bg: rgba(76, 175, 80, 0.4);
-            --found-bg: #2e7d32;
-            --text-color: #333;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            touch-action: none; /* Bloquea el scroll para no interrumpir el juego */
-            overflow: hidden;
-        }
-
-        h2 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-        }
-
-        #grid-container {
-            position: relative;
-            background: #fff;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 5px;
-            width: 90vw;
-            max-width: 380px;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        .cell {
-            aspect-ratio: 1 / 1;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: var(--text-color);
-            transition: all 0.1s ease;
-        }
-
-        /* Estilo mientras arrastras el dedo */
-        .selecting {
-            background-color: var(--highlight-bg);
-            transform: scale(0.95);
-        }
-
-        /* Estilo cuando ya encontraste la palabra */
-        .found {
-            background-color: var(--found-bg) !important;
-            color: white !important;
-            border-color: var(--primary-color);
-        }
-
-        #word-list {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 90vw;
-        }
-
-        .word-item {
-            padding: 8px 15px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s;
-        }
-
-        .word-found {
-            background: #d4edda;
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            text-decoration: line-through;
-        }
-
-        .btn-premio {
-            display: none;
-            margin-top: 20px;
-            padding: 15px 30px;
-            background: #25D366; /* Color WhatsApp */
-            color: white;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        :root { --p: #2e7d32; }
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; margin: 0; touch-action: none; overflow: hidden; }
+        #grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; width: 95vw; max-width: 420px; background: #ddd; padding: 5px; border-radius: 8px; margin-top: 10px;}
+        .cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: white; font-weight: bold; font-size: 0.7rem; border-radius: 2px; }
+        .sel { background: #c8e6c9 !important; }
+        .found { background: var(--p) !important; color: white !important; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 10px; padding: 5px; max-height: 100px; overflow-y: auto; width: 90vw; }
+        .word-item { padding: 3px 8px; background: white; border-radius: 12px; font-size: 0.6rem; border: 1px solid #ccc; }
+        .word-found { background: #e8f5e9; color: var(--p); text-decoration: line-through; }
+        .btn-win { display: none; background: #25D366; color: white; padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-
-    <h2>Busca las Palabras</h2>
-
-    <div id="grid-container">
-        <div id="grid"></div>
-    </div>
-
-    <div id="word-list">
-        <span class="word-item" id="w-LIBRO">LIBRO</span>
-        <span class="word-item" id="w-LOGOS">LOGOS</span>
-        <span class="word-item" id="w-FE">FE</span>
-        <span class="word-item" id="w-BIBLIA">BIBLIA</span>
-    </div>
-
-    <a href="https://wa.me/573125756581?text=¡Gané la sopa de letras! Reclamo mi premio." class="btn-premio" id="btn-win">
-        🎁 ¡RECLAMAR MI PREMIO!
-    </a>
-
-<script>
-    const words = ["LIBRO", "LOGOS", "FE", "BIBLIA"];
-    const size = 10;
-    const gridElement = document.getElementById('grid');
-    const winButton = document.getElementById('btn-win');
-    
-    let isSelecting = false;
-    let selectedCells = [];
-    let foundWords = [];
-
-    // Matriz de ejemplo (esto después lo haremos dinámico con tus productos)
-    const matrix = [
-        ['L','I','B','R','O','X','A','B','C','D'],
-        ['O','X','S','D','F','G','H','J','K','L'],
-        ['G','Q','W','E','R','T','Y','U','I','O'],
-        ['O','B','I','B','L','I','A','Z','X','C'],
-        ['S','A','S','D','F','G','H','J','K','L'],
-        ['F','E','W','E','R','T','Y','U','I','O'],
-        ['X','Y','Z','A','B','C','D','E','F','G'],
-        ['H','I','J','K','L','M','N','O','P','Q'],
-        ['R','S','T','U','V','W','X','Y','Z','A'],
-        ['B','C','D','E','F','G','H','I','J','K']
-    ];
-
-    // Crear la cuadrícula visualmente
-    matrix.forEach((row, r) => {
-        row.forEach((char, c) => {
-            const div = document.createElement('div');
-            div.className = 'cell';
-            div.textContent = char;
-            div.dataset.r = r;
-            div.dataset.c = c;
-            gridElement.appendChild(div);
+    <h4 style="color:#2e7d32; margin:10px 0;">Librería Logos: Reto 15</h4>
+    <div id="grid"></div>
+    <div id="word-list"><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-PAZ">PAZ</span></div>
+    <a href="https://wa.me/573125756581?text=Gane" class="btn-win" id="win-btn">RECLAMAR PREMIO</a>
+    <script>
+        const words = ["CATEDRAL", "KENNEDY", "PULSERA", "AGENDA", "LIBROS", "CRISTO", "BIBLIA", "SALMOS", "LOGOS", "DIOS", "AMOR", "AMEN", "CRUZ", "PAZ"];
+        const matrix = [["L", "F", "A", "F", "K", "D", "G", "P", "P", "K", "S", "U", "D", "L", "M"], ["B", "Q", "O", "B", "I", "B", "L", "I", "A", "F", "W", "B", "C", "I", "P"], ["Y", "C", "T", "C", "D", "R", "H", "K", "Z", "D", "G", "R", "R", "B", "M"], ["F", "D", "K", "M", "A", "L", "O", "G", "O", "S", "H", "Q", "U", "R", "D"], ["U", "B", "B", "A", "C", "R", "I", "S", "T", "O", "S", "I", "Z", "O", "X"], ["N", "P", "F", "C", "X", "H", "B", "C", "A", "Y", "M", "A", "V", "S", "Z"], ["L", "D", "U", "C", "A", "T", "E", "D", "R", "A", "L", "G", "D", "U", "Z"], ["Q", "L", "K", "L", "W", "T", "X", "V", "A", "Y", "Y", "E", "I", "R", "Z"], ["A", "A", "S", "I", "S", "K", "F", "S", "A", "C", "K", "N", "O", "M", "S"], ["D", "M", "V", "Z", "K", "E", "N", "N", "E", "D", "Y", "D", "S", "S", "C"], ["V", "E", "C", "F", "X", "A", "R", "Q", "Q", "U", "R", "A", "S", "A", "C"], ["S", "N", "B", "Z", "T", "U", "M", "A", "D", "P", "V", "A", "U", "L", "Q"], ["C", "Y", "B", "L", "D", "S", "Y", "O", "C", "N", "G", "C", "P", "M", "U"], ["S", "K", "G", "Q", "Q", "C", "Y", "Z", "R", "T", "V", "R", "E", "O", "G"], ["F", "L", "S", "F", "D", "O", "F", "F", "Y", "K", "X", "T", "R", "S", "Q"]];
+        const grid = document.getElementById('grid');
+        let selecting = false, selected = [], foundCount = 0;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(f, d) {
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d);
+        }
+        matrix.flat().forEach(char => {
+            const div = document.createElement('div'); div.className = 'cell'; div.textContent = char; grid.appendChild(div);
         });
-    });
-
-    const getCellFromEvent = (e) => {
-        const touch = e.touches ? e.touches[0] : e;
-        const el = document.elementFromPoint(touch.clientX, touch.clientY);
-        return el && el.classList.contains('cell') ? el : null;
-    };
-
-    const startSelection = (e) => {
-        isSelecting = true;
-        selectedCells = [];
-        handleMove(e);
-    };
-
-    const handleMove = (e) => {
-        if (!isSelecting) return;
-        const el = getCellFromEvent(e);
-        if (el && !selectedCells.includes(el)) {
-            el.classList.add('selecting');
-            selectedCells.push(el);
-        }
-    };
-
-    const endSelection = () => {
-        if (!isSelecting) return;
-        isSelecting = false;
-        
-        const word = selectedCells.map(el => el.textContent).join('');
-        const reverseWord = word.split('').reverse().join('');
-
-        if (words.includes(word) || words.includes(reverseWord)) {
-            const finalWord = words.includes(word) ? word : reverseWord;
-            
-            selectedCells.forEach(el => {
-                el.classList.remove('selecting');
-                el.classList.add('found');
-            });
-
-            const wordLabel = document.getElementById(`w-${finalWord}`);
-            if (wordLabel && !foundWords.includes(finalWord)) {
-                wordLabel.classList.add('word-found');
-                foundWords.push(finalWord);
+        const getCell = (e) => {
+            const t = e.touches ? e.touches[0] : e;
+            return document.elementFromPoint(t.clientX, t.clientY)?.closest('.cell');
+        };
+        const start = (e) => { if(audioCtx.state === 'suspended') audioCtx.resume(); selecting = true; selected = []; move(e); };
+        const move = (e) => {
+            if(!selecting) return; const el = getCell(e);
+            if(el && !selected.includes(el)) { el.classList.add('sel'); selected.push(el); beep(400 + (selected.length * 30), 0.1); }
+        };
+        const end = () => {
+            selecting = false; const word = selected.map(el => el.textContent).join(''); const rev = word.split('').reverse().join('');
+            if(words.includes(word) || words.includes(rev)) {
+                const val = words.includes(word) ? word : rev;
+                selected.forEach(el => el.classList.add('found'));
+                const item = document.getElementById('w-' + val);
+                if(item && !item.classList.contains('word-found')) { item.classList.add('word-found'); foundCount++; beep(800, 0.3); }
+                if(foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
             }
-
-            if (foundWords.length === words.length) {
-                winButton.style.display = 'block';
-            }
-        } else {
-            selectedCells.forEach(el => el.classList.remove('selecting'));
-        }
-        selectedCells = [];
-    };
-
-    // Eventos de Mouse (para PC)
-    gridElement.addEventListener('mousedown', startSelection);
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', endSelection);
-
-    // Eventos Táctiles (para Celulares)
-    gridElement.addEventListener('touchstart', (e) => { e.preventDefault(); startSelection(e); }, {passive: false});
-    gridElement.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, {passive: false});
-    window.addEventListener('touchend', endSelection);
-
-</script>
+            selected.forEach(el => el.classList.remove('sel'));
+        };
+        grid.addEventListener('touchstart', e => { e.preventDefault(); start(e); }, {passive:false});
+        grid.addEventListener('touchmove', e => { e.preventDefault(); move(e); }, {passive:false});
+        window.addEventListener('touchend', end);
+        grid.addEventListener('mousedown', start); window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+    </script>
 </body>
 </html>
+    
