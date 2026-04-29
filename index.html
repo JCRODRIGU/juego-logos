@@ -6,118 +6,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        body { font-family: sans-serif; background: #ffffff; margin: 0; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
-        .header { background: #2e7d32; color: white; width: 100%; text-align: center; padding: 10px 0; font-weight: bold; }
-        
+        * { touch-action: none; user-select: none; -webkit-user-select: none; }
+        body { font-family: sans-serif; background: #111; color: white; margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+        .header { background: #2e7d32; width: 100%; text-align: center; padding: 10px 0; font-weight: bold; font-size: 1.1rem; }
         #grid { 
-            display: grid; 
-            grid-template-columns: repeat(15, 1fr); 
-            width: 100vw; 
-            max-width: 500px;
-            background: #000; 
-            gap: 1px;
-            border: 1px solid #000;
+            display: grid; grid-template-columns: repeat(15, 1fr); 
+            width: 95vw; max-width: 450px; background: #333; gap: 1px; border: 2px solid #2e7d32; margin-top: 5px;
         }
         .cell { 
-            aspect-ratio: 1/1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #fff; 
-            color: #000; 
-            font-weight: bold; 
-            font-size: 4vw; /* FUENTE MÁS GRANDE */
-            -webkit-tap-highlight-color: transparent;
+            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
+            background: white; color: black; font-weight: bold; font-size: 3.8vw; 
         }
-        @media (min-width: 500px) { .cell { font-size: 1.2rem; } }
-
-        .sel { background: #fff176 !important; }
+        @media (min-width: 450px) { .cell { font-size: 1.2rem; } }
+        .sel { background: #ffeb3b !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; width: 100%; box-sizing: border-box; overflow-y: auto; max-height: 25vh; border-top: 2px solid #2e7d32; }
-        .word-item { padding: 5px 8px; background: #eee; border-radius: 5px; font-size: 0.8rem; border: 1px solid #ccc; }
-        .word-found { background: #e8f5e9; color: #2e7d32; text-decoration: line-through; font-weight: bold; }
-        
-        .footer-btns { display: flex; gap: 10px; margin: 10px; }
-        .btn { padding: 12px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 0.9rem; }
-        .btn-clear { background: #f44336; color: white; }
-        .btn-win { display: none; background: #25D366; color: white; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; width: 100%; overflow-y: auto; background: #222; }
+        .word-item { padding: 3px 8px; background: #444; border-radius: 4px; font-size: 0.7rem; border: 1px solid #555; }
+        .word-found { background: #1b5e20; color: #81c784; text-decoration: line-through; }
+        .btn-win { display: none; background: #25D366; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; position: absolute; bottom: 20px; z-index: 1000; }
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS - RETO 15</div>
-    
+    <div class="header">LIBRERÍA LOGOS</div>
     <div id="grid"></div>
-
-    <div class="footer-btns">
-        <button class="btn btn-clear" onclick="limpiarSeleccion()">BORRAR SELECCIÓN</button>
-        <a href="https://wa.me/573125756581?text=Gane" class="btn btn-win" id="win-btn">RECLAMAR PREMIO</a>
-    </div>
-
-    <div id="word-list"><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-PAZ">PAZ</span></div>
+    <div id="word-list"><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-PAZ">PAZ</span></div>
+    <a href="https://wa.me/573125756581?text=Gane" class="btn-win" id="win-btn">¡RECLAMAR PREMIO!</a>
 
     <script>
-        const words = ["CATEDRAL", "PULSERA", "KENNEDY", "LIBROS", "CRISTO", "BIBLIA", "AGENDA", "SALMOS", "LOGOS", "AMEN", "AMOR", "DIOS", "CRUZ", "PAZ"];
-        const matrix = [["O", "D", "W", "L", "I", "B", "R", "O", "S", "C", "J", "A", "B", "A", "H"], ["H", "E", "S", "C", "C", "M", "H", "A", "G", "E", "N", "D", "A", "M", "X"], ["R", "B", "I", "B", "L", "I", "A", "E", "Y", "S", "L", "R", "F", "O", "H"], ["S", "Q", "J", "H", "H", "D", "U", "T", "R", "U", "N", "O", "U", "R", "C"], ["C", "R", "I", "S", "T", "O", "E", "X", "B", "V", "E", "X", "G", "Y", "V"], ["B", "P", "P", "J", "Z", "P", "Q", "S", "G", "E", "A", "C", "J", "O", "C"], ["S", "T", "W", "U", "Z", "A", "M", "N", "G", "P", "M", "A", "J", "U", "S"], ["V", "O", "V", "K", "L", "Z", "N", "M", "P", "M", "E", "T", "Q", "K", "N"], ["I", "A", "C", "O", "E", "S", "M", "D", "M", "I", "N", "E", "I", "X", "Z"], ["F", "X", "L", "Y", "S", "N", "E", "G", "I", "T", "P", "D", "V", "K", "U"], ["R", "C", "P", "Q", "T", "A", "N", "R", "J", "O", "O", "R", "P", "L", "L"], ["H", "N", "F", "C", "H", "A", "L", "E", "A", "W", "S", "A", "X", "U", "N"], ["C", "C", "R", "U", "Z", "U", "V", "M", "D", "W", "J", "L", "H", "C", "D"], ["G", "N", "G", "M", "W", "A", "H", "H", "O", "Y", "C", "C", "J", "X", "Q"], ["M", "Z", "P", "Q", "N", "G", "W", "J", "G", "S", "V", "D", "Y", "M", "T"]];
+        const words = ["CATEDRAL", "KENNEDY", "PULSERA", "BIBLIA", "SALMOS", "CRISTO", "AGENDA", "LIBROS", "LOGOS", "CRUZ", "AMOR", "AMEN", "DIOS", "PAZ"];
+        const matrix = [["C", "V", "E", "X", "Q", "B", "C", "H", "C", "R", "Y", "T", "W", "H", "T"], ["C", "R", "T", "B", "L", "O", "G", "O", "S", "Y", "T", "P", "A", "Z", "X"], ["A", "W", "U", "C", "B", "S", "C", "F", "A", "C", "P", "B", "C", "Y", "G"], ["H", "J", "C", "Z", "W", "M", "B", "W", "F", "L", "T", "Z", "A", "V", "A"], ["L", "N", "O", "C", "E", "V", "I", "X", "C", "R", "I", "S", "T", "O", "G"], ["L", "B", "L", "I", "B", "R", "O", "S", "E", "N", "B", "S", "E", "M", "E"], ["C", "P", "U", "L", "S", "E", "R", "A", "E", "Z", "Q", "O", "D", "D", "N"], ["C", "B", "A", "X", "Z", "W", "S", "B", "K", "F", "O", "F", "R", "I", "D"], ["Q", "G", "T", "S", "A", "L", "M", "O", "S", "Z", "Z", "E", "A", "O", "A"], ["T", "S", "W", "M", "E", "U", "C", "A", "M", "O", "R", "X", "L", "S", "V"], ["K", "L", "I", "A", "G", "V", "B", "Y", "T", "F", "A", "M", "E", "N", "A"], ["N", "R", "J", "N", "B", "I", "B", "L", "I", "A", "I", "A", "M", "V", "J"], ["D", "O", "P", "S", "M", "A", "K", "E", "N", "N", "E", "D", "Y", "Z", "X"], ["I", "Q", "P", "F", "V", "W", "L", "U", "B", "Z", "A", "F", "M", "R", "X"], ["V", "M", "F", "N", "P", "V", "H", "D", "R", "S", "P", "E", "H", "M", "Y"]];
         const grid = document.getElementById('grid');
-        let selectedEls = [];
-        let foundCount = 0;
+        let isSelecting = false, selectedEls = [], foundCount = 0;
 
-        // Crear celdas con evento CLICK simple (más compatible)
         matrix.forEach((row, r) => row.forEach((char, c) => {
             const div = document.createElement('div');
-            div.className = 'cell'; 
-            div.textContent = char;
-            div.onclick = () => toggleCell(div);
+            div.className = 'cell'; div.textContent = char;
+            div.dataset.r = r; div.dataset.c = c;
             grid.appendChild(div);
         }));
 
-        function toggleCell(el) {
-            if (el.classList.contains('found')) return;
-            
-            // Si ya está seleccionada, la quita
-            if (el.classList.contains('sel')) {
-                el.classList.remove('sel');
-                selectedEls = selectedEls.filter(item => item !== el);
-            } else {
-                el.classList.add('sel');
-                selectedEls.push(el);
+        const handleTouch = (e) => {
+            const touch = e.touches ? e.touches[0] : e;
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (el && el.classList.contains('cell') && !el.classList.contains('found')) {
+                if (!selectedEls.includes(el)) {
+                    el.classList.add('sel');
+                    selectedEls.push(el);
+                }
             }
-            
-            checkWord();
-        }
+        };
 
-        function checkWord() {
-            const currentWord = selectedEls.map(el => el.textContent).join('');
-            const currentWordRev = currentWord.split('').reverse().join('');
-            
-            // Buscamos si la combinación actual forma alguna palabra
-            let matchedWord = null;
-            if (words.includes(currentWord)) matchedWord = currentWord;
-            else if (words.includes(currentWordRev)) matchedWord = currentWordRev;
+        grid.addEventListener('touchstart', (e) => {
+            isSelecting = true;
+            selectedEls = [];
+            handleTouch(e);
+        }, {passive: false});
 
-            if (matchedWord) {
-                selectedEls.forEach(el => {
-                    el.classList.remove('sel');
-                    el.classList.add('found');
-                });
-                const item = document.getElementById('w-' + matchedWord);
+        grid.addEventListener('touchmove', (e) => {
+            if (!isSelecting) return;
+            handleTouch(e);
+        }, {passive: false});
+
+        window.addEventListener('touchend', () => {
+            if (!isSelecting) return;
+            isSelecting = false;
+            const word = selectedEls.map(el => el.textContent).join('');
+            const rev = word.split('').reverse().join('');
+            
+            if (words.includes(word) || words.includes(rev)) {
+                const val = words.includes(word) ? word : rev;
+                selectedEls.forEach(el => { el.classList.remove('sel'); el.classList.add('found'); });
+                const item = document.getElementById('w-' + val);
                 if (item && !item.classList.contains('word-found')) {
                     item.classList.add('word-found');
                     foundCount++;
-                    selectedEls = []; // Limpiamos para la siguiente
                 }
-                
-                if (foundCount === words.length) {
-                    document.getElementById('win-btn').style.display = 'block';
-                }
+                if (foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
+            } else {
+                selectedEls.forEach(el => el.classList.remove('sel'));
             }
-        }
-
-        function limpiarSeleccion() {
-            selectedEls.forEach(el => el.classList.remove('sel'));
-            selectedEls = [];
-        }
+        });
     </script>
 </body>
 </html>
