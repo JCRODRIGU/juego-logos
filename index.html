@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras - Librería Logos</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Verde Librería */
+            --accent-color: #4CAF50;
+            --highlight-bg: rgba(76, 175, 80, 0.4);
+            --found-bg: #2e7d32;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            touch-action: none; /* Bloquea el scroll para no interrumpir el juego */
+            overflow: hidden;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        #grid-container {
+            position: relative;
+            background: #fff;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+            width: 90vw;
+            max-width: 380px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .cell {
+            aspect-ratio: 1 / 1;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            transition: all 0.1s ease;
+        }
+
+        /* Estilo mientras arrastras el dedo */
+        .selecting {
+            background-color: var(--highlight-bg);
+            transform: scale(0.95);
+        }
+
+        /* Estilo cuando ya encontraste la palabra */
+        .found {
+            background-color: var(--found-bg) !important;
+            color: white !important;
+            border-color: var(--primary-color);
+        }
+
+        #word-list {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 90vw;
+        }
+
+        .word-item {
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .word-found {
+            background: #d4edda;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: line-through;
+        }
+
+        .btn-premio {
+            display: none;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: #25D366; /* Color WhatsApp */
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Busca las Palabras</h2>
+
+    <div id="grid-container">
+        <div id="grid"></div>
+    </div>
+
+    <div id="word-list">
+        <span class="word-item" id="w-LIBRO">LIBRO</span>
+        <span class="word-item" id="w-LOGOS">LOGOS</span>
+        <span class="word-item" id="w-FE">FE</span>
+        <span class="word-item" id="w-BIBLIA">BIBLIA</span>
+    </div>
+
+    <a href="https://wa.me/573125756581?text=¡Gané la sopa de letras! Reclamo mi premio." class="btn-premio" id="btn-win">
+        🎁 ¡RECLAMAR MI PREMIO!
+    </a>
+
+<script>
+    const words = ["LIBRO", "LOGOS", "FE", "BIBLIA"];
+    const size = 10;
+    const gridElement = document.getElementById('grid');
+    const winButton = document.getElementById('btn-win');
+    
+    let isSelecting = false;
+    let selectedCells = [];
+    let foundWords = [];
+
+    // Matriz de ejemplo (esto después lo haremos dinámico con tus productos)
+    const matrix = [
+        ['L','I','B','R','O','X','A','B','C','D'],
+        ['O','X','S','D','F','G','H','J','K','L'],
+        ['G','Q','W','E','R','T','Y','U','I','O'],
+        ['O','B','I','B','L','I','A','Z','X','C'],
+        ['S','A','S','D','F','G','H','J','K','L'],
+        ['F','E','W','E','R','T','Y','U','I','O'],
+        ['X','Y','Z','A','B','C','D','E','F','G'],
+        ['H','I','J','K','L','M','N','O','P','Q'],
+        ['R','S','T','U','V','W','X','Y','Z','A'],
+        ['B','C','D','E','F','G','H','I','J','K']
+    ];
+
+    // Crear la cuadrícula visualmente
+    matrix.forEach((row, r) => {
+        row.forEach((char, c) => {
+            const div = document.createElement('div');
+            div.className = 'cell';
+            div.textContent = char;
+            div.dataset.r = r;
+            div.dataset.c = c;
+            gridElement.appendChild(div);
+        });
+    });
+
+    const getCellFromEvent = (e) => {
+        const touch = e.touches ? e.touches[0] : e;
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        return el && el.classList.contains('cell') ? el : null;
+    };
+
+    const startSelection = (e) => {
+        isSelecting = true;
+        selectedCells = [];
+        handleMove(e);
+    };
+
+    const handleMove = (e) => {
+        if (!isSelecting) return;
+        const el = getCellFromEvent(e);
+        if (el && !selectedCells.includes(el)) {
+            el.classList.add('selecting');
+            selectedCells.push(el);
+        }
+    };
+
+    const endSelection = () => {
+        if (!isSelecting) return;
+        isSelecting = false;
+        
+        const word = selectedCells.map(el => el.textContent).join('');
+        const reverseWord = word.split('').reverse().join('');
+
+        if (words.includes(word) || words.includes(reverseWord)) {
+            const finalWord = words.includes(word) ? word : reverseWord;
+            
+            selectedCells.forEach(el => {
+                el.classList.remove('selecting');
+                el.classList.add('found');
+            });
+
+            const wordLabel = document.getElementById(`w-${finalWord}`);
+            if (wordLabel && !foundWords.includes(finalWord)) {
+                wordLabel.classList.add('word-found');
+                foundWords.push(finalWord);
+            }
+
+            if (foundWords.length === words.length) {
+                winButton.style.display = 'block';
+            }
+        } else {
+            selectedCells.forEach(el => el.classList.remove('selecting'));
+        }
+        selectedCells = [];
+    };
+
+    // Eventos de Mouse (para PC)
+    gridElement.addEventListener('mousedown', startSelection);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', endSelection);
+
+    // Eventos Táctiles (para Celulares)
+    gridElement.addEventListener('touchstart', (e) => { e.preventDefault(); startSelection(e); }, {passive: false});
+    gridElement.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); }, {passive: false});
+    window.addEventListener('touchend', endSelection);
+
+</script>
+</body>
+</html>
