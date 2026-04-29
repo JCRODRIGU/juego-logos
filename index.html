@@ -1,91 +1,75 @@
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        * { touch-action: none; user-select: none; -webkit-user-select: none; }
-        body { font-family: sans-serif; background: #111; color: white; margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; height: 100vh; }
-        .header { background: #2e7d32; width: 100%; text-align: center; padding: 10px 0; font-weight: bold; font-size: 1.1rem; }
+        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; touch-action: none; user-select: none; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 95vw; max-width: 450px; background: #333; gap: 1px; border: 2px solid #2e7d32; margin-top: 5px;
+            width: 98vw; max-width: 450px; background: #000; gap: 1px; margin: 5px auto;
         }
         .cell { 
-            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-            background: white; color: black; font-weight: bold; font-size: 3.8vw; 
+            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
+            justify-content: center; font-weight: bold; font-size: 14px; 
         }
-        @media (min-width: 450px) { .cell { font-size: 1.2rem; } }
         .sel { background: #ffeb3b !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; width: 100%; overflow-y: auto; background: #222; }
-        .word-item { padding: 3px 8px; background: #444; border-radius: 4px; font-size: 0.7rem; border: 1px solid #555; }
-        .word-found { background: #1b5e20; color: #81c784; text-decoration: line-through; }
-        .btn-win { display: none; background: #25D366; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; position: absolute; bottom: 20px; z-index: 1000; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; }
+        .word-item { padding: 4px 8px; background: #eee; border-radius: 5px; font-size: 11px; border: 1px solid #ccc; }
+        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; }
+        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 10px; text-decoration: none; margin: 10px; display: inline-block; }
     </style>
 </head>
 <body>
     <div class="header">LIBRERÍA LOGOS</div>
     <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-PAZ">PAZ</span></div>
-    <a href="https://wa.me/573125756581?text=Gane" class="btn-win" id="win-btn">¡RECLAMAR PREMIO!</a>
+    <div id="word-list"><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-PULSERA">PULSERA</span></div>
+    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">¡GANASTE! RECLAMAR</a>
 
     <script>
-        const words = ["CATEDRAL", "KENNEDY", "PULSERA", "BIBLIA", "SALMOS", "CRISTO", "AGENDA", "LIBROS", "LOGOS", "CRUZ", "AMOR", "AMEN", "DIOS", "PAZ"];
-        const matrix = [["C", "V", "E", "X", "Q", "B", "C", "H", "C", "R", "Y", "T", "W", "H", "T"], ["C", "R", "T", "B", "L", "O", "G", "O", "S", "Y", "T", "P", "A", "Z", "X"], ["A", "W", "U", "C", "B", "S", "C", "F", "A", "C", "P", "B", "C", "Y", "G"], ["H", "J", "C", "Z", "W", "M", "B", "W", "F", "L", "T", "Z", "A", "V", "A"], ["L", "N", "O", "C", "E", "V", "I", "X", "C", "R", "I", "S", "T", "O", "G"], ["L", "B", "L", "I", "B", "R", "O", "S", "E", "N", "B", "S", "E", "M", "E"], ["C", "P", "U", "L", "S", "E", "R", "A", "E", "Z", "Q", "O", "D", "D", "N"], ["C", "B", "A", "X", "Z", "W", "S", "B", "K", "F", "O", "F", "R", "I", "D"], ["Q", "G", "T", "S", "A", "L", "M", "O", "S", "Z", "Z", "E", "A", "O", "A"], ["T", "S", "W", "M", "E", "U", "C", "A", "M", "O", "R", "X", "L", "S", "V"], ["K", "L", "I", "A", "G", "V", "B", "Y", "T", "F", "A", "M", "E", "N", "A"], ["N", "R", "J", "N", "B", "I", "B", "L", "I", "A", "I", "A", "M", "V", "J"], ["D", "O", "P", "S", "M", "A", "K", "E", "N", "N", "E", "D", "Y", "Z", "X"], ["I", "Q", "P", "F", "V", "W", "L", "U", "B", "Z", "A", "F", "M", "R", "X"], ["V", "M", "F", "N", "P", "V", "H", "D", "R", "S", "P", "E", "H", "M", "Y"]];
-        const grid = document.getElementById('grid');
-        let isSelecting = false, selectedEls = [], foundCount = 0;
+        const words = ["SALMOS", "DIOS", "PAZ", "KENNEDY", "CRISTO", "AMEN", "BIBLIA", "AMOR", "LOGOS", "CATEDRAL", "AGENDA", "LIBROS", "CRUZ", "PULSERA"];
+        const matrix = [["M", "C", "B", "H", "B", "Y", "L", "O", "G", "O", "S", "P", "W", "Z", "D"], ["H", "V", "P", "J", "O", "E", "R", "K", "K", "Z", "B", "D", "T", "N", "N"], ["G", "Q", "X", "A", "M", "E", "N", "E", "V", "E", "T", "P", "C", "H", "A"], ["X", "C", "B", "J", "G", "B", "J", "K", "M", "G", "N", "F", "L", "F", "R"], ["L", "B", "R", "I", "X", "E", "G", "X", "I", "A", "O", "N", "B", "M", "D"], ["K", "I", "H", "I", "B", "L", "N", "S", "T", "G", "L", "C", "E", "B", "R"], ["L", "R", "J", "J", "S", "L", "Q", "D", "U", "D", "I", "W", "R", "D", "S"], ["N", "W", "K", "Y", "Q", "T", "I", "F", "A", "I", "B", "D", "Y", "U", "Y"], ["A", "R", "P", "M", "R", "W", "O", "A", "S", "O", "R", "B", "X", "K", "Z"], ["M", "B", "A", "A", "I", "J", "G", "F", "A", "S", "O", "P", "K", "W", "P"], ["K", "V", "Z", "G", "J", "F", "F", "N", "L", "I", "S", "F", "Q", "P", "V"], ["V", "Z", "M", "Z", "W", "N", "L", "X", "M", "Y", "T", "A", "D", "Q", "O"], ["W", "K", "O", "J", "Z", "U", "D", "K", "O", "T", "E", "M", "N", "F", "X"], ["Z", "A", "M", "O", "R", "P", "U", "L", "S", "E", "R", "A", "P", "I", "Z"], ["U", "X", "C", "A", "T", "E", "D", "R", "A", "L", "W", "Q", "B", "F", "T"]];
+        let selectedEls = [], foundCount = 0;
 
         matrix.forEach((row, r) => row.forEach((char, c) => {
             const div = document.createElement('div');
             div.className = 'cell'; div.textContent = char;
             div.dataset.r = r; div.dataset.c = c;
-            grid.appendChild(div);
+            
+            // USAMOS EVENTOS SIMPLES DE TACTO
+            div.ontouchstart = (e) => { e.preventDefault(); handleSelect(div); };
+            div.onmousedown = () => handleSelect(div);
+            
+            document.getElementById('grid').appendChild(div);
         }));
 
-        const handleTouch = (e) => {
-            const touch = e.touches ? e.touches[0] : e;
-            const el = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (el && el.classList.contains('cell') && !el.classList.contains('found')) {
-                if (!selectedEls.includes(el)) {
-                    el.classList.add('sel');
-                    selectedEls.push(el);
-                }
-            }
-        };
-
-        grid.addEventListener('touchstart', (e) => {
-            isSelecting = true;
-            selectedEls = [];
-            handleTouch(e);
-        }, {passive: false});
-
-        grid.addEventListener('touchmove', (e) => {
-            if (!isSelecting) return;
-            handleTouch(e);
-        }, {passive: false});
-
-        window.addEventListener('touchend', () => {
-            if (!isSelecting) return;
-            isSelecting = false;
-            const word = selectedEls.map(el => el.textContent).join('');
-            const rev = word.split('').reverse().join('');
+        function handleSelect(el) {
+            if (el.classList.contains('found')) return;
             
-            if (words.includes(word) || words.includes(rev)) {
-                const val = words.includes(word) ? word : rev;
-                selectedEls.forEach(el => { el.classList.remove('sel'); el.classList.add('found'); });
-                const item = document.getElementById('w-' + val);
-                if (item && !item.classList.contains('word-found')) {
-                    item.classList.add('word-found');
-                    foundCount++;
-                }
-                if (foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
+            if (el.classList.contains('sel')) {
+                el.classList.remove('sel');
+                selectedEls = selectedEls.filter(i => i !== el);
             } else {
-                selectedEls.forEach(el => el.classList.remove('sel'));
+                el.classList.add('sel');
+                selectedEls.push(el);
             }
-        });
+            
+            const txt = selectedEls.map(i => i.textContent).join('');
+            const rev = txt.split('').reverse().join('');
+            
+            if (words.includes(txt) || words.includes(rev)) {
+                const final = words.includes(txt) ? txt : rev;
+                selectedEls.forEach(i => { i.classList.add('found'); i.classList.remove('sel'); });
+                document.getElementById('w-' + final).classList.add('word-found');
+                foundCount++;
+                selectedEls = [];
+                if (foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
+            }
+        }
     </script>
 </body>
 </html>
