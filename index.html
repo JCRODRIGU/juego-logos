@@ -34,11 +34,11 @@
             <h3 style="margin: 5px 0;">Publicidad Logos</h3>
             <p style="font-size: 14px;">Mugs y botilitos personalizados.<br>Bogotá - Kennedy Central</p>
         </div>
-        <button class="btn-next" onclick="initGame()">SIGUIENTE NIVEL</button>
+        <button class="btn-next" onclick="initGame()">SIGUIENTE SOPA</button>
     </div>
 
     <script>
-        const pool = ["MININOTAS", "PINES", "ESCARCHADA", "SOBRE", "TRATADOS", "TARJETA", "BOLSA", "CALCOMANIA", "DIPLOMA", "SEPARADOR", "CUADERNO", "NI\u00d1OS", "BOTON", "ESQUELAS", "REGALO", "SOBRES", "CUMPLEA\u00d1OS", "REGALOS", "ANGELITO"];
+        const pool = ["ORACION", "CRISTO", "GRACIA", "BIBLIA", "AGENDA", "AMOR", "PROVERBIOS", "LOGOS", "ESPIRITU", "KENNEDY", "PROMESA", "DIOS", "PERDON", "IGLESIA", "AMEN", "PAZ", "CATEDRAL", "LIBROS", "CRUZ", "PULSERA", "SALMOS"];
         let usedWords = JSON.parse(localStorage.getItem('logos_used')) || [];
         let wordsPos = {};
         let foundCount = 0;
@@ -48,17 +48,15 @@
 
         let audioCtx = null;
         function playTone(f, d) {
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const o = audioCtx.createOscillator();
-                const g = audioCtx.createGain();
-                o.frequency.setValueAtTime(f, audioCtx.currentTime);
-                g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-                o.connect(g); g.connect(audioCtx.destination);
-                o.start(); o.stop(audioCtx.currentTime + d);
-            } catch(e) {}
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
         }
 
         function initGame() {
@@ -70,17 +68,12 @@
             let level = parseInt(localStorage.getItem('logos_level')) || 1;
             document.getElementById('record-tag').textContent = "Nivel: " + level;
 
-            // Selección de palabras evitando las usadas recientemente
+            // FILTRAR PALABRAS NO USADAS (Para evitar repetición)
             let available = pool.filter(w => !usedWords.includes(w));
-            if (available.length < 15) { 
-                usedWords = []; 
-                available = pool; 
-            }
+            if (available.length < 15) { usedWords = []; available = pool; } // Reiniciar si se acaban
             
             const seleccionadas = available.sort(() => 0.5 - Math.random()).slice(0, 15);
             usedWords.push(...seleccionadas);
-            // Guardamos solo las últimas 100 para no llenar la memoria pero mantener variedad
-            if(usedWords.length > 100) usedWords = usedWords.slice(-100);
             localStorage.setItem('logos_used', JSON.stringify(usedWords));
 
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
@@ -130,7 +123,6 @@
             });
         }
 
-        // SELECCIÓN TÁCTIL ORIGINAL
         function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
