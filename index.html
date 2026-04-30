@@ -8,10 +8,7 @@
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: sans-serif; margin: 0; background: #f0f0f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; text-align: center; flex-shrink: 0; }
-        
-        /* Contenedor que asegura que la sopa se vea */
         #container-sopa { flex: 0 0 auto; display: flex; justify-content: center; padding: 10px; background: white; }
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
@@ -21,33 +18,22 @@
         .cell { background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         .sel { background: #fff176 !important; }
         .found { background: #4caf50 !important; color: white !important; }
-
-        /* Lista de palabras con scroll garantizado */
-        #word-section { 
-            flex: 1; overflow-y: auto; background: #e8f5e9; padding: 15px; 
-            border-top: 3px solid #2e7d32; touch-action: pan-y;
-        }
+        #word-section { flex: 1; overflow-y: auto; background: #e8f5e9; padding: 15px; border-top: 3px solid #2e7d32; touch-action: pan-y; }
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
         .word-item { padding: 6px 12px; background: white; border-radius: 15px; font-size: 12px; border: 1px solid #999; }
         .word-found { background: #4caf50 !important; color: white !important; text-decoration: line-through; border-color: #2e7d32; }
-
-        #victory { 
-            display: none; position: fixed; inset: 0; background: white; 
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
-        }
+        #victory { display: none; position: fixed; inset: 0; background: white; z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
     <div class="header">LIBRERÍA LOGOS</div>
     <div id="container-sopa"><div id="grid"></div></div>
     <div id="word-section">
-        <div style="text-align:center; font-size:11px; margin-bottom:8px;">DESLIZA PARA VER PALABRAS:</div>
+        <div style="text-align:center; font-size:11px; margin-bottom:8px;">PALABRAS A BUSCAR (DESLIZA):</div>
         <div id="word-list"></div>
     </div>
-
     <div id="victory">
         <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
-        <p>Visítanos en Kennedy Central</p>
         <button onclick="location.reload()" style="padding:15px 30px; background:#2e7d32; color:white; border:none; border-radius:25px;">JUGAR DE NUEVO</button>
     </div>
 
@@ -55,22 +41,32 @@
         const pool = [];
         let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
         const TAMANO = 15;
+        
+        // --- SISTEMA DE SONIDO REFORZADO ---
         let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
-        function playSound(freq) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, duration = 0.1) {
+            if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.frequency.value = freq;
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
         function init() {
             const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
-            
             seleccionadas.forEach(palabra => {
                 let puesta = false;
                 for(let i=0; i<50 && !puesta; i++) {
@@ -79,7 +75,6 @@
                     if (dir==='H' && c+palabra.length > TAMANO) continue;
                     if (dir==='V' && f+palabra.length > TAMANO) continue;
                     if (dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
-                    
                     let puede = true; let coords = [];
                     for(let j=0; j<palabra.length; j++){
                         let nf = f + (dir!=='H'?j:0), nc = c + (dir!=='V'?j:0);
@@ -92,14 +87,12 @@
                     }
                 }
             });
-
             const gridDiv = document.getElementById('grid');
             matriz.forEach((fila, r) => fila.forEach((char, c) => {
                 const cell = document.createElement('div');
                 cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
                 cell.dataset.pos = r+'-'+c; gridDiv.appendChild(cell);
             }));
-
             const listDiv = document.getElementById('word-list');
             Object.keys(wordsPos).forEach(w => {
                 const s = document.createElement('span'); s.className='word-item'; s.id='w-'+w; s.textContent=w;
@@ -115,15 +108,23 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440);
+                    playSound(440, 0.05); // Sonido de selección
                     check();
                 }
             }
         };
 
         const grid = document.getElementById('grid');
-        grid.addEventListener('touchstart', (e) => { isSelecting=true; activeCoords=[]; handleMove(e); e.preventDefault(); }, {passive:false});
+        grid.addEventListener('touchstart', (e) => { 
+            initAudio(); // DESBLOQUEO DE AUDIO AQUÍ
+            isSelecting=true; 
+            activeCoords=[]; 
+            handleMove(e); 
+            e.preventDefault(); 
+        }, {passive:false});
+
         grid.addEventListener('touchmove', (e) => { handleMove(e); e.preventDefault(); }, {passive:false});
+        
         window.addEventListener('touchend', () => {
             isSelecting=false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -136,7 +137,8 @@
                                           document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
                     wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     document.getElementById('w-'+w).classList.add('word-found');
-                    foundCount++; playSound(880);
+                    foundCount++; 
+                    playSound(880, 0.3); // Sonido de palabra encontrada (más agudo)
                     if(foundCount === Object.keys(wordsPos).length) document.getElementById('victory').style.display='flex';
                 }
             }
