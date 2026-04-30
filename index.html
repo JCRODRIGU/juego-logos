@@ -4,53 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto 20 Niveles - Librería Logos</title>
+    <title>Reto Bíblico Logos</title>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; }
-        .header { background: #2e7d32; color: white; padding: 10px; }
-        .progress-container { width: 85%; background: #1b5e20; height: 12px; margin: 5px auto; border-radius: 6px; }
-        #progress-bar { width: 0%; height: 100%; background: #ffee58; transition: width 0.5s; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 95vw; max-width: 400px; background: #ccc; gap: 1px; margin: 10px auto; border: 2px solid #2e7d32; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        body { font-family: sans-serif; text-align: center; background: #ffffff; margin: 0; }
+        
+        /* FORMATO ANCLA RECUPERADO */
+        .header { background: #2e7d32; color: white; padding: 15px; font-weight: bold; font-size: 1.1em; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 98vw; max-width: 460px; background: #ccc; gap: 1px; margin: 10px auto; border: 3px solid #2e7d32; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; color: #000; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
-        .ad-card { background: white; color: #333; padding: 15px; border-radius: 15px; width: 90%; max-width: 350px; }
-        .ad-card img { width: 100%; height: 250px; object-fit: contain; border-radius: 10px; background: #f9f9f9; }
-        .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 25px; font-weight: bold; margin-top: 15px; cursor: pointer; width: 100%; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; min-height: 60px; }
-        .word-item { padding: 4px 8px; background: #eee; border-radius: 8px; font-size: 10px; color: #777; border: 1px solid #ddd; }
-        .word-found { background: #2e7d32; color: white; }
-        #verse-display { padding: 12px; font-style: italic; color: #1b5e20; background: #e8f5e9; font-weight: bold; margin: 5px; border-radius: 8px; font-size: 0.9em; }
+        
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; min-height: 80px; }
+        .word-item { padding: 5px 10px; background: #f0f0f0; border-radius: 10px; font-size: 11px; color: #666; border: 1px solid #ddd; }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
+
+        .progress-container { width: 85%; background: #1b5e20; height: 12px; margin: 8px auto; border-radius: 10px; border: 1px solid #fff; }
+        #progress-bar { width: 0%; height: 100%; background: #ffee58; transition: width 0.5s; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
+        .ad-card { background: white; color: #333; padding: 15px; border-radius: 15px; width: 95%; max-width: 400px; text-align: center; }
+        .ad-card img { width: 100%; height: auto; max-height: 300px; object-fit: contain; border-radius: 10px; margin-bottom: 10px; }
+        .btn-action { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 30px; font-weight: bold; font-size: 1.1em; margin-top: 15px; cursor: pointer; width: 100%; }
+        
+        #verse-display { padding: 15px; font-style: italic; color: #1b5e20; font-weight: bold; background: #e8f5e9; margin: 10px; border-radius: 10px; font-size: 1.1em; line-height: 1.4; border-left: 5px solid #2e7d32; text-align: left; }
     </style>
 </head>
 <body>
 
+    <div id="start-modal" class="modal" style="display:flex; background: #2e7d32;">
+        <h2 style="margin-bottom:10px;">LIBRERÍA CRISTIANA LOGOS</h2>
+        <p style="margin-bottom:30px;">Reto Bíblico: 20 Niveles de Sopa de Letras</p>
+        <button class="btn-action" style="background:white; color:#2e7d32; width: auto; padding: 15px 50px;" onclick="iniciar()">EMPEZAR RETO</button>
+    </div>
+
     <div id="ad-modal" class="modal">
         <div class="ad-card">
-            <h3 style="margin:0 0 10px 0; color:#2e7d32">¡Nivel Completado!</h3>
+            <h3 style="margin-top:0; color:#2e7d32">¡Nivel Completado!</h3>
             <img id="ad-img" src="" alt="Producto Logos">
-            <div id="ad-txt" style="font-weight: bold; margin-top:10px;"></div>
-            <div id="ad-price" style="color: #c62828; font-size: 1.3em; font-weight: bold; margin: 5px 0;"></div>
-            <button class="btn-next" onclick="cerrarAd()">CONTINUAR AL SIGUIENTE NIVEL</button>
+            <div id="ad-txt" style="font-weight: bold; font-size: 1.1em;"></div>
+            <div id="ad-price" style="color: #c62828; font-size: 1.4em; font-weight: bold; margin: 8px 0;"></div>
+            <button class="btn-action" onclick="cerrarAd()">SIGUIENTE NIVEL</button>
         </div>
     </div>
 
-    <div id="start-modal" class="modal" style="display:flex; background: #2e7d32;">
-        <h2 style="margin-bottom:0">LIBRERÍA CRISTIANA LOGOS</h2>
-        <p style="margin-bottom:30px">Completa los 20 Versículos</p>
-        <button class="btn-next" style="background:white; color:#2e7d32; width: auto; padding: 15px 50px;" onclick="iniciar()">EMPEZAR RETO</button>
-    </div>
-
     <div id="win-modal" class="modal">
-        <h1 style="color:#ffee58">¡FELICITACIONES!</h1>
-        <p style="font-size:1.2em">Has completado la Ruta de la Palabra.</p>
-        <a href="https://wa.me/573125756581?text=He%20completado%20los%2020%20niveles%20del%20Reto%20Logos" style="text-decoration:none; background:#25D366; color:white; padding:20px 40px; border-radius:50px; font-weight:bold; display:block; margin-top:20px;">RECLAMAR MI PREMIO</a>
+        <h1 style="color:#ffee58">¡RETO CUMPLIDO!</h1>
+        <p style="font-size:1.2em; text-align:center;">Has completado los 20 versículos.</p>
+        <a href="https://wa.me/573125756581?text=He%20completado%20el%20Reto%20Logos%20de%2020%20niveles" style="text-decoration:none; background:#25D366; color:white; padding:20px 40px; border-radius:50px; font-weight:bold; margin-top:20px; font-size: 1.2em; display: inline-block;">RECLAMAR PREMIO</a>
     </div>
 
     <div class="header">
-        <div id="level-txt" style="font-weight:bold">NIVEL 1 / 20</div>
+        <div id="level-txt">NIVEL 1 / 20</div>
         <div class="progress-container"><div id="progress-bar"></div></div>
     </div>
 
@@ -61,6 +67,7 @@
     <script>
         const niveles = [{"v": "Lampara es a mis pies tu palabra y lumbrera a mi camino", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor nada me faltara", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra", "r": "Genesis 1:1"}, {"v": "Cree en el Senor Jesucristo y seras salvo tu y tu casa", "r": "Hechos 16:31"}, {"v": "El amor es sufrido es benigno el amor no tiene envidia", "r": "1 Corintios 13:4"}, {"v": "Clama a mi y yo te respondere y te ensenare cosas grandes", "r": "Jeremias 33:3"}, {"v": "Buscad primeramente el reino de Dios y su justicia", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza nuestro pronto auxilio", "r": "Salmo 46:1"}, {"v": "Yo soy el camino y la verdad y la vida", "r": "Juan 14:6"}, {"v": "El gozo de Jehova es vuestra fortaleza", "r": "Nehemias 8:10"}, {"v": "La blanda respuesta quita la ira mas la palabra aspera sube el furor", "r": "Proverbios 15:1"}, {"v": "Mas el fruto del Espiritu es amor gozo paz paciencia", "r": "Galatas 5:22"}, {"v": "Justificados pues por la fe tenemos paz para con Dios", "r": "Romanos 5:1"}, {"v": "La fe es la certeza de lo que se espera", "r": "Hebreos 11:1"}, {"v": "Poned la mira en las cosas de arriba no en las de la tierra", "r": "Colosenses 3:2"}, {"v": "Someteos pues a Dios resistid al diablo y huira de vosotros", "r": "Santiago 4:7"}, {"v": "Pedid y se os dara buscad y hallareis llamad y se os abrira", "r": "Mateo 7:7"}, {"v": "Porque de tal manera amo Dios al mundo que dio a su Hijo", "r": "Juan 3:16"}];
         const anuncios = [{"img": "publicidad1.jpg", "txt": "Botilito Sublimado Mujer", "precio": "$25.000"}, {"img": "publicidad2.jpg", "txt": "Biblia Reina Valera 1960", "precio": "$45.000"}, {"img": "publicidad3.jpg", "txt": "Camiseta Dise\u00f1o Especial", "precio": "$35.000"}, {"img": "publicidad4.jpg", "txt": "Diccionario B\u00edblico", "precio": "$55.000"}, {"img": "publicidad5.jpg", "txt": "Pan de Vida (Promesas)", "precio": "$12.000"}, {"img": "publicidad6.jpg", "txt": "Libro Matrimonio Cristiano", "precio": "$38.000"}, {"img": "publicidad7.jpg", "txt": "Agenda 2026 Logos", "precio": "$22.000"}, {"img": "publicidad8.jpg", "txt": "Separadores B\u00edblicos x10", "precio": "$8.000"}, {"img": "publicidad9.jpg", "txt": "Mug Sublimado Logos", "precio": "$18.000"}, {"img": "publicidad10.jpg", "txt": "Cuadro Decorativo Vers\u00edculo", "precio": "$30.000"}, {"img": "publicidad11.jpg", "txt": "Libro de Oraci\u00f3n Diaria", "precio": "$28.000"}, {"img": "publicidad12.jpg", "txt": "Biblia para Ni\u00f1os Ilustrada", "precio": "$50.000"}, {"img": "publicidad13.jpg", "txt": "Estuche para Biblia", "precio": "$25.000"}, {"img": "publicidad14.jpg", "txt": "Llaveros Cristianos", "precio": "$6.000"}, {"img": "publicidad15.jpg", "txt": "CD M\u00fasica de Adoraci\u00f3n", "precio": "$15.000"}, {"img": "publicidad16.jpg", "txt": "Gorra Logos Bordada", "precio": "$25.000"}, {"img": "publicidad17.jpg", "txt": "Juego de Mesa B\u00edblico", "precio": "$45.000"}, {"img": "publicidad18.jpg", "txt": "Libreta de Notas", "precio": "$12.000"}, {"img": "publicidad19.jpg", "txt": "Bol\u00edgrafo con Vers\u00edculo", "precio": "$5.000"}, {"img": "publicidad20.jpg", "txt": "Bono de Regalo Logos", "precio": "Valor Libre"}];
+        const relleno = ["BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "LIBRO", "PAZ", "DIOS", "KENNEDY", "DISCIPULO", "GRACIA", "ESPIRITU", "SALVACION"];
         let nivelActual = 0;
         let wordsPos = {};
         let foundCount = 0;
@@ -93,9 +100,26 @@
             }
             document.getElementById('level-txt').textContent = `NIVEL ${nivelActual + 1} / ${niveles.length}`;
             document.getElementById('progress-bar').style.width = `${(nivelActual / niveles.length) * 100}%`;
+            
             const data = niveles[nivelActual];
             document.getElementById('verse-display').textContent = `"${data.v}" - ${data.r}`;
-            const palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
+            
+            // LÓGICA DE 15 PALABRAS EXACTAS
+            let palabras = data.v.toUpperCase().split(' ')
+                .map(p => p.replace(/[^A-Z]/g, ''))
+                .filter(p => p.length >= 3);
+            
+            palabras = [...new Set(palabras)]; // Sin duplicados
+
+            if(palabras.length < 15) {
+                let i = 0;
+                while(palabras.length < 15 && i < relleno.length) {
+                    if(!palabras.includes(relleno[i])) palabras.push(relleno[i]);
+                    i++;
+                }
+            }
+            if(palabras.length > 15) palabras = palabras.slice(0, 15);
+
             generarSopa(palabras);
         }
 
@@ -106,9 +130,10 @@
             grid.innerHTML = ''; list.innerHTML = '';
             foundCount = 0; wordsPos = {};
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
+            
             palabras.forEach(palabra => {
                 let colocada = false;
-                for(let i=0; i<50 && !colocada; i++) {
+                for(let i=0; i<80 && !colocada; i++) {
                     let dir = Math.random() > 0.5 ? 'H' : 'V';
                     let r = Math.floor(Math.random() * (dir === 'V' ? TAM - palabra.length : TAM));
                     let c = Math.floor(Math.random() * (dir === 'H' ? TAM - palabra.length : TAM));
@@ -130,6 +155,7 @@
                     }
                 }
             });
+            
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     if(matriz[r][c] === '') matriz[r][c] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
@@ -138,14 +164,14 @@
                     grid.appendChild(d);
                 }
             }
-            Object.keys(wordsPos).forEach(w => {
+            palabras.forEach(w => {
                 const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+w; s.textContent = w;
                 list.appendChild(s);
             });
         }
 
         function mostrarAd() {
-            const ad = anuncios[nivelActual]; // Muestra el anuncio correspondiente al nivel
+            const ad = anuncios[nivelActual];
             document.getElementById('ad-img').src = ad.img;
             document.getElementById('ad-txt').textContent = ad.txt;
             document.getElementById('ad-price').textContent = ad.precio;
