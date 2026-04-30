@@ -1,67 +1,71 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
         * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
-        #grid { 
-            display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto;
-        }
-        .cell { 
-            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
-            justify-content: center; font-weight: bold; font-size: 16px; color: #000;
-        }
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; overflow: hidden; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-around; align-items: center; }
+        #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto; border: 2px solid #2e7d32; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #000; }
         .sel { background: #fff176 !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; background: white; }
         .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
         .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
-        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 10px; display: inline-block; }
+        
+        /* Publicidad y Ganador */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; color: white; justify-content: center; align-items: center; flex-direction: column; }
+        .ad-box { width: 300px; height: 250px; background: #fff; color: #333; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border-radius: 10px; font-weight: bold; }
+        .btn-action { background: #25D366; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 1rem; }
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS</div>
+    <div class="header">
+        <span>LIBRERÍA LOGOS</span>
+        <span id="score-display">Récord: 0</span>
+    </div>
     <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-PAZ">PAZ</span></div>
-    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">✅ RECLAMAR PREMIO</a>
+    <div id="word-list"><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-DIOS">DIOS</span></div>
+
+    <div id="overlay">
+        <h2 id="msg">¡EXCELENTE!</h2>
+        <div class="ad-box">
+            <!-- AQUÍ PUEDES PONER TU IMAGEN O SCRIPT DE PUB -->
+            ESPACIO PUBLICITARIO<br>Librería Logos Kennedy
+        </div>
+        <button class="btn-action" onclick="location.reload()">SIGUIENTE SOPA</button>
+        <p style="font-size: 12px; margin-top: 15px;">Visítanos: Calle 35C Sur No 78A-18</p>
+    </div>
 
     <script>
-        const wordsPos = {"AMOR": ["3-4", "4-4", "5-4", "6-4"], "SALMOS": ["0-1", "0-2", "0-3", "0-4", "0-5", "0-6"], "LOGOS": ["11-10", "11-11", "11-12", "11-13", "11-14"], "PULSERA": ["1-4", "2-5", "3-6", "4-7", "5-8", "6-9", "7-10"], "AGENDA": ["3-4", "4-5", "5-6", "6-7", "7-8", "8-9"], "BIBLIA": ["3-5", "4-6", "5-7", "6-8", "7-9", "8-10"], "CATEDRAL": ["14-0", "14-1", "14-2", "14-3", "14-4", "14-5", "14-6", "14-7"], "LIBROS": ["7-7", "8-8", "9-9", "10-10", "11-11", "12-12"], "CRUZ": ["7-1", "7-2", "7-3", "7-4"], "AMEN": ["9-3", "10-4", "11-5", "12-6"], "DIOS": ["12-0", "12-1", "12-2", "12-3"], "CRISTO": ["4-13", "5-13", "6-13", "7-13", "8-13", "9-13"], "KENNEDY": ["3-12", "4-12", "5-12", "6-12", "7-12", "8-12", "9-12"], "PAZ": ["2-7", "2-8", "2-9"]};
-        const matrix = [["P", "S", "A", "L", "M", "O", "S", "K", "F", "H", "I", "R", "W", "G", "E"], ["P", "C", "F", "Q", "P", "G", "G", "J", "I", "Q", "V", "Q", "G", "K", "U"], ["L", "I", "Y", "D", "I", "U", "F", "P", "A", "Z", "N", "N", "H", "W", "V"], ["V", "E", "O", "I", "A", "B", "L", "V", "U", "I", "B", "G", "K", "U", "E"], ["A", "C", "A", "Z", "M", "G", "I", "S", "J", "Z", "U", "M", "E", "C", "X"], ["V", "O", "S", "C", "O", "A", "E", "B", "E", "T", "I", "J", "N", "R", "J"], ["Y", "T", "P", "V", "R", "C", "I", "N", "L", "R", "K", "Z", "N", "I", "F"], ["T", "C", "R", "U", "Z", "L", "B", "L", "D", "I", "A", "D", "E", "S", "Y"], ["A", "U", "B", "L", "B", "M", "L", "J", "I", "A", "A", "X", "D", "T", "K"], ["S", "L", "R", "A", "B", "K", "M", "P", "T", "B", "G", "H", "Y", "O", "M"], ["Y", "F", "P", "U", "M", "G", "H", "O", "P", "I", "R", "E", "T", "N", "I"], ["Y", "Y", "M", "S", "Z", "E", "P", "B", "L", "D", "L", "O", "G", "O", "S"], ["D", "I", "O", "S", "Q", "F", "N", "N", "O", "K", "W", "L", "S", "E", "D"], ["Q", "D", "R", "Q", "E", "F", "B", "Q", "H", "J", "B", "S", "P", "E", "P"], ["C", "A", "T", "E", "D", "R", "A", "L", "I", "H", "C", "H", "Z", "S", "X"]];
+        const wordsPos = {"PAZ": ["14-4", "14-5", "14-6"], "CRISTO": ["3-2", "4-2", "5-2", "6-2", "7-2", "8-2"], "CATEDRAL": ["5-4", "6-5", "7-6", "8-7", "9-8", "10-9", "11-10", "12-11"], "BIBLIA": ["5-7", "5-8", "5-9", "5-10", "5-11", "5-12"], "AMOR": ["9-7", "10-8", "11-9", "12-10"], "PULSERA": ["1-3", "1-4", "1-5", "1-6", "1-7", "1-8", "1-9"], "LOGOS": ["9-4", "10-5", "11-6", "12-7", "13-8"], "AGENDA": ["8-0", "9-0", "10-0", "11-0", "12-0", "13-0"], "KENNEDY": ["6-7", "6-8", "6-9", "6-10", "6-11", "6-12", "6-13"], "CRUZ": ["8-9", "8-10", "8-11", "8-12"], "LIBROS": ["3-1", "4-1", "5-1", "6-1", "7-1", "8-1"], "AMEN": ["2-2", "2-3", "2-4", "2-5"], "SALMOS": ["0-4", "0-5", "0-6", "0-7", "0-8", "0-9"], "DIOS": ["9-13", "10-13", "11-13", "12-13"]};
+        const matrix = [["Z", "T", "O", "N", "S", "A", "L", "M", "O", "S", "Q", "X", "K", "R", "H"], ["L", "E", "W", "P", "U", "L", "S", "E", "R", "A", "I", "D", "H", "M", "E"], ["K", "V", "A", "M", "E", "N", "W", "U", "E", "Q", "W", "Q", "C", "N", "F"], ["Q", "L", "C", "A", "P", "V", "B", "M", "V", "G", "T", "R", "Y", "U", "Q"], ["A", "I", "R", "B", "Q", "V", "F", "I", "E", "R", "T", "C", "B", "W", "Q"], ["X", "B", "I", "C", "C", "N", "T", "B", "I", "B", "L", "I", "A", "Z", "T"], ["D", "R", "S", "B", "T", "A", "J", "K", "E", "N", "N", "E", "D", "Y", "D"], ["D", "O", "T", "S", "I", "B", "T", "X", "F", "J", "B", "O", "G", "Y", "A"], ["A", "S", "O", "J", "U", "N", "P", "E", "V", "C", "R", "U", "Z", "K", "S"], ["G", "C", "N", "M", "L", "C", "N", "A", "D", "G", "Z", "Y", "L", "D", "C"], ["E", "X", "Y", "O", "F", "O", "X", "I", "M", "R", "M", "Z", "W", "I", "R"], ["N", "T", "F", "P", "A", "H", "G", "T", "J", "O", "A", "G", "R", "O", "E"], ["D", "I", "R", "I", "S", "I", "Y", "O", "H", "J", "R", "L", "M", "S", "O"], ["A", "N", "D", "C", "N", "G", "P", "F", "S", "P", "O", "M", "T", "Z", "E"], ["F", "C", "S", "L", "P", "A", "Z", "D", "S", "M", "K", "U", "Q", "B", "Y"]];
         let activeCoords = [];
         let foundCount = 0;
         let isSelecting = false;
+        
+        // RECUPERAR RÉCORD
+        let totalSolved = localStorage.getItem('logos_record') || 0;
+        document.getElementById('score-display').textContent = "Récord: " + totalSolved;
 
-        // MOTOR DE SONIDO ARREGLADO
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        function playBeep(f, d) {
-            if (!audioCtx) return;
-            const o = audioCtx.createOscillator(); 
-            const g = audioCtx.createGain();
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            o.type = 'sine';
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); 
-            g.connect(audioCtx.destination); 
-            o.start(); 
-            o.stop(audioCtx.currentTime + d);
+        // SONIDO: Oscilador Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, dur) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + dur);
         }
 
         const grid = document.getElementById('grid');
@@ -80,23 +84,17 @@
                 if (!activeCoords.includes(pos)) {
                     activeCoords.push(pos);
                     el.classList.add('sel');
-                    playBeep(440, 0.1); // Sonido de letra
+                    playTone(600, 'sine', 0.1); 
                     checkWords();
                 }
             }
         }
 
         grid.addEventListener('touchstart', (e) => {
-            initAudio(); // Desbloquea el sonido en el primer toque
-            isSelecting = true;
-            activeCoords = [];
-            handleTouch(e);
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isSelecting = true; activeCoords = []; handleTouch(e);
         });
-
-        grid.addEventListener('touchmove', (e) => {
-            if (isSelecting) handleTouch(e);
-        });
-
+        grid.addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
         window.addEventListener('touchend', () => {
             isSelecting = false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -110,19 +108,25 @@
                     const el = document.querySelector(`[data-pos="${p}"]`);
                     return el.classList.contains('sel') || el.classList.contains('found');
                 })) {
-                    coords.forEach(p => {
-                        const el = document.querySelector(`[data-pos="${p}"]`);
-                        el.classList.add('found');
-                    });
+                    coords.forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     const btn = document.getElementById('w-' + word);
                     if (btn && !btn.classList.contains('word-found')) {
                         btn.classList.add('word-found');
                         foundCount++;
-                        playBeep(600, 0.4); // Sonido de palabra encontrada (más largo)
-                        if (foundCount === Object.keys(wordsPos).length) document.getElementById('win-btn').style.display = 'block';
+                        playTone(1000, 'square', 0.3); // Sonido de palabra encontrada
+                        if (foundCount === Object.keys(wordsPos).length) {
+                            ganarJuego();
+                        }
                     }
                 }
             }
+        }
+
+        function ganarJuego() {
+            totalSolved++;
+            localStorage.setItem('logos_record', totalSolved);
+            document.getElementById('overlay').style.display = 'flex';
+            playTone(1200, 'sine', 0.6);
         }
     </script>
 </body>
