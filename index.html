@@ -1,112 +1,147 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
+        * { touch-action: none; user-select: none; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: sans-serif; margin: 0; background: #f0f0f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; text-align: center; flex-shrink: 0; }
+        
+        /* Contenedor que asegura que la sopa se vea */
+        #container-sopa { flex: 0 0 auto; display: flex; justify-content: center; padding: 10px; background: white; }
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto;
+            width: 95vw; max-width: 380px; aspect-ratio: 1/1;
+            background: #ccc; gap: 1px; border: 3px solid #2e7d32;
         }
-        .cell { 
-            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
-            justify-content: center; font-weight: bold; font-size: 16px; color: #000;
-        }
+        .cell { background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         .sel { background: #fff176 !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; }
-        .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
-        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
-        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 10px; display: inline-block; }
+
+        /* Lista de palabras con scroll garantizado */
+        #word-section { 
+            flex: 1; overflow-y: auto; background: #e8f5e9; padding: 15px; 
+            border-top: 3px solid #2e7d32; touch-action: pan-y;
+        }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .word-item { padding: 6px 12px; background: white; border-radius: 15px; font-size: 12px; border: 1px solid #999; }
+        .word-found { background: #4caf50 !important; color: white !important; text-decoration: line-through; border-color: #2e7d32; }
+
+        #victory { 
+            display: none; position: fixed; inset: 0; background: white; 
+            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
+        }
     </style>
 </head>
 <body>
     <div class="header">LIBRERÍA LOGOS</div>
-    <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span></div>
-    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">✅ RECLAMAR PREMIO</a>
+    <div id="container-sopa"><div id="grid"></div></div>
+    <div id="word-section">
+        <div style="text-align:center; font-size:11px; margin-bottom:8px;">DESLIZA PARA VER PALABRAS:</div>
+        <div id="word-list"></div>
+    </div>
+
+    <div id="victory">
+        <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
+        <p>Visítanos en Kennedy Central</p>
+        <button onclick="location.reload()" style="padding:15px 30px; background:#2e7d32; color:white; border:none; border-radius:25px;">JUGAR DE NUEVO</button>
+    </div>
 
     <script>
-        const wordsPos = {"AGENDA": ["2-2", "2-3", "2-4", "2-5", "2-6", "2-7"], "CRUZ": ["4-3", "5-4", "6-5", "7-6"], "AMEN": ["9-8", "9-9", "9-10", "9-11"], "BIBLIA": ["11-5", "11-6", "11-7", "11-8", "11-9", "11-10"], "AMOR": ["10-0", "10-1", "10-2", "10-3"], "PULSERA": ["1-5", "1-6", "1-7", "1-8", "1-9", "1-10", "1-11"], "CRISTO": ["0-4", "0-5", "0-6", "0-7", "0-8", "0-9"], "DIOS": ["3-8", "4-9", "5-10", "6-11"], "KENNEDY": ["3-2", "4-2", "5-2", "6-2", "7-2", "8-2", "9-2"], "SALMOS": ["6-13", "7-13", "8-13", "9-13", "10-13", "11-13"], "LOGOS": ["9-1", "10-2", "11-3", "12-4", "13-5"], "PAZ": ["5-14", "6-14", "7-14"], "LIBROS": ["10-6", "10-7", "10-8", "10-9", "10-10", "10-11"], "CATEDRAL": ["0-12", "1-12", "2-12", "3-12", "4-12", "5-12", "6-12", "7-12"]};
-        const matrix = [["N", "U", "X", "W", "C", "R", "I", "S", "T", "O", "C", "E", "C", "C", "J"], ["A", "J", "R", "X", "U", "P", "U", "L", "S", "E", "R", "A", "A", "W", "R"], ["C", "Y", "A", "G", "E", "N", "D", "A", "P", "B", "F", "G", "T", "C", "P"], ["E", "U", "K", "D", "R", "R", "T", "W", "D", "R", "T", "Z", "E", "B", "M"], ["D", "D", "E", "C", "B", "J", "C", "G", "G", "I", "C", "T", "D", "R", "X"], ["V", "I", "N", "G", "R", "S", "O", "D", "K", "F", "O", "N", "R", "Z", "P"], ["O", "H", "N", "N", "L", "U", "W", "N", "U", "D", "V", "S", "A", "S", "A"], ["I", "J", "E", "J", "U", "J", "Z", "M", "J", "I", "K", "Q", "L", "A", "Z"], ["D", "I", "D", "M", "J", "D", "C", "Q", "M", "E", "R", "G", "C", "L", "P"], ["T", "L", "Y", "X", "A", "I", "L", "W", "A", "M", "E", "N", "W", "M", "O"], ["A", "M", "O", "R", "O", "Z", "L", "I", "B", "R", "O", "S", "T", "O", "Z"], ["M", "S", "T", "G", "V", "B", "I", "B", "L", "I", "A", "E", "W", "S", "J"], ["O", "P", "R", "T", "O", "X", "G", "L", "Y", "G", "Q", "D", "L", "H", "B"], ["M", "G", "N", "H", "H", "S", "U", "L", "I", "A", "F", "R", "M", "S", "H"], ["V", "L", "P", "S", "I", "G", "P", "U", "P", "K", "V", "B", "P", "C", "C"]];
-        let activeCoords = [];
-        let foundCount = 0;
-        let isSelecting = false;
+        const pool = [];
+        let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
+        const TAMANO = 15;
+        let audioCtx = null;
 
-        // Sonido corregido
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playBeep(f, d) {
-            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d);
+        function playSound(freq) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         }
 
-        const grid = document.getElementById('grid');
-        matrix.forEach((row, r) => row.forEach((char, c) => {
-            const div = document.createElement('div');
-            div.className = 'cell'; div.textContent = char;
-            div.dataset.pos = r + '-' + c;
-            grid.appendChild(div);
-        }));
-
-        function handleTouch(e) {
-            const t = e.touches ? e.touches[0] : e;
-            const el = document.elementFromPoint(t.clientX, t.clientY);
-            if (el && el.classList.contains('cell')) {
-                const pos = el.dataset.pos;
-                if (!activeCoords.includes(pos)) {
-                    activeCoords.push(pos);
-                    el.classList.add('sel');
-                    playBeep(440, 0.1);
-                    checkWords();
-                }
-            }
-        }
-
-        grid.addEventListener('touchstart', (e) => {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            isSelecting = true;
-            activeCoords = [];
-            handleTouch(e);
-        });
-
-        grid.addEventListener('touchmove', (e) => {
-            if (isSelecting) handleTouch(e);
-        });
-
-        window.addEventListener('touchend', () => {
-            isSelecting = false;
-            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
-            activeCoords = [];
-        });
-
-        function checkWords() {
-            for (let word in wordsPos) {
-                const coords = wordsPos[word];
-                if (coords.every(p => {
-                    const el = document.querySelector(`[data-pos="${p}"]`);
-                    return el.classList.contains('sel') || el.classList.contains('found');
-                })) {
-                    coords.forEach(p => {
-                        const el = document.querySelector(`[data-pos="${p}"]`);
-                        el.classList.add('found');
-                    });
-                    const btn = document.getElementById('w-' + word);
-                    if (btn && !btn.classList.contains('word-found')) {
-                        btn.classList.add('word-found');
-                        foundCount++;
-                        playBeep(600, 0.3);
-                        if (foundCount === Object.keys(wordsPos).length) document.getElementById('win-btn').style.display = 'block';
+        function init() {
+            const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
+            let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
+            
+            seleccionadas.forEach(palabra => {
+                let puesta = false;
+                for(let i=0; i<50 && !puesta; i++) {
+                    let dir = ['H','V','D'][Math.floor(Math.random()*3)];
+                    let f = Math.floor(Math.random()*TAMANO), c = Math.floor(Math.random()*TAMANO);
+                    if (dir==='H' && c+palabra.length > TAMANO) continue;
+                    if (dir==='V' && f+palabra.length > TAMANO) continue;
+                    if (dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
+                    
+                    let puede = true; let coords = [];
+                    for(let j=0; j<palabra.length; j++){
+                        let nf = f + (dir!=='H'?j:0), nc = c + (dir!=='V'?j:0);
+                        if(matriz[nf][nc]!=='' && matriz[nf][nc]!==palabra[j]) { puede=false; break; }
+                        coords.push(nf+'-'+nc);
+                    }
+                    if(puede) {
+                        coords.forEach((co, idx) => { matriz[co.split('-')[0]][co.split('-')[1]] = palabra[idx]; });
+                        wordsPos[palabra] = coords; puesta = true;
                     }
                 }
+            });
+
+            const gridDiv = document.getElementById('grid');
+            matriz.forEach((fila, r) => fila.forEach((char, c) => {
+                const cell = document.createElement('div');
+                cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
+                cell.dataset.pos = r+'-'+c; gridDiv.appendChild(cell);
+            }));
+
+            const listDiv = document.getElementById('word-list');
+            Object.keys(wordsPos).forEach(w => {
+                const s = document.createElement('span'); s.className='word-item'; s.id='w-'+w; s.textContent=w;
+                listDiv.appendChild(s);
+            });
+        }
+
+        const handleMove = (e) => {
+            if(!isSelecting) return;
+            const t = e.touches ? e.touches[0] : e;
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            if(el && el.classList.contains('cell')) {
+                const pos = el.dataset.pos;
+                if(!activeCoords.includes(pos)) {
+                    activeCoords.push(pos); el.classList.add('sel');
+                    playSound(440);
+                    check();
+                }
+            }
+        };
+
+        const grid = document.getElementById('grid');
+        grid.addEventListener('touchstart', (e) => { isSelecting=true; activeCoords=[]; handleMove(e); e.preventDefault(); }, {passive:false});
+        grid.addEventListener('touchmove', (e) => { handleMove(e); e.preventDefault(); }, {passive:false});
+        window.addEventListener('touchend', () => {
+            isSelecting=false;
+            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+        });
+
+        function check() {
+            for(let w in wordsPos) {
+                if(!document.getElementById('w-'+w).classList.contains('word-found') && 
+                   wordsPos[w].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
+                                          document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                    wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                    document.getElementById('w-'+w).classList.add('word-found');
+                    foundCount++; playSound(880);
+                    if(foundCount === Object.keys(wordsPos).length) document.getElementById('victory').style.display='flex';
+                }
             }
         }
+        init();
     </script>
 </body>
 </html>
