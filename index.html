@@ -14,8 +14,7 @@
 
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
         
-        /* Contenedor del versículo para que se vea completo */
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 10px; border-left: 5px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 10px; border-left: 5px solid #2e7d32; min-height: 85px; display: flex; align-items: center; justify-content: center; }
         #verse-text { font-size: 0.95rem; color: #1b5e20; font-weight: bold; line-height: 1.4; }
 
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
@@ -23,14 +22,14 @@
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 130px; overflow-y: auto; background: #f9f9f9; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 130px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 13px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; }
-        .ad-card img { width: 100%; max-height: 180px; object-fit: contain; margin: 10px 0; }
-        .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 30px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; }
+        .ad-card img { width: 100%; max-height: 180px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
+        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -41,11 +40,11 @@
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-size: 0.8em; color: #666;">ARTÍCULO DESTACADO</div>
+            <div style="font-size: 0.8em; color: #666; font-weight: bold;">DISPONIBLE EN TIENDA</div>
             <img id="ad-img" src="">
-            <div id="ad-txt" style="font-weight: bold;"></div>
-            <div id="ad-price" style="color:#c62828; font-size: 1.3em; font-weight: bold; margin: 5px 0;"></div>
-            <button class="btn-next" onclick="proximoNivel()">CONTINUAR AL SIGUIENTE NIVEL</button>
+            <div id="ad-txt" style="font-weight: bold; margin-bottom: 5px;"></div>
+            <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold; margin-bottom: 15px;"></div>
+            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
         </div>
     </div>
 
@@ -88,6 +87,16 @@
             cargarNivel();
         });
 
+        // BOTÓN DE SIGUIENTE NIVEL CON FIX DE RENDERIZADO
+        document.getElementById('btn-next-lvl').addEventListener('click', () => {
+            document.getElementById('ad-modal').style.display = 'none';
+            nivelActual++;
+            // Usamos requestAnimationFrame para asegurar que el modal se cierre antes de procesar el nivel
+            requestAnimationFrame(() => {
+                setTimeout(cargarNivel, 50);
+            });
+        });
+
         function cargarNivel() {
             const data = niveles[nivelActual % niveles.length];
             document.getElementById('lvl-tag').textContent = `NIVEL ${nivelActual + 1} - ${data.r}`;
@@ -109,13 +118,18 @@
             const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            grid.innerHTML = ''; list.innerHTML = '';
-            foundCount = 0; wordsPos = {};
+            
+            // Limpieza total antes de generar
+            grid.innerHTML = ''; 
+            list.innerHTML = '';
+            foundCount = 0; 
+            wordsPos = {};
+            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
 
             palabras.forEach(palabra => {
                 let puesta = false;
-                for(let i=0; i<100 && !puesta; i++) {
+                for(let i=0; i<150 && !puesta; i++) {
                     let dir = Math.floor(Math.random() * 3); // 0:H, 1:V, 2:D
                     let dr = dir === 0 ? 0 : 1;
                     let dc = dir === 1 ? 0 : 1;
@@ -159,7 +173,7 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.1); 
+                    playSound(440, 0.05); 
                     check();
                 }
             }
@@ -177,7 +191,7 @@
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
-                        playSound(523, 0.2); 
+                        playSound(523, 0.15); 
                         foundCount++;
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarAd, 600);
                     }
@@ -191,12 +205,6 @@
             document.getElementById('ad-txt').textContent = ad.txt;
             document.getElementById('ad-price').textContent = ad.precio;
             document.getElementById('ad-modal').style.display = 'flex';
-        }
-
-        function proximoNivel() {
-            document.getElementById('ad-modal').style.display = 'none';
-            nivelActual++; // AHORA SÍ PASA AL SIGUIENTE
-            cargarNivel();
         }
     </script>
 </body>
