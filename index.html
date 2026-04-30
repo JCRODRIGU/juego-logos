@@ -9,7 +9,7 @@
         * { touch-action: none; user-select: none; box-sizing: border-box; }
         body { font-family: sans-serif; text-align: center; background: #ffffff; margin: 0; }
         
-        /* FORMATO ANCLA RECUPERADO */
+        /* FORMATO ANCLA RESTAURADO */
         .header { background: #2e7d32; color: white; padding: 15px; font-weight: bold; font-size: 1.1em; }
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 98vw; max-width: 460px; background: #ccc; gap: 1px; margin: 10px auto; border: 3px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; color: #000; }
@@ -35,24 +35,24 @@
 
     <div id="start-modal" class="modal" style="display:flex; background: #2e7d32;">
         <h2 style="margin-bottom:10px;">LIBRERÍA CRISTIANA LOGOS</h2>
-        <p style="margin-bottom:30px;">Reto Bíblico: 20 Niveles de Sopa de Letras</p>
-        <button class="btn-action" style="background:white; color:#2e7d32; width: auto; padding: 15px 50px;" onclick="iniciar()">EMPEZAR RETO</button>
+        <p style="margin-bottom:30px;">Reto de 20 Niveles con Diagonales</p>
+        <button class="btn-action" style="background:white; color:#2e7d32; width: auto; padding: 15px 50px;" onclick="iniciar()">EMPEZAR JUEGO</button>
     </div>
 
     <div id="ad-modal" class="modal">
         <div class="ad-card">
-            <h3 style="margin-top:0; color:#2e7d32">¡Nivel Completado!</h3>
-            <img id="ad-img" src="" alt="Producto Logos">
-            <div id="ad-txt" style="font-weight: bold; font-size: 1.1em;"></div>
+            <h3 style="margin-top:0; color:#2e7d32">¡Versículo Completado!</h3>
+            <img id="ad-img" src="" alt="Producto">
+            <div id="ad-txt" style="font-weight: bold;"></div>
             <div id="ad-price" style="color: #c62828; font-size: 1.4em; font-weight: bold; margin: 8px 0;"></div>
-            <button class="btn-action" onclick="cerrarAd()">SIGUIENTE NIVEL</button>
+            <button class="btn-action" onclick="cerrarAd()">CONTINUAR RUTA</button>
         </div>
     </div>
 
     <div id="win-modal" class="modal">
-        <h1 style="color:#ffee58">¡RETO CUMPLIDO!</h1>
-        <p style="font-size:1.2em; text-align:center;">Has completado los 20 versículos.</p>
-        <a href="https://wa.me/573125756581?text=He%20completado%20el%20Reto%20Logos%20de%2020%20niveles" style="text-decoration:none; background:#25D366; color:white; padding:20px 40px; border-radius:50px; font-weight:bold; margin-top:20px; font-size: 1.2em; display: inline-block;">RECLAMAR PREMIO</a>
+        <h1 style="color:#ffee58">¡FELICITACIONES!</h1>
+        <p style="font-size:1.2em;">Completaste los 20 niveles Logos.</p>
+        <a href="https://wa.me/573125756581?text=Gane%20el%20reto%20Logos%20de%2020%20niveles" style="text-decoration:none; background:#25D366; color:white; padding:20px 40px; border-radius:50px; font-weight:bold; margin-top:20px; font-size: 1.2em; display: inline-block;">RECLAMAR PREMIO</a>
     </div>
 
     <div class="header">
@@ -67,25 +67,13 @@
     <script>
         const niveles = [{"v": "Lampara es a mis pies tu palabra y lumbrera a mi camino", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor nada me faltara", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra", "r": "Genesis 1:1"}, {"v": "Cree en el Senor Jesucristo y seras salvo tu y tu casa", "r": "Hechos 16:31"}, {"v": "El amor es sufrido es benigno el amor no tiene envidia", "r": "1 Corintios 13:4"}, {"v": "Clama a mi y yo te respondere y te ensenare cosas grandes", "r": "Jeremias 33:3"}, {"v": "Buscad primeramente el reino de Dios y su justicia", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza nuestro pronto auxilio", "r": "Salmo 46:1"}, {"v": "Yo soy el camino y la verdad y la vida", "r": "Juan 14:6"}, {"v": "El gozo de Jehova es vuestra fortaleza", "r": "Nehemias 8:10"}, {"v": "La blanda respuesta quita la ira mas la palabra aspera sube el furor", "r": "Proverbios 15:1"}, {"v": "Mas el fruto del Espiritu es amor gozo paz paciencia", "r": "Galatas 5:22"}, {"v": "Justificados pues por la fe tenemos paz para con Dios", "r": "Romanos 5:1"}, {"v": "La fe es la certeza de lo que se espera", "r": "Hebreos 11:1"}, {"v": "Poned la mira en las cosas de arriba no en las de la tierra", "r": "Colosenses 3:2"}, {"v": "Someteos pues a Dios resistid al diablo y huira de vosotros", "r": "Santiago 4:7"}, {"v": "Pedid y se os dara buscad y hallareis llamad y se os abrira", "r": "Mateo 7:7"}, {"v": "Porque de tal manera amo Dios al mundo que dio a su Hijo", "r": "Juan 3:16"}];
         const anuncios = [{"img": "publicidad1.jpg", "txt": "Botilito Sublimado Mujer", "precio": "$25.000"}, {"img": "publicidad2.jpg", "txt": "Biblia Reina Valera 1960", "precio": "$45.000"}, {"img": "publicidad3.jpg", "txt": "Camiseta Dise\u00f1o Especial", "precio": "$35.000"}, {"img": "publicidad4.jpg", "txt": "Diccionario B\u00edblico", "precio": "$55.000"}, {"img": "publicidad5.jpg", "txt": "Pan de Vida (Promesas)", "precio": "$12.000"}, {"img": "publicidad6.jpg", "txt": "Libro Matrimonio Cristiano", "precio": "$38.000"}, {"img": "publicidad7.jpg", "txt": "Agenda 2026 Logos", "precio": "$22.000"}, {"img": "publicidad8.jpg", "txt": "Separadores B\u00edblicos x10", "precio": "$8.000"}, {"img": "publicidad9.jpg", "txt": "Mug Sublimado Logos", "precio": "$18.000"}, {"img": "publicidad10.jpg", "txt": "Cuadro Decorativo Vers\u00edculo", "precio": "$30.000"}, {"img": "publicidad11.jpg", "txt": "Libro de Oraci\u00f3n Diaria", "precio": "$28.000"}, {"img": "publicidad12.jpg", "txt": "Biblia para Ni\u00f1os Ilustrada", "precio": "$50.000"}, {"img": "publicidad13.jpg", "txt": "Estuche para Biblia", "precio": "$25.000"}, {"img": "publicidad14.jpg", "txt": "Llaveros Cristianos", "precio": "$6.000"}, {"img": "publicidad15.jpg", "txt": "CD M\u00fasica de Adoraci\u00f3n", "precio": "$15.000"}, {"img": "publicidad16.jpg", "txt": "Gorra Logos Bordada", "precio": "$25.000"}, {"img": "publicidad17.jpg", "txt": "Juego de Mesa B\u00edblico", "precio": "$45.000"}, {"img": "publicidad18.jpg", "txt": "Libreta de Notas", "precio": "$12.000"}, {"img": "publicidad19.jpg", "txt": "Bol\u00edgrafo con Vers\u00edculo", "precio": "$5.000"}, {"img": "publicidad20.jpg", "txt": "Bono de Regalo Logos", "precio": "Valor Libre"}];
-        const relleno = ["BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "LIBRO", "PAZ", "DIOS", "KENNEDY", "DISCIPULO", "GRACIA", "ESPIRITU", "SALVACION"];
+        const relleno = ["BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "LIBRO", "PAZ", "DIOS", "KENNEDY", "GRACIA", "SALVACION", "DISCIPULO", "ESPIRITU"];
         let nivelActual = 0;
         let wordsPos = {};
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
         let audioCtx;
-
-        function playSound(f, d) {
-            if(!audioCtx) return;
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            o.type = 'sine';
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + d);
-        }
 
         function iniciar() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -104,12 +92,12 @@
             const data = niveles[nivelActual];
             document.getElementById('verse-display').textContent = `"${data.v}" - ${data.r}`;
             
-            // LÓGICA DE 15 PALABRAS EXACTAS
+            // LÓGICA DE 15 PALABRAS
             let palabras = data.v.toUpperCase().split(' ')
                 .map(p => p.replace(/[^A-Z]/g, ''))
                 .filter(p => p.length >= 3);
             
-            palabras = [...new Set(palabras)]; // Sin duplicados
+            palabras = [...new Set(palabras)];
 
             if(palabras.length < 15) {
                 let i = 0;
@@ -131,23 +119,28 @@
             foundCount = 0; wordsPos = {};
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             
+            // DIRECCIONES INCLUYENDO DIAGONAL
+            const dirs = [[0,1], [1,0], [1,1]]; 
+
             palabras.forEach(palabra => {
                 let colocada = false;
-                for(let i=0; i<80 && !colocada; i++) {
-                    let dir = Math.random() > 0.5 ? 'H' : 'V';
-                    let r = Math.floor(Math.random() * (dir === 'V' ? TAM - palabra.length : TAM));
-                    let c = Math.floor(Math.random() * (dir === 'H' ? TAM - palabra.length : TAM));
+                for(let i=0; i<100 && !colocada; i++) {
+                    let d = dirs[Math.floor(Math.random() * dirs.length)];
+                    let r = Math.floor(Math.random() * (TAM - (d[0] * palabra.length)));
+                    let c = Math.floor(Math.random() * (TAM - (d[1] * palabra.length)));
+                    
                     let fits = true;
                     for(let j=0; j<palabra.length; j++) {
-                        let rr = dir === 'V' ? r + j : r;
-                        let cc = dir === 'H' ? c + j : c;
+                        let rr = r + (d[0] * j);
+                        let cc = c + (d[1] * j);
                         if(matriz[rr][cc] !== '' && matriz[rr][cc] !== palabra[j]) fits = false;
                     }
+                    
                     if(fits) {
                         wordsPos[palabra] = [];
                         for(let j=0; j<palabra.length; j++) {
-                            let rr = dir === 'V' ? r + j : r;
-                            let cc = dir === 'H' ? c + j : c;
+                            let rr = r + (d[0] * j);
+                            let cc = c + (d[1] * j);
                             matriz[rr][cc] = palabra[j];
                             wordsPos[palabra].push(`${rr}-${cc}`);
                         }
@@ -171,12 +164,11 @@
         }
 
         function mostrarAd() {
-            const ad = anuncios[nivelActual];
+            const ad = anuncios[nivelActual % anuncios.length];
             document.getElementById('ad-img').src = ad.img;
             document.getElementById('ad-txt').textContent = ad.txt;
             document.getElementById('ad-price').textContent = ad.precio;
             document.getElementById('ad-modal').style.display = 'flex';
-            playSound(660, 0.3);
         }
 
         function cerrarAd() {
@@ -193,7 +185,6 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.1);
                     check();
                 }
             }
@@ -213,7 +204,6 @@
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
                         foundCount++;
-                        playSound(523, 0.2);
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarAd, 800);
                     }
                 }
