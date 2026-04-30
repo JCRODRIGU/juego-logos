@@ -17,75 +17,133 @@
         .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
         .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
         
-        /* Pantalla de Publicidad y Ganador */
         #victory-screen { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(255,255,255,0.98); z-index: 9999; 
             flex-direction: column; align-items: center; justify-content: center;
         }
         .ad-container { 
-            width: 90%; max-width: 350px; background: #f9f9f9; border: 2px dashed #2e7d32; 
-            padding: 20px; margin: 20px 0; border-radius: 15px; color: #333;
+            width: 85%; max-width: 320px; background: #f9f9f9; border: 2px dashed #2e7d32; 
+            padding: 15px; margin: 15px 0; border-radius: 12px;
         }
-        .btn-next { background: #2e7d32; color: white; padding: 15px 40px; border-radius: 30px; border: none; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
-        .btn-wa { color: #2e7d32; text-decoration: underline; margin-top: 15px; font-size: 0.9rem; background: none; border: none; }
+        .btn-next { background: #2e7d32; color: white; padding: 15px 35px; border-radius: 30px; border: none; font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <div class="header">
         <span>LIBRERÍA LOGOS</span>
-        <span id="record-tag">Sopa: 1/20</span>
+        <span id="record-tag">Nivel: 1/20</span>
     </div>
     
     <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-CRUZ">CRUZ</span></div>
+    <div id="word-list"></div>
 
-    <!-- PANTALLA INTERMEDIA (PUNTOS 3, 4, 5) -->
     <div id="victory-screen">
-        <h1 style="color: #2e7d32; margin: 0;">¡EXCELENTE!</h1>
-        <p id="stats-msg">Has completado la sopa.</p>
-        
+        <h1 style="color: #2e7d32; margin: 0;">¡NIVEL COMPLETADO!</h1>
+        <p id="stats-msg"></p>
         <div class="ad-container">
-            <small>Publicidad Logos</small>
-            <h3 style="margin: 10px 0;">¿Ya conoces nuestros nuevos Botilitos?</h3>
-            <p style="font-size: 14px;">Sublimación personalizada en Kennedy Central.</p>
+            <h3 style="margin: 5px 0;">Publicidad Logos</h3>
+            <p style="font-size: 14px;">¡Nuevos botilitos y mugs personalizados!<br>Kennedy Central - Bogotá</p>
         </div>
-
-        <button class="btn-next" onclick="nextLevel()">JUGAR SIGUIENTE NIVEL</button>
-        <button class="btn-wa" onclick="sendWA()">Enviar resultado por WhatsApp</button>
+        <button class="btn-next" onclick="initGame()">SIGUIENTE SOPA</button>
     </div>
 
     <script>
-        const wordsPos = {"CATEDRAL": ["8-0", "8-1", "8-2", "8-3", "8-4", "8-5", "8-6", "8-7"], "AMEN": ["1-5", "2-6", "3-7", "4-8"], "PULSERA": ["13-1", "13-2", "13-3", "13-4", "13-5", "13-6", "13-7"], "KENNEDY": ["4-14", "5-14", "6-14", "7-14", "8-14", "9-14", "10-14"], "AGENDA": ["9-6", "9-7", "9-8", "9-9", "9-10", "9-11"], "AMOR": ["1-13", "2-13", "3-13", "4-13"], "BIBLIA": ["4-11", "5-11", "6-11", "7-11", "8-11", "9-11"], "PAZ": ["3-8", "3-9", "3-10"], "LIBROS": ["2-5", "3-6", "4-7", "5-8", "6-9", "7-10"], "CRISTO": ["10-8", "10-9", "10-10", "10-11", "10-12", "10-13"], "SALMOS": ["0-1", "0-2", "0-3", "0-4", "0-5", "0-6"], "LOGOS": ["11-7", "11-8", "11-9", "11-10", "11-11"], "DIOS": ["12-2", "12-3", "12-4", "12-5"], "CRUZ": ["0-11", "0-12", "0-13", "0-14"]};
-        const matrix = [["E", "S", "A", "L", "M", "O", "S", "M", "R", "Q", "Y", "C", "R", "U", "Z"], ["E", "H", "T", "I", "P", "A", "W", "E", "D", "P", "W", "E", "J", "A", "L"], ["B", "H", "X", "D", "A", "L", "M", "T", "D", "A", "B", "H", "A", "M", "S"], ["O", "F", "J", "I", "C", "W", "I", "E", "P", "A", "Z", "S", "A", "O", "Y"], ["J", "T", "H", "C", "N", "J", "L", "B", "N", "W", "E", "B", "H", "R", "K"], ["R", "R", "U", "T", "D", "A", "M", "M", "R", "P", "U", "I", "W", "V", "E"], ["Q", "F", "M", "F", "Z", "Z", "U", "Y", "Q", "O", "R", "B", "Y", "L", "N"], ["K", "J", "J", "U", "S", "K", "M", "G", "A", "D", "S", "L", "Q", "C", "N"], ["C", "A", "T", "E", "D", "R", "A", "L", "W", "I", "U", "I", "V", "A", "E"], ["V", "Y", "V", "A", "H", "T", "A", "G", "E", "N", "D", "A", "M", "M", "D"], ["Z", "S", "M", "D", "P", "N", "T", "W", "C", "R", "I", "S", "T", "O", "Y"], ["T", "O", "R", "T", "F", "V", "U", "L", "O", "G", "O", "S", "H", "J", "Q"], ["Q", "M", "D", "I", "O", "S", "P", "Y", "G", "O", "W", "Z", "K", "Q", "B"], ["W", "P", "U", "L", "S", "E", "R", "A", "H", "S", "F", "G", "W", "P", "D"], ["A", "V", "F", "N", "Z", "D", "Z", "O", "Y", "V", "C", "Q", "Y", "B", "N"]];
-        let activeCoords = [];
+        const pool = ["KENNEDY", "AMEN", "CRISTO", "BIBLIA", "PULSERA", "AMOR", "LIBROS", "MANILLA", "PASTOR", "CATEDRAL", "AGENDA", "PROMESA", "PROVERBIOS", "PAZ", "CRUZ", "LOGOS", "SALMOS", "IGLESIA", "DIOS"];
+        let wordsPos = {};
         let foundCount = 0;
+        let activeCoords = [];
         let isSelecting = false;
+        const TAMANO = 15;
 
-        // RÉCORD (Punto 5)
-        let currentLevel = parseInt(localStorage.getItem('logos_level')) || 1;
-        document.getElementById('record-tag').textContent = "Sopa: " + currentLevel + "/20";
-
-        // SONIDO (Mantenido intacto)
+        // AUDIO (Simplificado para evitar fallos)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, dur) {
+        function playTone(f, d) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + dur);
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
         }
 
-        const grid = document.getElementById('grid');
-        matrix.forEach((row, r) => row.forEach((char, c) => {
-            const div = document.createElement('div');
-            div.className = 'cell'; div.textContent = char;
-            div.dataset.pos = r + '-' + c;
-            grid.appendChild(div);
-        }));
+        function initGame() {
+            // 1. Reset variables
+            document.getElementById('victory-screen').style.display = 'none';
+            document.getElementById('grid').innerHTML = '';
+            document.getElementById('word-list').innerHTML = '';
+            wordsPos = {};
+            foundCount = 0;
+            
+            // 2. Actualizar Récord
+            let level = parseInt(localStorage.getItem('logos_level')) || 1;
+            document.getElementById('record-tag').textContent = "Nivel: " + level + "/20";
 
+            // 3. Seleccionar 15 palabras nuevas del Pool
+            const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 15);
+            
+            // 4. Crear Matriz vacía
+            let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
+
+            // 5. Ubicar palabras (H, V, D)
+            seleccionadas.forEach(palabra => {
+                let colocada = false;
+                for(let intento=0; intento<100; intento++) {
+                    if(colocada) break;
+                    let dir = ['H','V','D'][Math.floor(Math.random()*3)];
+                    let f = Math.floor(Math.random()*TAMANO);
+                    let c = Math.floor(Math.random()*TAMANO);
+                    
+                    if(dir === 'H' && c + palabra.length > TAMANO) continue;
+                    if(dir === 'V' && f + palabra.length > TAMANO) continue;
+                    if(dir === 'D' && (f + palabra.length > TAMANO || c + palabra.length > TAMANO)) continue;
+
+                    let coords = [];
+                    let puede = true;
+                    for(let i=0; i<palabra.length; i++) {
+                        let nf = f + (dir==='V' || dir==='D' ? i : 0);
+                        let nc = c + (dir==='H' || dir==='D' ? i : 0);
+                        if(matriz[nf][nc] !== '' && matriz[nf][nc] !== palabra[i]) { puede = false; break; }
+                        coords.push(nf + '-' + nc);
+                    }
+
+                    if(puede) {
+                        coords.forEach((co, i) => {
+                            let [rf, rc] = co.split('-').map(Number);
+                            matriz[rf][rc] = palabra[i];
+                        });
+                        wordsPos[palabra] = coords;
+                        colocada = true;
+                    }
+                }
+            });
+
+            // 6. Rellenar y Dibujar
+            const gridDiv = document.getElementById('grid');
+            const listDiv = document.getElementById('word-list');
+
+            matriz.forEach((fila, r) => {
+                fila.forEach((char, c) => {
+                    if(char === '') char = String.fromCharCode(65 + Math.floor(Math.random()*26));
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = char;
+                    cell.dataset.pos = r + '-' + c;
+                    gridDiv.appendChild(cell);
+                });
+            });
+
+            seleccionadas.forEach(w => {
+                const span = document.createElement('span');
+                span.className = 'word-item';
+                span.id = 'w-' + w;
+                span.textContent = w;
+                listDiv.appendChild(span);
+            });
+        }
+
+        // SELECCIÓN TÁCTIL (Misma lógica simple)
         function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
@@ -95,57 +153,46 @@
                     activeCoords.push(pos);
                     el.classList.add('sel');
                     playTone(440, 0.1);
-                    checkWords();
+                    checkWin();
                 }
             }
         }
 
-        grid.addEventListener('touchstart', (e) => {
+        document.getElementById('grid').addEventListener('touchstart', (e) => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             isSelecting = true; activeCoords = []; handleTouch(e);
         });
-        grid.addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
+        document.getElementById('grid').addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
         window.addEventListener('touchend', () => {
             isSelecting = false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
-            activeCoords = [];
         });
 
-        function checkWords() {
+        function checkWin() {
             for (let word in wordsPos) {
                 const coords = wordsPos[word];
                 if (coords.every(p => {
-                    const el = document.querySelector(`[data-pos="${p}"]`);
-                    return el.classList.contains('sel') || el.classList.contains('found');
+                    const cell = document.querySelector(`[data-pos="${p}"]`);
+                    return cell.classList.contains('sel') || cell.classList.contains('found');
                 })) {
                     coords.forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     const btn = document.getElementById('w-' + word);
                     if (btn && !btn.classList.contains('word-found')) {
                         btn.classList.add('word-found');
                         foundCount++;
-                        playTone(600, 0.3);
-                        if (foundCount === Object.keys(wordsPos).length) showVictory();
+                        playTone(660, 0.3);
+                        if (foundCount === Object.keys(wordsPos).length) {
+                            let level = parseInt(localStorage.getItem('logos_level')) || 1;
+                            localStorage.setItem('logos_level', level + 1);
+                            document.getElementById('victory-screen').style.display = 'flex';
+                            document.getElementById('stats-msg').textContent = "Has superado el nivel " + level;
+                        }
                     }
                 }
             }
         }
 
-        function showVictory() {
-            document.getElementById('victory-screen').style.display = 'flex';
-            document.getElementById('stats-msg').textContent = "Nivel " + currentLevel + " completado con éxito.";
-        }
-
-        function nextLevel() {
-            currentLevel++;
-            if(currentLevel > 20) currentLevel = 1; // Reiniciar al llegar a 20
-            localStorage.setItem('logos_level', currentLevel);
-            location.reload(); // Esto genera una sopa nueva al recargar
-        }
-
-        function sendWA() {
-            const text = "¡Completé la sopa de letras nivel " + currentLevel + " en Librería Logos!";
-            window.open("https://wa.me/573125756581?text=" + encodeURIComponent(text));
-        }
+        initGame();
     </script>
 </body>
 </html>
