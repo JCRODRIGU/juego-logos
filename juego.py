@@ -3,25 +3,20 @@ import string
 import pandas as pd
 
 def generar_sopa_logos_sonido_ok(df):
-    # Detectar la columna producto (usualmente la J en tus archivos es la posición 9)
-    # Si no encuentra 'producto', toma la columna 9 por índice (J)
+    # Detectar la columna producto (posición 9 / Columna J)
     columna = 'producto' if 'producto' in df.columns else df.columns[9] if len(df.columns) > 9 else df.columns[0]
     
     productos = df[columna].dropna().astype(str).tolist()
     
-    # NUEVA LÓGICA: Extrae todas las palabras de la descripción, no solo la primera
+    # Extrae todas las palabras de la descripción que cumplan el largo
     palabras_totales = []
     for frase in productos:
-        # Dividimos la frase por espacios
         palabras_frase = frase.upper().replace(",", " ").split()
         for p in palabras_frase:
-            # Limpiamos tildes
             limpia = p.replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U")
-            # Filtramos por longitud (entre 3 y 10 letras)
             if 3 <= len(limpia) <= 10:
                 palabras_totales.append(limpia)
     
-    # Seleccionamos aleatorias de la lista total
     candidatas_unicas = list(set(palabras_totales))
     seleccionadas = random.sample(candidatas_unicas, min(15, len(candidatas_unicas)))
     
@@ -68,10 +63,14 @@ def generar_sopa_logos_sonido_ok(df):
         * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
+        
+        /* CUADRADO ENVOLVENTE RECUPERADO (border) */
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
             width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto;
+            border: 3px solid #2e7d32; /* Este es el cuadrado que mencionas */
         }
+        
         .cell { 
             aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
             justify-content: center; font-weight: bold; font-size: 16px; color: #000;
@@ -96,7 +95,6 @@ def generar_sopa_logos_sonido_ok(df):
         let activeCoords = [];
         let foundCount = 0;
         let isSelecting = false;
-
         let audioCtx = null;
 
         function initAudio() {
@@ -188,5 +186,3 @@ def generar_sopa_logos_sonido_ok(df):
     """
     final_html = html_template.replace("__BOTONES__", botones_html).replace("__WORDS_POS__", words_pos_js).replace("__MATRIX__", matrix_js)
     with open("index.html", "w", encoding="utf-8") as f: f.write(final_html)
-
-# El bloque try se mantiene para procesar tu DataFrame
