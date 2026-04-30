@@ -6,68 +6,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; touch-action: none; user-select: none; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
-        #grid { 
-            display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 98vw; max-width: 450px; background: #000; gap: 1px; margin: 5px auto;
-        }
-        .cell { 
-            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
-            justify-content: center; font-weight: bold; font-size: 14px; 
-        }
-        .sel { background: #ffeb3b !important; }
+        body { font-family: sans-serif; text-align: center; background: #fdfdfd; margin: 0; touch-action: none; user-select: none; }
+        .header { background: #2e7d32; color: white; padding: 12px; font-weight: bold; font-size: 1.2rem; }
+        #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 480px; background: #444; gap: 1px; margin: 8px auto; border: 2px solid #2e7d32; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #111; }
+        .sel { background: #fff59d !important; border: 1px solid #fbc02d; box-sizing: border-box; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; }
-        .word-item { padding: 4px 8px; background: #eee; border-radius: 5px; font-size: 11px; border: 1px solid #ccc; }
-        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; }
-        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 10px; text-decoration: none; margin: 10px; display: inline-block; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 15px; }
+        .word-item { padding: 5px 10px; background: #f5f5f5; border-radius: 6px; font-size: 12px; border: 1px solid #ddd; color: #555; }
+        .word-found { background: #e8f5e9; color: #2e7d32; text-decoration: line-through; border: 1px solid #2e7d32; }
+        .win-btn { display: none; background: #25D366; color: white; padding: 18px; border-radius: 40px; text-decoration: none; font-weight: bold; margin: 20px auto; width: 80%; }
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS</div>
+    <div class="header">LIBRERÍA LOGOS: RETO 15</div>
     <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-CRUZ">CRUZ</span></div>
-    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">¡GANASTE! RECLAMAR</a>
+    <div id="word-list"><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-DIOS">DIOS</span></div>
+    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" class="win-btn">✅ ¡GANASTE! RECLAMAR</a>
 
     <script>
-        const words = ["SALMOS", "AGENDA", "LOGOS", "PAZ", "BIBLIA", "PULSERA", "AMOR", "KENNEDY", "LIBROS", "CRISTO", "CATEDRAL", "DIOS", "AMEN", "CRUZ"];
-        const matrix = [["Y", "M", "R", "L", "I", "B", "R", "O", "S", "N", "T", "R", "P", "A", "Z"], ["C", "W", "I", "X", "P", "B", "A", "E", "R", "C", "R", "I", "S", "T", "O"], ["J", "T", "C", "D", "K", "X", "L", "W", "X", "G", "Y", "D", "K", "Q", "I"], ["N", "H", "B", "K", "R", "A", "Y", "O", "L", "T", "C", "U", "A", "A", "I"], ["R", "G", "Z", "A", "A", "S", "D", "G", "G", "N", "R", "B", "L", "S", "L"], ["K", "S", "K", "K", "C", "G", "B", "P", "S", "O", "Z", "I", "H", "A", "V"], ["T", "E", "Y", "C", "Z", "A", "E", "I", "U", "T", "S", "R", "W", "L", "G"], ["C", "S", "N", "O", "A", "G", "T", "N", "B", "L", "S", "N", "Q", "M", "C"], ["R", "C", "P", "N", "R", "U", "M", "E", "D", "L", "S", "Z", "P", "O", "Y"], ["U", "W", "Y", "K", "E", "M", "R", "C", "D", "A", "I", "E", "D", "S", "Q"], ["Z", "M", "A", "A", "G", "D", "H", "R", "I", "R", "V", "A", "R", "V", "B"], ["H", "S", "S", "M", "D", "Z", "Y", "Q", "E", "N", "A", "M", "C", "A", "L"], ["B", "D", "B", "E", "T", "R", "F", "H", "O", "S", "J", "L", "D", "K", "M"], ["R", "H", "Q", "N", "L", "E", "M", "H", "N", "A", "M", "O", "R", "Q", "F"], ["O", "D", "I", "O", "S", "T", "Y", "V", "Q", "A", "C", "G", "S", "V", "S"]];
-        let selectedEls = [], foundCount = 0;
+        const wordsPos = {"PAZ": [(7, 2), (7, 3), (7, 4)], "PULSERA": [(0, 6), (1, 6), (2, 6), (3, 6), (4, 6), (5, 6), (6, 6)], "CATEDRAL": [(12, 4), (12, 5), (12, 6), (12, 7), (12, 8), (12, 9), (12, 10), (12, 11)], "CRUZ": [(7, 8), (8, 9), (9, 10), (10, 11)], "SALMOS": [(2, 14), (3, 14), (4, 14), (5, 14), (6, 14), (7, 14)], "CRISTO": [(4, 5), (5, 5), (6, 5), (7, 5), (8, 5), (9, 5)], "KENNEDY": [(13, 0), (13, 1), (13, 2), (13, 3), (13, 4), (13, 5), (13, 6)], "AGENDA": [(14, 9), (14, 10), (14, 11), (14, 12), (14, 13), (14, 14)], "LIBROS": [(2, 8), (3, 9), (4, 10), (5, 11), (6, 12), (7, 13)], "AMOR": [(7, 1), (8, 2), (9, 3), (10, 4)], "AMEN": [(0, 4), (1, 4), (2, 4), (3, 4)], "LOGOS": [(11, 7), (11, 8), (11, 9), (11, 10), (11, 11)], "BIBLIA": [(0, 13), (1, 13), (2, 13), (3, 13), (4, 13), (5, 13)], "DIOS": [(5, 4), (6, 5), (7, 6), (8, 7)]};
+        const matrix = [["T", "W", "G", "A", "A", "R", "P", "U", "G", "V", "G", "I", "Y", "B", "G"], ["R", "T", "S", "P", "M", "C", "U", "I", "L", "W", "L", "F", "X", "I", "K"], ["R", "L", "A", "A", "E", "X", "L", "X", "L", "G", "C", "J", "I", "B", "S"], ["Y", "X", "Q", "J", "N", "Z", "S", "S", "R", "I", "V", "T", "O", "L", "A"], ["U", "W", "H", "W", "P", "C", "E", "F", "A", "U", "B", "P", "H", "I", "L"], ["B", "F", "A", "Y", "D", "R", "R", "A", "X", "F", "Z", "R", "Q", "A", "M"], ["M", "A", "K", "M", "K", "I", "A", "R", "J", "B", "F", "Q", "O", "G", "O"], ["X", "A", "P", "A", "Z", "S", "O", "S", "C", "U", "P", "A", "D", "S", "S"], ["X", "U", "M", "M", "Z", "T", "P", "S", "H", "R", "G", "I", "E", "F", "K"], ["E", "T", "R", "O", "F", "O", "A", "H", "B", "P", "U", "A", "N", "C", "T"], ["F", "G", "N", "U", "R", "B", "E", "C", "X", "Y", "Z", "Z", "F", "L", "N"], ["J", "V", "F", "D", "N", "B", "U", "L", "O", "G", "O", "S", "L", "W", "O"], ["J", "P", "N", "E", "C", "A", "T", "E", "D", "R", "A", "L", "D", "D", "M"], ["K", "E", "N", "N", "E", "D", "Y", "O", "Y", "K", "R", "B", "E", "R", "X"], ["J", "P", "V", "N", "L", "K", "V", "E", "C", "A", "G", "E", "N", "D", "A"]];
+        let activeCoords = [];
+        let foundCount = 0;
 
+        // Audio Setup
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(f, d) {
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d);
+        }
+
+        const grid = document.getElementById('grid');
         matrix.forEach((row, r) => row.forEach((char, c) => {
             const div = document.createElement('div');
             div.className = 'cell'; div.textContent = char;
-            div.dataset.r = r; div.dataset.c = c;
-            
-            // USAMOS EVENTOS SIMPLES DE TACTO
-            div.ontouchstart = (e) => { e.preventDefault(); handleSelect(div); };
-            div.onmousedown = () => handleSelect(div);
-            
-            document.getElementById('grid').appendChild(div);
+            div.dataset.pos = r + '-' + c;
+            div.onclick = () => {
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                toggleCell(div, r, c);
+            };
+            grid.appendChild(div);
         }));
 
-        function handleSelect(el) {
-            if (el.classList.contains('found')) return;
-            
-            if (el.classList.contains('sel')) {
-                el.classList.remove('sel');
-                selectedEls = selectedEls.filter(i => i !== el);
+        function toggleCell(el, r, c) {
+            const posStr = r + '-' + c;
+            if (el.classList.contains('found')) {
+                // Permitir re-seleccionar celdas encontradas si se cruzan
+                if (activeCoords.includes(posStr)) {
+                    activeCoords = activeCoords.filter(p => p !== posStr);
+                    el.classList.remove('sel');
+                } else {
+                    activeCoords.push(posStr);
+                    el.classList.add('sel');
+                    beep(400, 0.1);
+                }
             } else {
-                el.classList.add('sel');
-                selectedEls.push(el);
+                if (el.classList.contains('sel')) {
+                    el.classList.remove('sel');
+                    activeCoords = activeCoords.filter(p => p !== posStr);
+                } else {
+                    el.classList.add('sel');
+                    activeCoords.push(posStr);
+                    beep(450, 0.1);
+                }
             }
-            
-            const txt = selectedEls.map(i => i.textContent).join('');
-            const rev = txt.split('').reverse().join('');
-            
-            if (words.includes(txt) || words.includes(rev)) {
-                const final = words.includes(txt) ? txt : rev;
-                selectedEls.forEach(i => { i.classList.add('found'); i.classList.remove('sel'); });
-                document.getElementById('w-' + final).classList.add('word-found');
-                foundCount++;
-                selectedEls = [];
-                if (foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
+            checkWords();
+        }
+
+        function checkWords() {
+            for (let word in wordsPos) {
+                const coords = wordsPos[word];
+                const allSelected = coords.every(pair => activeCoords.includes(pair[0] + '-' + pair[1]));
+                
+                if (allSelected) {
+                    coords.forEach(pair => {
+                        const cell = document.querySelector(`[data-pos="${pair[0]}-${pair[1]}"]`);
+                        cell.classList.add('found');
+                        cell.classList.remove('sel');
+                        // Limpiar de la selección activa las coordenadas de la palabra encontrada
+                        activeCoords = activeCoords.filter(p => p !== (pair[0] + '-' + pair[1]));
+                    });
+                    
+                    const btn = document.getElementById('w-' + word);
+                    if (btn && !btn.classList.contains('word-found')) {
+                        btn.classList.add('word-found');
+                        beep(800, 0.4);
+                        foundCount++;
+                    }
+                }
+            }
+            if (foundCount === Object.keys(wordsPos).length) {
+                document.getElementById('win-btn').style.display = 'block';
             }
         }
     </script>
