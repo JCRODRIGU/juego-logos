@@ -4,113 +4,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa Logos</title>
+    <title>Sopa Logos Pro</title>
     <style>
-        * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; background: #f0f2f5; height: 100vh; 
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-        
-        /* CABECERA */
-        .header { 
-            background: #2e7d32; color: white; padding: 12px; 
-            font-weight: bold; text-align: center; flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* TABLERO (OCUPA ESPACIO FIJO) */
-        #game-board { 
-            background: white; padding: 10px; display: flex; 
-            justify-content: center; flex-shrink: 0;
-        }
-        #grid { 
-            display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 95vw; max-width: 380px; aspect-ratio: 1/1;
-            background: #bdc3c7; gap: 1px; border: 3px solid #2e7d32;
-        }
-        .cell { 
-            background: white; display: flex; align-items: center; 
-            justify-content: center; font-weight: bold; font-size: 13px; color: #2c3e50; 
-        }
-        .sel { background: #f1c40f !important; }
-        .found { background: #27ae60 !important; color: white !important; }
-
-        /* LISTA DE PALABRAS (OCUPA EL RESTO DE LA PANTALLA) */
-        #footer-area { 
-            flex-grow: 1; overflow-y: auto; background: #34495e; 
-            padding: 15px; border-top: 5px solid #2e7d32;
-            touch-action: pan-y; /* Permite scroll vertical */
-        }
-        .instruction { color: #ecf0f1; font-size: 11px; text-align: center; margin-bottom: 10px; opacity: 0.8; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-        .word-item { 
-            padding: 5px 12px; background: #ecf0f1; border-radius: 20px; 
-            font-size: 12px; color: #2c3e50; font-weight: bold; border: 2px solid transparent;
-        }
-        /* ESTILO PARA CUANDO SE ENCUENTRAN */
-        .word-found { 
-            background: #27ae60 !important; 
-            color: white !important; 
-            text-decoration: line-through;
-            border-color: #ffffff;
-            opacity: 0.7;
-        }
-
-        #victory-screen { 
-            display: none; position: fixed; inset: 0; background: white; 
-            z-index: 1000; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        }
-        .btn-next { background: #2e7d32; color: white; padding: 15px 40px; border-radius: 30px; border: none; font-weight: bold; margin-top: 20px; font-size: 18px; }
+        * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #000; }
+        .sel { background: #fff176 !important; }
+        .found { background: #4caf50 !important; color: white !important; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; max-height: 20vh; overflow-y: auto; }
+        .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
+        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
+        #victory-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        .ad-container { width: 85%; max-width: 320px; background: #f9f9f9; border: 2px dashed #2e7d32; padding: 15px; margin: 15px 0; border-radius: 12px; }
+        .btn-next { background: #2e7d32; color: white; padding: 15px 35px; border-radius: 30px; border: none; font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS - Kennedy Central</div>
-
-    <div id="game-board">
-        <div id="grid"></div>
+    <div class="header">
+        <span>LIBRERÍA LOGOS</span>
+        <span id="record-tag">Nivel: 1</span>
     </div>
-
-    <div id="footer-area">
-        <div class="instruction">PALABRAS A ENCONTRAR (DESLIZA PARA VER TODAS):</div>
-        <div id="word-list"></div>
-    </div>
-
+    <div id="grid"></div>
+    <div id="word-list"></div>
     <div id="victory-screen">
-        <h1 style="color: #2e7d32;">¡EXCELENTE TRABAJO!</h1>
-        <div style="padding: 20px; background: #f9f9f9; border-radius: 10px; margin: 10px; border: 1px solid #ddd;">
-            <p>Sopa completada con éxito.</p>
-            <p><b>Librería Logos</b><br>Calle 35C Sur No 78A-18<br>Bogotá, Colombia</p>
+        <h1 style="color: #2e7d32; margin: 0;">¡NIVEL COMPLETADO!</h1>
+        <div class="ad-container">
+            <h3 style="margin: 5px 0;">Publicidad Logos</h3>
+            <p style="font-size: 14px;">Mugs y botilitos personalizados.<br>Bogotá - Kennedy Central</p>
         </div>
-        <button class="btn-next" onclick="initGame()">JUGAR OTRA VEZ</button>
+        <button class="btn-next" onclick="initGame()">SIGUIENTE NIVEL</button>
     </div>
 
     <script>
-        const pool = [];
-        let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
+        const pool = ["MININOTAS", "PINES", "ESCARCHADA", "SOBRE", "TRATADOS", "TARJETA", "BOLSA", "CALCOMANIA", "DIPLOMA", "SEPARADOR", "CUADERNO", "NI\u00d1OS", "BOTON", "ESQUELAS", "REGALO", "SOBRES", "CUMPLEA\u00d1OS", "REGALOS", "ANGELITO"];
+        let usedWords = JSON.parse(localStorage.getItem('logos_used')) || [];
+        let wordsPos = {};
+        let foundCount = 0;
+        let activeCoords = [];
+        let isSelecting = false;
         const TAMANO = 15;
+
+        let audioCtx = null;
+        function playTone(f, d) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.frequency.setValueAtTime(f, audioCtx.currentTime);
+                g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(); o.stop(audioCtx.currentTime + d);
+            } catch(e) {}
+        }
 
         function initGame() {
             document.getElementById('victory-screen').style.display = 'none';
             document.getElementById('grid').innerHTML = '';
             document.getElementById('word-list').innerHTML = '';
             wordsPos = {}; foundCount = 0;
+            
+            let level = parseInt(localStorage.getItem('logos_level')) || 1;
+            document.getElementById('record-tag').textContent = "Nivel: " + level;
 
-            const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
+            // Selección de palabras evitando las usadas recientemente
+            let available = pool.filter(w => !usedWords.includes(w));
+            if (available.length < 15) { 
+                usedWords = []; 
+                available = pool; 
+            }
+            
+            const seleccionadas = available.sort(() => 0.5 - Math.random()).slice(0, 15);
+            usedWords.push(...seleccionadas);
+            // Guardamos solo las últimas 100 para no llenar la memoria pero mantener variedad
+            if(usedWords.length > 100) usedWords = usedWords.slice(-100);
+            localStorage.setItem('logos_used', JSON.stringify(usedWords));
 
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
+
             seleccionadas.forEach(palabra => {
                 let colocada = false;
-                for(let i=0; i<30; i++) {
+                for(let i=0; i<100; i++) {
                     if(colocada) break;
                     let dir = ['H','V','D'][Math.floor(Math.random()*3)];
                     let f = Math.floor(Math.random()*TAMANO);
                     let c = Math.floor(Math.random()*TAMANO);
-                    if(dir==='H' && c+palabra.length > TAMANO) continue;
-                    if(dir==='V' && f+palabra.length > TAMANO) continue;
-                    if(dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
-                    
+                    if(dir === 'H' && c + palabra.length > TAMANO) continue;
+                    if(dir === 'V' && f + palabra.length > TAMANO) continue;
+                    if(dir === 'D' && (f + palabra.length > TAMANO || c + palabra.length > TAMANO)) continue;
+
                     let coords = []; let puede = true;
                     for(let j=0; j<palabra.length; j++) {
                         let nf = f + (dir==='V' || dir==='D' ? j : 0);
@@ -119,44 +104,51 @@
                         coords.push(nf + '-' + nc);
                     }
                     if(puede) {
-                        coords.forEach((co, idx) => { matriz[co.split('-')[0]][co.split('-')[1]] = palabra[idx]; });
-                        wordsPos[palabra] = coords; colocada = true;
+                        coords.forEach((co, idx) => {
+                            let [rf, rc] = co.split('-').map(Number);
+                            matriz[rf][rc] = palabra[idx];
+                        });
+                        wordsPos[palabra] = coords;
+                        colocada = true;
                     }
                 }
             });
 
             const gridDiv = document.getElementById('grid');
+            const listDiv = document.getElementById('word-list');
             matriz.forEach((fila, r) => fila.forEach((char, c) => {
                 const cell = document.createElement('div');
-                cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
+                cell.className = 'cell';
+                cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
                 cell.dataset.pos = r + '-' + c;
                 gridDiv.appendChild(cell);
             }));
-
-            const listDiv = document.getElementById('word-list');
-            Object.keys(wordsPos).forEach(w => {
+            seleccionadas.forEach(w => {
                 const span = document.createElement('span');
                 span.className = 'word-item'; span.id = 'w-' + w; span.textContent = w;
                 listDiv.appendChild(span);
             });
         }
 
-        function handleMove(e) {
-            if (!isSelecting) return;
+        // SELECCIÓN TÁCTIL ORIGINAL
+        function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
             if (el && el.classList.contains('cell')) {
                 const pos = el.dataset.pos;
                 if (!activeCoords.includes(pos)) {
-                    activeCoords.push(pos); el.classList.add('sel');
+                    activeCoords.push(pos);
+                    el.classList.add('sel');
+                    playTone(440, 0.1);
                     checkWin();
                 }
             }
         }
 
-        const grid = document.getElementById('grid');
-        grid.addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleMove(e); e.preventDefault(); }, {passive:false});
-        grid.addEventListener('touchmove', (e) => { handleMove(e); e.preventDefault(); }, {passive:false});
+        document.getElementById('grid').addEventListener('touchstart', (e) => { 
+            isSelecting = true; activeCoords = []; handleTouch(e); 
+        });
+        document.getElementById('grid').addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
         window.addEventListener('touchend', () => {
             isSelecting = false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -164,18 +156,21 @@
 
         function checkWin() {
             for (let word in wordsPos) {
-                const item = document.getElementById('w-' + word);
-                if (item.classList.contains('word-found')) continue;
-
-                if (wordsPos[word].every(p => {
-                    const c = document.querySelector(`[data-pos="${p}"]`);
-                    return c.classList.contains('sel') || c.classList.contains('found');
+                const coords = wordsPos[word];
+                if (coords.every(p => {
+                    const cell = document.querySelector(`[data-pos="${p}"]`);
+                    return cell.classList.contains('sel') || cell.classList.contains('found');
                 })) {
-                    wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
-                    item.classList.add('word-found');
-                    foundCount++;
-                    if (foundCount === Object.keys(wordsPos).length) {
-                        setTimeout(() => { document.getElementById('victory-screen').style.display = 'flex'; }, 400);
+                    coords.forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                    const btn = document.getElementById('w-' + word);
+                    if (btn && !btn.classList.contains('word-found')) {
+                        btn.classList.add('word-found');
+                        foundCount++; playTone(660, 0.3);
+                        if (foundCount === Object.keys(wordsPos).length) {
+                            let level = parseInt(localStorage.getItem('logos_level')) || 1;
+                            localStorage.setItem('logos_level', level + 1);
+                            document.getElementById('victory-screen').style.display = 'flex';
+                        }
                     }
                 }
             }
