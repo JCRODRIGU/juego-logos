@@ -1,54 +1,71 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
         * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
-        #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto; }
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; overflow: hidden; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-around; align-items: center; }
+        #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto; border: 2px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #000; }
         .sel { background: #fff176 !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; background: white; }
         .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
         .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
-        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 10px; display: inline-block; }
+        
+        /* Publicidad y Ganador */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; color: white; justify-content: center; align-items: center; flex-direction: column; }
+        .ad-box { width: 300px; height: 250px; background: #fff; color: #333; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border-radius: 10px; font-weight: bold; }
+        .btn-action { background: #25D366; color: white; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 1rem; }
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS</div>
+    <div class="header">
+        <span>LIBRERÍA LOGOS</span>
+        <span id="score-display">Récord: 0</span>
+    </div>
     <div id="grid"></div>
-    <div id="word-list"><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-LIBROS">LIBROS</span></div>
-    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">✅ RECLAMAR PREMIO</a>
+    <div id="word-list"><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-CRUZ">CRUZ</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-SALMOS">SALMOS</span></div>
+
+    <div id="overlay">
+        <h2 id="msg">¡EXCELENTE!</h2>
+        <div class="ad-box">
+            <!-- AQUÍ PUEDES PONER TU IMAGEN O SCRIPT DE PUB -->
+            ESPACIO PUBLICITARIO<br>Librería Logos Kennedy
+        </div>
+        <button class="btn-action" onclick="location.reload()">SIGUIENTE SOPA</button>
+        <p style="font-size: 12px; margin-top: 15px;">Visítanos: Calle 35C Sur No 78A-18</p>
+    </div>
 
     <script>
-        const wordsPos = {"LOGOS": ["6-2", "7-2", "8-2", "9-2", "10-2"], "DIOS": ["5-5", "6-5", "7-5", "8-5"], "AMOR": ["8-3", "9-3", "10-3", "11-3"], "PAZ": ["3-10", "4-11", "5-12"], "PULSERA": ["2-8", "3-8", "4-8", "5-8", "6-8", "7-8", "8-8"], "BIBLIA": ["12-9", "12-10", "12-11", "12-12", "12-13", "12-14"], "CRISTO": ["4-2", "4-3", "4-4", "4-5", "4-6", "4-7"], "SALMOS": ["2-6", "3-7", "4-8", "5-9", "6-10", "7-11"], "CATEDRAL": ["1-2", "1-3", "1-4", "1-5", "1-6", "1-7", "1-8", "1-9"], "AGENDA": ["2-14", "3-14", "4-14", "5-14", "6-14", "7-14"], "CRUZ": ["11-7", "11-8", "11-9", "11-10"], "KENNEDY": ["0-7", "0-8", "0-9", "0-10", "0-11", "0-12", "0-13"], "AMEN": ["7-10", "8-11", "9-12", "10-13"], "LIBROS": ["13-3", "13-4", "13-5", "13-6", "13-7", "13-8"]};
-        const matrix = [["K", "U", "W", "N", "K", "R", "G", "K", "E", "N", "N", "E", "D", "Y", "W"], ["D", "P", "C", "A", "T", "E", "D", "R", "A", "L", "Y", "K", "P", "T", "A"], ["G", "V", "L", "A", "V", "N", "S", "G", "P", "H", "F", "L", "Q", "W", "A"], ["J", "Y", "J", "V", "U", "T", "F", "A", "U", "M", "P", "Q", "S", "T", "G"], ["G", "A", "C", "R", "I", "S", "T", "O", "L", "C", "O", "A", "A", "O", "E"], ["B", "H", "W", "P", "B", "D", "B", "S", "S", "M", "Z", "E", "Z", "Q", "N"], ["W", "E", "L", "J", "M", "I", "L", "S", "E", "C", "O", "P", "Z", "E", "D"], ["P", "B", "O", "O", "X", "O", "F", "W", "R", "W", "A", "S", "E", "M", "A"], ["X", "U", "G", "A", "W", "S", "S", "V", "A", "N", "O", "M", "N", "G", "H"], ["Z", "R", "O", "M", "N", "V", "F", "A", "S", "N", "A", "H", "E", "E", "C"], ["F", "J", "S", "O", "T", "H", "P", "Y", "U", "A", "G", "D", "G", "N", "I"], ["Y", "P", "R", "R", "E", "D", "J", "C", "R", "U", "Z", "J", "T", "A", "J"], ["I", "M", "N", "X", "H", "N", "U", "M", "U", "B", "I", "B", "L", "I", "A"], ["Q", "P", "X", "L", "I", "B", "R", "O", "S", "F", "B", "L", "D", "M", "W"], ["F", "R", "J", "A", "E", "V", "K", "H", "U", "N", "Z", "H", "T", "L", "Q"]];
+        const wordsPos = {"AMEN": ["5-7", "6-7", "7-7", "8-7"], "PULSERA": ["9-7", "9-8", "9-9", "9-10", "9-11", "9-12", "9-13"], "CRUZ": ["1-2", "1-3", "1-4", "1-5"], "KENNEDY": ["6-0", "7-1", "8-2", "9-3", "10-4", "11-5", "12-6"], "LIBROS": ["7-4", "8-5", "9-6", "10-7", "11-8", "12-9"], "PAZ": ["6-4", "7-5", "8-6"], "DIOS": ["13-1", "13-2", "13-3", "13-4"], "CATEDRAL": ["5-0", "6-1", "7-2", "8-3", "9-4", "10-5", "11-6", "12-7"], "LOGOS": ["3-2", "4-3", "5-4", "6-5", "7-6"], "BIBLIA": ["0-7", "1-8", "2-9", "3-10", "4-11", "5-12"], "AMOR": ["2-3", "2-4", "2-5", "2-6"], "CRISTO": ["0-0", "1-1", "2-2", "3-3", "4-4", "5-5"], "AGENDA": ["7-8", "7-9", "7-10", "7-11", "7-12", "7-13"], "SALMOS": ["8-4", "9-5", "10-6", "11-7", "12-8", "13-9"]};
+        const matrix = [["C", "J", "K", "G", "V", "M", "Y", "B", "J", "L", "I", "B", "G", "W", "Z"], ["Z", "R", "C", "R", "U", "Z", "F", "H", "I", "F", "H", "F", "S", "A", "O"], ["X", "H", "I", "A", "M", "O", "R", "M", "I", "B", "J", "C", "M", "G", "A"], ["T", "D", "L", "S", "F", "H", "Q", "A", "G", "I", "L", "B", "W", "E", "V"], ["A", "D", "L", "O", "T", "F", "B", "D", "Y", "F", "W", "I", "Q", "N", "V"], ["C", "R", "N", "Z", "G", "O", "O", "A", "R", "N", "P", "B", "A", "N", "Y"], ["K", "A", "U", "B", "P", "O", "X", "M", "T", "E", "S", "W", "V", "T", "N"], ["A", "E", "T", "Y", "L", "A", "S", "E", "A", "G", "E", "N", "D", "A", "K"], ["Y", "A", "N", "E", "S", "I", "Z", "N", "D", "Y", "H", "T", "L", "V", "J"], ["T", "S", "U", "N", "D", "A", "B", "P", "U", "L", "S", "E", "R", "A", "H"], ["S", "A", "E", "U", "E", "R", "L", "R", "C", "A", "O", "Z", "L", "M", "D"], ["I", "H", "Y", "P", "T", "D", "A", "M", "O", "X", "V", "B", "F", "A", "O"], ["J", "M", "J", "Z", "I", "N", "Y", "L", "O", "S", "R", "W", "D", "I", "J"], ["E", "D", "I", "O", "S", "W", "X", "V", "M", "S", "R", "C", "N", "T", "X"], ["T", "W", "I", "K", "D", "O", "Z", "Y", "Q", "J", "E", "O", "H", "O", "H"]];
         let activeCoords = [];
         let foundCount = 0;
         let isSelecting = false;
+        
+        // RECUPERAR RÉCORD
+        let totalSolved = localStorage.getItem('logos_record') || 0;
+        document.getElementById('score-display').textContent = "Récord: " + totalSolved;
 
-        // SISTEMA DE AUDIO REFORZADO
+        // SONIDO: Oscilador Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playSound(freq, duration) {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) { console.log("Audio bloqueado"); }
+        function playTone(freq, type, dur) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + dur);
         }
 
         const grid = document.getElementById('grid');
@@ -67,7 +84,7 @@
                 if (!activeCoords.includes(pos)) {
                     activeCoords.push(pos);
                     el.classList.add('sel');
-                    playSound(440, 0.1); // Beep de selección
+                    playTone(600, 'sine', 0.1); 
                     checkWords();
                 }
             }
@@ -75,13 +92,9 @@
 
         grid.addEventListener('touchstart', (e) => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            isSelecting = true;
-            activeCoords = [];
-            handleTouch(e);
+            isSelecting = true; activeCoords = []; handleTouch(e);
         });
-
-        grid.addEventListener('touchmove', handleTouch);
-
+        grid.addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
         window.addEventListener('touchend', () => {
             isSelecting = false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -100,11 +113,20 @@
                     if (btn && !btn.classList.contains('word-found')) {
                         btn.classList.add('word-found');
                         foundCount++;
-                        playSound(880, 0.4); // Sonido de éxito (más agudo)
-                        if (foundCount === Object.keys(wordsPos).length) document.getElementById('win-btn').style.display = 'block';
+                        playTone(1000, 'square', 0.3); // Sonido de palabra encontrada
+                        if (foundCount === Object.keys(wordsPos).length) {
+                            ganarJuego();
+                        }
                     }
                 }
             }
+        }
+
+        function ganarJuego() {
+            totalSolved++;
+            localStorage.setItem('logos_record', totalSolved);
+            document.getElementById('overlay').style.display = 'flex';
+            playTone(1200, 'sine', 0.6);
         }
     </script>
 </body>
