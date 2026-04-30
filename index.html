@@ -8,7 +8,7 @@
     <style>
         * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-between; padding: 10px 20px; }
         #grid { display: grid; grid-template-columns: repeat(15, 1fr); width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: #000; }
         .sel { background: #fff176 !important; }
@@ -16,90 +16,102 @@
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; max-height: 20vh; overflow-y: auto; }
         .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
         .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
-        #victory-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .ad-container { width: 85%; max-width: 320px; background: #f9f9f9; border: 2px dashed #2e7d32; padding: 15px; margin: 15px 0; border-radius: 12px; }
+        
+        #victory-screen { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.98); z-index: 9999; 
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        .ad-container { 
+            width: 85%; max-width: 320px; background: #f9f9f9; border: 2px dashed #2e7d32; 
+            padding: 15px; margin: 15px 0; border-radius: 12px;
+        }
         .btn-next { background: #2e7d32; color: white; padding: 15px 35px; border-radius: 30px; border: none; font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <div class="header">
         <span>LIBRERÍA LOGOS</span>
-        <span id="record-tag">Nivel: 1</span>
+        <span id="record-tag">Nivel: 1/20</span>
     </div>
+    
     <div id="grid"></div>
     <div id="word-list"></div>
+
     <div id="victory-screen">
         <h1 style="color: #2e7d32; margin: 0;">¡NIVEL COMPLETADO!</h1>
+        <p id="stats-msg"></p>
         <div class="ad-container">
             <h3 style="margin: 5px 0;">Publicidad Logos</h3>
-            <p style="font-size: 14px;">Mugs y botilitos personalizados.<br>Bogotá - Kennedy Central</p>
+            <p style="font-size: 14px;">¡Nuevos botilitos y mugs personalizados!<br>Kennedy Central - Bogotá</p>
         </div>
         <button class="btn-next" onclick="initGame()">SIGUIENTE SOPA</button>
     </div>
 
     <script>
-        const pool = ["ORACION", "CRISTO", "GRACIA", "BIBLIA", "AGENDA", "AMOR", "PROVERBIOS", "LOGOS", "ESPIRITU", "KENNEDY", "PROMESA", "DIOS", "PERDON", "IGLESIA", "AMEN", "PAZ", "CATEDRAL", "LIBROS", "CRUZ", "PULSERA", "SALMOS"];
-        let usedWords = JSON.parse(localStorage.getItem('logos_used')) || [];
+        const pool = ["DIOS", "LOGOS", "CRUZ", "CATEDRAL", "AGENDA", "LIBROS", "KENNEDY", "PULSERA", "MANILLA", "IGLESIA", "PASTOR", "CRISTO", "PAZ", "PROVERBIOS", "AMEN", "SALMOS", "AMOR", "BIBLIA", "PROMESA"];
         let wordsPos = {};
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
         const TAMANO = 15;
 
-        let audioCtx = null;
+        // AUDIO (Simplificado para evitar fallos)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playTone(f, d) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
             o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
             o.connect(g); g.connect(audioCtx.destination);
             o.start(); o.stop(audioCtx.currentTime + d);
         }
 
         function initGame() {
+            // 1. Reset variables
             document.getElementById('victory-screen').style.display = 'none';
             document.getElementById('grid').innerHTML = '';
             document.getElementById('word-list').innerHTML = '';
-            wordsPos = {}; foundCount = 0;
+            wordsPos = {};
+            foundCount = 0;
             
+            // 2. Actualizar Récord
             let level = parseInt(localStorage.getItem('logos_level')) || 1;
-            document.getElementById('record-tag').textContent = "Nivel: " + level;
+            document.getElementById('record-tag').textContent = "Nivel: " + level + "/20";
 
-            // FILTRAR PALABRAS NO USADAS (Para evitar repetición)
-            let available = pool.filter(w => !usedWords.includes(w));
-            if (available.length < 15) { usedWords = []; available = pool; } // Reiniciar si se acaban
+            // 3. Seleccionar 15 palabras nuevas del Pool
+            const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 15);
             
-            const seleccionadas = available.sort(() => 0.5 - Math.random()).slice(0, 15);
-            usedWords.push(...seleccionadas);
-            localStorage.setItem('logos_used', JSON.stringify(usedWords));
-
+            // 4. Crear Matriz vacía
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
 
+            // 5. Ubicar palabras (H, V, D)
             seleccionadas.forEach(palabra => {
                 let colocada = false;
-                for(let i=0; i<100; i++) {
+                for(let intento=0; intento<100; intento++) {
                     if(colocada) break;
                     let dir = ['H','V','D'][Math.floor(Math.random()*3)];
                     let f = Math.floor(Math.random()*TAMANO);
                     let c = Math.floor(Math.random()*TAMANO);
+                    
                     if(dir === 'H' && c + palabra.length > TAMANO) continue;
                     if(dir === 'V' && f + palabra.length > TAMANO) continue;
                     if(dir === 'D' && (f + palabra.length > TAMANO || c + palabra.length > TAMANO)) continue;
 
-                    let coords = []; let puede = true;
-                    for(let j=0; j<palabra.length; j++) {
-                        let nf = f + (dir==='V' || dir==='D' ? j : 0);
-                        let nc = c + (dir==='H' || dir==='D' ? j : 0);
-                        if(matriz[nf][nc] !== '' && matriz[nf][nc] !== palabra[j]) { puede = false; break; }
+                    let coords = [];
+                    let puede = true;
+                    for(let i=0; i<palabra.length; i++) {
+                        let nf = f + (dir==='V' || dir==='D' ? i : 0);
+                        let nc = c + (dir==='H' || dir==='D' ? i : 0);
+                        if(matriz[nf][nc] !== '' && matriz[nf][nc] !== palabra[i]) { puede = false; break; }
                         coords.push(nf + '-' + nc);
                     }
+
                     if(puede) {
-                        coords.forEach((co, idx) => {
+                        coords.forEach((co, i) => {
                             let [rf, rc] = co.split('-').map(Number);
-                            matriz[rf][rc] = palabra[idx];
+                            matriz[rf][rc] = palabra[i];
                         });
                         wordsPos[palabra] = coords;
                         colocada = true;
@@ -107,22 +119,31 @@
                 }
             });
 
+            // 6. Rellenar y Dibujar
             const gridDiv = document.getElementById('grid');
             const listDiv = document.getElementById('word-list');
-            matriz.forEach((fila, r) => fila.forEach((char, c) => {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
-                cell.dataset.pos = r + '-' + c;
-                gridDiv.appendChild(cell);
-            }));
+
+            matriz.forEach((fila, r) => {
+                fila.forEach((char, c) => {
+                    if(char === '') char = String.fromCharCode(65 + Math.floor(Math.random()*26));
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = char;
+                    cell.dataset.pos = r + '-' + c;
+                    gridDiv.appendChild(cell);
+                });
+            });
+
             seleccionadas.forEach(w => {
                 const span = document.createElement('span');
-                span.className = 'word-item'; span.id = 'w-' + w; span.textContent = w;
+                span.className = 'word-item';
+                span.id = 'w-' + w;
+                span.textContent = w;
                 listDiv.appendChild(span);
             });
         }
 
+        // SELECCIÓN TÁCTIL (Misma lógica simple)
         function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
@@ -137,8 +158,9 @@
             }
         }
 
-        document.getElementById('grid').addEventListener('touchstart', (e) => { 
-            isSelecting = true; activeCoords = []; handleTouch(e); 
+        document.getElementById('grid').addEventListener('touchstart', (e) => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            isSelecting = true; activeCoords = []; handleTouch(e);
         });
         document.getElementById('grid').addEventListener('touchmove', (e) => { if (isSelecting) handleTouch(e); });
         window.addEventListener('touchend', () => {
@@ -157,16 +179,19 @@
                     const btn = document.getElementById('w-' + word);
                     if (btn && !btn.classList.contains('word-found')) {
                         btn.classList.add('word-found');
-                        foundCount++; playTone(660, 0.3);
+                        foundCount++;
+                        playTone(660, 0.3);
                         if (foundCount === Object.keys(wordsPos).length) {
                             let level = parseInt(localStorage.getItem('logos_level')) || 1;
                             localStorage.setItem('logos_level', level + 1);
                             document.getElementById('victory-screen').style.display = 'flex';
+                            document.getElementById('stats-msg').textContent = "Has superado el nivel " + level;
                         }
                     }
                 }
             }
         }
+
         initGame();
     </script>
 </body>
