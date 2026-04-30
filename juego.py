@@ -60,15 +60,17 @@ def generar_sopa_logos_sonido_ok(df):
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
         
-        /* CUADRADO ENVOLVENTE RECUPERADO (border) */
+        /* AJUSTE PARA QUE EL CUADRO SEA VISIBLE SIEMPRE */
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 98vw; max-width: 450px; background: #444; gap: 1px; margin: 5px auto;
-            border: 3px solid #2e7d32; /* Este es el cuadrado que mencionas */
+            width: 96vw; /* Un poco más pequeño para dejar margen al borde */
+            max-width: 450px; background: #444; gap: 1px; margin: 10px auto;
+            border: 4px solid #2e7d32; /* Borde verde reforzado */
+            border-radius: 4px;
         }
         
         .cell { 
