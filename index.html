@@ -14,8 +14,10 @@
 
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
         
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 10px; border-left: 5px solid #2e7d32; min-height: 85px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 0.95rem; color: #1b5e20; font-weight: bold; line-height: 1.4; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 10px; border-left: 5px solid #2e7d32; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+        
+        /* VERSÍCULO MÁS GRANDE */
+        #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: bold; line-height: 1.3; }
 
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
@@ -87,11 +89,9 @@
             cargarNivel();
         });
 
-        // BOTÓN DE SIGUIENTE NIVEL CON FIX DE RENDERIZADO
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
             document.getElementById('ad-modal').style.display = 'none';
             nivelActual++;
-            // Usamos requestAnimationFrame para asegurar que el modal se cierre antes de procesar el nivel
             requestAnimationFrame(() => {
                 setTimeout(cargarNivel, 50);
             });
@@ -119,7 +119,6 @@
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
             
-            // Limpieza total antes de generar
             grid.innerHTML = ''; 
             list.innerHTML = '';
             foundCount = 0; 
@@ -130,7 +129,7 @@
             palabras.forEach(palabra => {
                 let puesta = false;
                 for(let i=0; i<150 && !puesta; i++) {
-                    let dir = Math.floor(Math.random() * 3); // 0:H, 1:V, 2:D
+                    let dir = Math.floor(Math.random() * 3);
                     let dr = dir === 0 ? 0 : 1;
                     let dc = dir === 1 ? 0 : 1;
                     let r = Math.floor(Math.random() * (TAM - (dr * palabra.length)));
