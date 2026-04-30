@@ -1,150 +1,75 @@
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa Logos</title>
     <style>
-        * { touch-action: none; user-select: none; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; margin: 0; background: #ffffff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; text-align: center; }
-        
-        #game-container { flex: 0 0 auto; display: flex; justify-content: center; padding: 5px; }
+        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; touch-action: none; user-select: none; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 95vw; max-width: 380px; aspect-ratio: 1/1;
-            background: #ddd; gap: 1px; border: 2px solid #2e7d32;
+            width: 98vw; max-width: 450px; background: #000; gap: 1px; margin: 5px auto;
         }
-        .cell { background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
-        .sel { background: #fff176 !important; }
+        .cell { 
+            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
+            justify-content: center; font-weight: bold; font-size: 14px; 
+        }
+        .sel { background: #ffeb3b !important; }
         .found { background: #4caf50 !important; color: white !important; }
-
-        /* LISTA FIJA ABAJO - SIN DESLIZAR */
-        #word-section { flex: 1; background: #f9f9f9; padding: 10px; border-top: 2px solid #2e7d32; display: block; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
-        .word-item { padding: 4px 10px; background: white; border-radius: 10px; font-size: 11px; border: 1px solid #ccc; color: #333; }
-        .word-found { background: #4caf50 !important; color: white !important; text-decoration: line-through; border-color: #2e7d32; }
-
-        #victory { 
-            display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); 
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 10px; }
+        .word-item { padding: 4px 8px; background: #eee; border-radius: 5px; font-size: 11px; border: 1px solid #ccc; }
+        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; }
+        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 10px; text-decoration: none; margin: 10px; display: inline-block; }
     </style>
 </head>
 <body>
     <div class="header">LIBRERÍA LOGOS</div>
-    <div id="game-container"><div id="grid"></div></div>
-    
-    <div id="word-section">
-        <div id="word-list"></div>
-    </div>
-
-    <div id="victory">
-        <h2 style="color:#2e7d32">¡LO ENCONTRASTE!</h2>
-        <p><b>Librería Logos</b><br>Kennedy Central, Bogotá</p>
-        <button onclick="location.reload()" style="padding:15px 30px; background:#2e7d32; color:white; border:none; border-radius:25px; font-weight:bold;">SIGUIENTE NIVEL</button>
-    </div>
+    <div id="grid"></div>
+    <div id="word-list"><span class="word-item" id="w-SALMOS">SALMOS</span><span class="word-item" id="w-AGENDA">AGENDA</span><span class="word-item" id="w-LOGOS">LOGOS</span><span class="word-item" id="w-PAZ">PAZ</span><span class="word-item" id="w-BIBLIA">BIBLIA</span><span class="word-item" id="w-PULSERA">PULSERA</span><span class="word-item" id="w-AMOR">AMOR</span><span class="word-item" id="w-KENNEDY">KENNEDY</span><span class="word-item" id="w-LIBROS">LIBROS</span><span class="word-item" id="w-CRISTO">CRISTO</span><span class="word-item" id="w-CATEDRAL">CATEDRAL</span><span class="word-item" id="w-DIOS">DIOS</span><span class="word-item" id="w-AMEN">AMEN</span><span class="word-item" id="w-CRUZ">CRUZ</span></div>
+    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">¡GANASTE! RECLAMAR</a>
 
     <script>
-        const pool = [];
-        let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
-        const TAMANO = 15;
-        let audioCtx = null;
+        const words = ["SALMOS", "AGENDA", "LOGOS", "PAZ", "BIBLIA", "PULSERA", "AMOR", "KENNEDY", "LIBROS", "CRISTO", "CATEDRAL", "DIOS", "AMEN", "CRUZ"];
+        const matrix = [["Y", "M", "R", "L", "I", "B", "R", "O", "S", "N", "T", "R", "P", "A", "Z"], ["C", "W", "I", "X", "P", "B", "A", "E", "R", "C", "R", "I", "S", "T", "O"], ["J", "T", "C", "D", "K", "X", "L", "W", "X", "G", "Y", "D", "K", "Q", "I"], ["N", "H", "B", "K", "R", "A", "Y", "O", "L", "T", "C", "U", "A", "A", "I"], ["R", "G", "Z", "A", "A", "S", "D", "G", "G", "N", "R", "B", "L", "S", "L"], ["K", "S", "K", "K", "C", "G", "B", "P", "S", "O", "Z", "I", "H", "A", "V"], ["T", "E", "Y", "C", "Z", "A", "E", "I", "U", "T", "S", "R", "W", "L", "G"], ["C", "S", "N", "O", "A", "G", "T", "N", "B", "L", "S", "N", "Q", "M", "C"], ["R", "C", "P", "N", "R", "U", "M", "E", "D", "L", "S", "Z", "P", "O", "Y"], ["U", "W", "Y", "K", "E", "M", "R", "C", "D", "A", "I", "E", "D", "S", "Q"], ["Z", "M", "A", "A", "G", "D", "H", "R", "I", "R", "V", "A", "R", "V", "B"], ["H", "S", "S", "M", "D", "Z", "Y", "Q", "E", "N", "A", "M", "C", "A", "L"], ["B", "D", "B", "E", "T", "R", "F", "H", "O", "S", "J", "L", "D", "K", "M"], ["R", "H", "Q", "N", "L", "E", "M", "H", "N", "A", "M", "O", "R", "Q", "F"], ["O", "D", "I", "O", "S", "T", "Y", "V", "Q", "A", "C", "G", "S", "V", "S"]];
+        let selectedEls = [], foundCount = 0;
 
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
+        matrix.forEach((row, r) => row.forEach((char, c) => {
+            const div = document.createElement('div');
+            div.className = 'cell'; div.textContent = char;
+            div.dataset.r = r; div.dataset.c = c;
+            
+            // USAMOS EVENTOS SIMPLES DE TACTO
+            div.ontouchstart = (e) => { e.preventDefault(); handleSelect(div); };
+            div.onmousedown = () => handleSelect(div);
+            
+            document.getElementById('grid').appendChild(div);
+        }));
 
-        function playSound(freq, vol, dur) {
-            if (!audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-            osc.start(); osc.stop(audioCtx.currentTime + dur);
-        }
-
-        function init() {
-            const seleccionadas = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
-            let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
-            seleccionadas.forEach(palabra => {
-                let puesta = false;
-                for(let i=0; i<50 && !puesta; i++){
-                    let dir = ['H','V','D'][Math.floor(Math.random()*3)];
-                    let f = Math.floor(Math.random()*TAMANO), c = Math.floor(Math.random()*TAMANO);
-                    if(dir==='H' && c+palabra.length > TAMANO) continue;
-                    if(dir==='V' && f+palabra.length > TAMANO) continue;
-                    if(dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
-                    let puede = true; let coords = [];
-                    for(let j=0; j<palabra.length; j++){
-                        let nf = f + (dir!=='H'?j:0), nc = c + (dir!=='V'?j:0);
-                        if(matriz[nf][nc]!=='' && matriz[nf][nc]!==palabra[j]){ puede=false; break; }
-                        coords.push(nf+'-'+nc);
-                    }
-                    if(puede){
-                        coords.forEach((co, idx) => { matriz[co.split('-')[0]][co.split('-')[1]] = palabra[idx]; });
-                        wordsPos[palabra] = coords; puesta = true;
-                    }
-                }
-            });
-            const gridDiv = document.getElementById('grid');
-            matriz.forEach((fila, r) => fila.forEach((char, c) => {
-                const cell = document.createElement('div');
-                cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65+Math.floor(Math.random()*26));
-                cell.dataset.pos = r+'-'+c; gridDiv.appendChild(cell);
-            }));
-            const listDiv = document.getElementById('word-list');
-            Object.keys(wordsPos).forEach(w => {
-                const s = document.createElement('span'); s.className='word-item'; s.id='w-'+w; s.textContent=w;
-                listDiv.appendChild(s);
-            });
-        }
-
-        const handleMove = (e) => {
-            if(!isSelecting) return;
-            const t = e.touches ? e.touches[0] : e;
-            const el = document.elementFromPoint(t.clientX, t.clientY);
-            if(el && el.classList.contains('cell')){
-                const pos = el.dataset.pos;
-                if(!activeCoords.includes(pos)){
-                    activeCoords.push(pos); el.classList.add('sel');
-                    playSound(400, 0.1, 0.05);
-                    check();
-                }
+        function handleSelect(el) {
+            if (el.classList.contains('found')) return;
+            
+            if (el.classList.contains('sel')) {
+                el.classList.remove('sel');
+                selectedEls = selectedEls.filter(i => i !== el);
+            } else {
+                el.classList.add('sel');
+                selectedEls.push(el);
             }
-        };
-
-        const grid = document.getElementById('grid');
-        grid.addEventListener('touchstart', (e) => { 
-            initAudio(); 
-            isSelecting=true; activeCoords=[]; handleMove(e); 
-            e.preventDefault(); 
-        }, {passive:false});
-        grid.addEventListener('touchmove', (e) => { handleMove(e); e.preventDefault(); }, {passive:false});
-        window.addEventListener('touchend', () => {
-            isSelecting=false;
-            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
-        });
-
-        function check() {
-            for(let w in wordsPos) {
-                const item = document.getElementById('w-'+w);
-                if(!item.classList.contains('word-found') && 
-                   wordsPos[w].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
-                                          document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
-                    wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
-                    item.classList.add('word-found');
-                    foundCount++; playSound(800, 0.2, 0.3);
-                    if(foundCount === Object.keys(wordsPos).length) document.getElementById('victory').style.display='flex';
-                }
+            
+            const txt = selectedEls.map(i => i.textContent).join('');
+            const rev = txt.split('').reverse().join('');
+            
+            if (words.includes(txt) || words.includes(rev)) {
+                const final = words.includes(txt) ? txt : rev;
+                selectedEls.forEach(i => { i.classList.add('found'); i.classList.remove('sel'); });
+                document.getElementById('w-' + final).classList.add('word-found');
+                foundCount++;
+                selectedEls = [];
+                if (foundCount === words.length) document.getElementById('win-btn').style.display = 'block';
             }
         }
-        init();
     </script>
 </body>
 </html>
