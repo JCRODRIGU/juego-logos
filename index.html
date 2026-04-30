@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa Logos Pro</title>
+    <title>Sopa Librería Logos</title>
     <style>
         * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
@@ -34,11 +34,11 @@
             <h3 style="margin: 5px 0;">Publicidad Logos</h3>
             <p style="font-size: 14px;">Mugs y botilitos personalizados.<br>Bogotá - Kennedy Central</p>
         </div>
-        <button class="btn-next" onclick="initGame()">SIGUIENTE NIVEL</button>
+        <button class="btn-next" onclick="initGame()">SIGUIENTE SOPA</button>
     </div>
 
     <script>
-        const pool = ["CUADERNO", "REGALOS", "REGALO", "CUMPLEA\u00d1OS", "ANGELITO", "SOBRES", "MININOTAS", "TRATADOS", "SEPARADOR", "DIPLOMA", "CALCOMANIA", "BOTON", "PINES", "SOBRE", "ESQUELAS", "NI\u00d1OS", "BOLSA", "TARJETA", "ESCARCHADA"];
+        const pool = [];
         let usedWords = JSON.parse(localStorage.getItem('logos_used')) || [];
         let wordsPos = {};
         let foundCount = 0;
@@ -70,21 +70,14 @@
             let level = parseInt(localStorage.getItem('logos_level')) || 1;
             document.getElementById('record-tag').textContent = "Nivel: " + level;
 
-            // Selección de palabras evitando las usadas recientemente
             let available = pool.filter(w => !usedWords.includes(w));
-            if (available.length < 15) { 
-                usedWords = []; 
-                available = pool; 
-            }
+            if (available.length < 15) { usedWords = []; available = pool; }
             
             const seleccionadas = available.sort(() => 0.5 - Math.random()).slice(0, 15);
             usedWords.push(...seleccionadas);
-            // Guardamos solo las últimas 100 para no llenar la memoria pero mantener variedad
-            if(usedWords.length > 100) usedWords = usedWords.slice(-100);
-            localStorage.setItem('logos_used', JSON.stringify(usedWords));
+            localStorage.setItem('logos_used', JSON.stringify(usedWords.slice(-200))); // Guardamos últimas 200
 
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
-
             seleccionadas.forEach(palabra => {
                 let colocada = false;
                 for(let i=0; i<100; i++) {
@@ -95,7 +88,6 @@
                     if(dir === 'H' && c + palabra.length > TAMANO) continue;
                     if(dir === 'V' && f + palabra.length > TAMANO) continue;
                     if(dir === 'D' && (f + palabra.length > TAMANO || c + palabra.length > TAMANO)) continue;
-
                     let coords = []; let puede = true;
                     for(let j=0; j<palabra.length; j++) {
                         let nf = f + (dir==='V' || dir==='D' ? j : 0);
@@ -115,7 +107,6 @@
             });
 
             const gridDiv = document.getElementById('grid');
-            const listDiv = document.getElementById('word-list');
             matriz.forEach((fila, r) => fila.forEach((char, c) => {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
@@ -123,6 +114,7 @@
                 cell.dataset.pos = r + '-' + c;
                 gridDiv.appendChild(cell);
             }));
+            const listDiv = document.getElementById('word-list');
             seleccionadas.forEach(w => {
                 const span = document.createElement('span');
                 span.className = 'word-item'; span.id = 'w-' + w; span.textContent = w;
@@ -130,7 +122,6 @@
             });
         }
 
-        // SELECCIÓN TÁCTIL ORIGINAL
         function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
@@ -167,8 +158,8 @@
                         btn.classList.add('word-found');
                         foundCount++; playTone(660, 0.3);
                         if (foundCount === Object.keys(wordsPos).length) {
-                            let level = parseInt(localStorage.getItem('logos_level')) || 1;
-                            localStorage.setItem('logos_level', level + 1);
+                            let lvl = parseInt(localStorage.getItem('logos_level')) || 1;
+                            localStorage.setItem('logos_level', lvl + 1);
                             document.getElementById('victory-screen').style.display = 'flex';
                         }
                     }
