@@ -7,61 +7,66 @@
     <title>Sopa Logos</title>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: sans-serif; margin: 0; background: #f0f0f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; text-align: center; flex-shrink: 0; }
-        #container-sopa { flex: 0 0 auto; display: flex; justify-content: center; padding: 10px; background: white; }
+        body { font-family: sans-serif; margin: 0; background: #ffffff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; text-align: center; }
+        
+        #game-container { flex: 0 0 auto; display: flex; justify-content: center; padding: 5px; }
         #grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); 
             width: 95vw; max-width: 380px; aspect-ratio: 1/1;
-            background: #ccc; gap: 1px; border: 3px solid #2e7d32;
+            background: #ddd; gap: 1px; border: 2px solid #2e7d32;
         }
-        .cell { background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        .cell { background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
         .sel { background: #fff176 !important; }
         .found { background: #4caf50 !important; color: white !important; }
-        #word-section { flex: 1; overflow-y: auto; background: #e8f5e9; padding: 15px; border-top: 3px solid #2e7d32; touch-action: pan-y; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-        .word-item { padding: 6px 12px; background: white; border-radius: 15px; font-size: 12px; border: 1px solid #999; }
+
+        /* LISTA FIJA ABAJO - SIN DESLIZAR */
+        #word-section { flex: 1; background: #f9f9f9; padding: 10px; border-top: 2px solid #2e7d32; display: block; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+        .word-item { padding: 4px 10px; background: white; border-radius: 10px; font-size: 11px; border: 1px solid #ccc; color: #333; }
         .word-found { background: #4caf50 !important; color: white !important; text-decoration: line-through; border-color: #2e7d32; }
-        #victory { display: none; position: fixed; inset: 0; background: white; z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+
+        #victory { 
+            display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); 
+            z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="header">LIBRERÍA LOGOS</div>
-    <div id="container-sopa"><div id="grid"></div></div>
+    <div id="game-container"><div id="grid"></div></div>
+    
     <div id="word-section">
-        <div style="text-align:center; font-size:11px; margin-bottom:8px;">PALABRAS A BUSCAR (DESLIZA):</div>
         <div id="word-list"></div>
     </div>
+
     <div id="victory">
-        <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
-        <button onclick="location.reload()" style="padding:15px 30px; background:#2e7d32; color:white; border:none; border-radius:25px;">JUGAR DE NUEVO</button>
+        <h2 style="color:#2e7d32">¡LO ENCONTRASTE!</h2>
+        <p><b>Librería Logos</b><br>Kennedy Central, Bogotá</p>
+        <button onclick="location.reload()" style="padding:15px 30px; background:#2e7d32; color:white; border:none; border-radius:25px; font-weight:bold;">SIGUIENTE NIVEL</button>
     </div>
 
     <script>
         const pool = [];
         let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
         const TAMANO = 15;
-        
-        // --- SISTEMA DE SONIDO REFORZADO ---
         let audioCtx = null;
+
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        function playSound(freq, duration = 0.1) {
+        function playSound(freq, vol, dur) {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.start(); osc.stop(audioCtx.currentTime + duration);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
         }
 
         function init() {
@@ -69,19 +74,19 @@
             let matriz = Array(TAMANO).fill().map(() => Array(TAMANO).fill(''));
             seleccionadas.forEach(palabra => {
                 let puesta = false;
-                for(let i=0; i<50 && !puesta; i++) {
+                for(let i=0; i<50 && !puesta; i++){
                     let dir = ['H','V','D'][Math.floor(Math.random()*3)];
                     let f = Math.floor(Math.random()*TAMANO), c = Math.floor(Math.random()*TAMANO);
-                    if (dir==='H' && c+palabra.length > TAMANO) continue;
-                    if (dir==='V' && f+palabra.length > TAMANO) continue;
-                    if (dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
+                    if(dir==='H' && c+palabra.length > TAMANO) continue;
+                    if(dir==='V' && f+palabra.length > TAMANO) continue;
+                    if(dir==='D' && (f+palabra.length > TAMANO || c+palabra.length > TAMANO)) continue;
                     let puede = true; let coords = [];
                     for(let j=0; j<palabra.length; j++){
                         let nf = f + (dir!=='H'?j:0), nc = c + (dir!=='V'?j:0);
-                        if(matriz[nf][nc]!=='' && matriz[nf][nc]!==palabra[j]) { puede=false; break; }
+                        if(matriz[nf][nc]!=='' && matriz[nf][nc]!==palabra[j]){ puede=false; break; }
                         coords.push(nf+'-'+nc);
                     }
-                    if(puede) {
+                    if(puede){
                         coords.forEach((co, idx) => { matriz[co.split('-')[0]][co.split('-')[1]] = palabra[idx]; });
                         wordsPos[palabra] = coords; puesta = true;
                     }
@@ -90,7 +95,7 @@
             const gridDiv = document.getElementById('grid');
             matriz.forEach((fila, r) => fila.forEach((char, c) => {
                 const cell = document.createElement('div');
-                cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65 + Math.floor(Math.random()*26));
+                cell.className = 'cell'; cell.textContent = char || String.fromCharCode(65+Math.floor(Math.random()*26));
                 cell.dataset.pos = r+'-'+c; gridDiv.appendChild(cell);
             }));
             const listDiv = document.getElementById('word-list');
@@ -104,11 +109,11 @@
             if(!isSelecting) return;
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
-            if(el && el.classList.contains('cell')) {
+            if(el && el.classList.contains('cell')){
                 const pos = el.dataset.pos;
-                if(!activeCoords.includes(pos)) {
+                if(!activeCoords.includes(pos)){
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05); // Sonido de selección
+                    playSound(400, 0.1, 0.05);
                     check();
                 }
             }
@@ -116,15 +121,11 @@
 
         const grid = document.getElementById('grid');
         grid.addEventListener('touchstart', (e) => { 
-            initAudio(); // DESBLOQUEO DE AUDIO AQUÍ
-            isSelecting=true; 
-            activeCoords=[]; 
-            handleMove(e); 
+            initAudio(); 
+            isSelecting=true; activeCoords=[]; handleMove(e); 
             e.preventDefault(); 
         }, {passive:false});
-
         grid.addEventListener('touchmove', (e) => { handleMove(e); e.preventDefault(); }, {passive:false});
-        
         window.addEventListener('touchend', () => {
             isSelecting=false;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -132,13 +133,13 @@
 
         function check() {
             for(let w in wordsPos) {
-                if(!document.getElementById('w-'+w).classList.contains('word-found') && 
+                const item = document.getElementById('w-'+w);
+                if(!item.classList.contains('word-found') && 
                    wordsPos[w].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
                                           document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
                     wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
-                    document.getElementById('w-'+w).classList.add('word-found');
-                    foundCount++; 
-                    playSound(880, 0.3); // Sonido de palabra encontrada (más agudo)
+                    item.classList.add('word-found');
+                    foundCount++; playSound(800, 0.2, 0.3);
                     if(foundCount === Object.keys(wordsPos).length) document.getElementById('victory').style.display='flex';
                 }
             }
