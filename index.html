@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Reto Bíblico Logos</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
@@ -15,8 +16,6 @@
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
         
         #verse-container { background: #e8f5e9; padding: 20px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 110px; display: flex; align-items: center; justify-content: center; }
-        
-        /* FUENTE DEL VERSÍCULO MAXIMIZADA */
         #verse-text { font-size: 1.5rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
@@ -29,24 +28,37 @@
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .ad-card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; }
-        .ad-card img { width: 100%; max-height: 180px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
-        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 10px; }
+        .ad-card { background: white; color: #333; padding: 15px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; border: 4px solid #2e7d32; }
+        .ad-card img { width: 100%; max-height: 160px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
+        
+        .info-adquisicion { font-size: 0.85rem; color: #444; background: #f1f8e9; padding: 10px; border-radius: 8px; margin: 10px 0; line-height: 1.3; border: 1px dashed #2e7d32; }
+        .info-adquisicion a { color: #2e7d32; font-weight: bold; text-decoration: none; }
+
+        .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; }
+        .btn-ws { background:#25D366; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 10px; display: none; }
+        
+        .prize-card { background: #fff9c4 !important; border: 5px solid #fbc02d !important; }
     </style>
 </head>
 <body>
     <div id="overlay">
-        <h1>LIBRERÍA LOGOS</h1>
+        <h1>LIBRERÍA CRISTIANA LOGOS</h1>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="ad-modal" class="modal-ad">
-        <div class="ad-card">
-            <div style="font-size: 0.8em; color: #666; font-weight: bold;">DISPONIBLE EN TIENDA</div>
+        <div id="ad-content" class="ad-card">
+            <div id="ad-label" style="font-size: 0.8em; color: #666; font-weight: bold;">DISPONIBLE EN TIENDA</div>
             <img id="ad-img" src="">
             <div id="ad-txt" style="font-weight: bold; margin-bottom: 5px;"></div>
-            <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold; margin-bottom: 15px;"></div>
+            <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold;"></div>
+            
+            <div class="info-adquisicion" id="info-tienda">
+                Puedes adquirir este producto en <b>Librería Cristiana Logos</b> Calle 35C Sur No 78A-18 Kennedy Central Bogota o por Whatsapp <a href="https://wa.me/573125756581">312-5756581</a>
+            </div>
+
             <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
+            <button class="btn-ws" id="btn-ws">COMPARTIR EN WHATSAPP</button>
         </div>
     </div>
 
@@ -56,9 +68,9 @@
     <div id="word-list"></div>
 
     <script>
-        const niveles = [{"v": "Lampara es a mis pies tu palabra y lumbrera a mi camino", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor nada me faltara", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra", "r": "Genesis 1:1"}, {"v": "Cree en el Senor Jesucristo y seras salvo tu y tu casa", "r": "Hechos 16:31"}, {"v": "El amor es sufrido es benigno el amor no tiene envidia", "r": "1 Corintios 13:4"}, {"v": "Clama a mi y yo te respondere y te ensenare cosas grandes", "r": "Jeremias 33:3"}, {"v": "Buscad primeramente el reino de Dios y su justicia", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza nuestro pronto auxilio", "r": "Salmo 46:1"}];
-        const anuncios = [{"img": "publicidad1.jpg", "txt": "Botilito Sublimado Mujer", "precio": "$25.000"}, {"img": "publicidad2.jpg", "txt": "Biblia Reina Valera 1960", "precio": "$45.000"}, {"img": "publicidad3.jpg", "txt": "Camiseta Dise\u00f1o Especial", "precio": "$35.000"}, {"img": "publicidad4.jpg", "txt": "Diccionario B\u00edblico", "precio": "$55.000"}, {"img": "publicidad5.jpg", "txt": "Pan de Vida (Promesas)", "precio": "$12.000"}];
-        const rellenoLogos = ["BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "PAZ", "DIOS", "GRACIA", "KENNEDY", "BOGOTA", "SALVACION", "LUZ", "VIDA"];
+        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad4.jpg", "txt": "BIBLIA NTV MANUAL BLANCA", "precio": "$160.000"}, {"img": "publicidad5.jpg", "txt": "BIBLIA NTV MANUAL AZUL", "precio": "$160.000"}, {"img": "publicidad6.jpg", "txt": "BIBLIA RV1960 PRIMAVERA FUCSIA LG 11 PUNTOS", "precio": "$160.000"}, {"img": "publicidad7.jpg", "txt": "BIBLIA - NTV - AZUL - ESTUDIO DIARIO VIVIR PARA JOVENES", "precio": "$155.000"}, {"img": "publicidad8.jpg", "txt": "BIBLIA NTV LETRA GRANDE ROSADA", "precio": "$155.000"}, {"img": "publicidad9.jpg", "txt": "LA BIBLIA EN ACCION, TYNDALE", "precio": "$155.000"}, {"img": "publicidad10.jpg", "txt": "BIBLIA - RV 1960 NEGRA - ACOLCHADA", "precio": "$154.000"}, {"img": "publicidad11.jpg", "txt": "BIBLIA - RV 1960 NEGRA FLORES ROSADAS", "precio": "$145.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad13.jpg", "txt": "LIBRO MAS QUE UN CARPINTERO", "precio": "$33.000"}, {"img": "publicidad14.jpg", "txt": "DEVOCIONAL UNA MUJER CONFORME", "precio": "$33.000"}, {"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}, {"img": "publicidad16.jpg", "txt": "EL PODER DE LOS PADRES QUE ORAN", "precio": "$33.000"}, {"img": "publicidad17.jpg", "txt": "EL PODER DEL ESPOSO QUE ORA", "precio": "$33.000"}, {"img": "publicidad18.jpg", "txt": "EL PODER DE LA MUJER QUE ORA", "precio": "$33.000"}, {"img": "publicidad19.jpg", "txt": "CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad20.jpg", "txt": "VICTORIA SOBRE LA OSCURIDAD", "precio": "$33.000"}];
+        const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "ESPIRITU SANTO", "CRUZ", "REDENCION", "PACTO", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "SANTIFICACION", "HUMILDAD", "JUSTIFICACION", "DISCIPULO", "APOSTOL", "PROFETA", "IGLESIA", "ADORACION", "ORACION", "AYUNO", "VICTORIA", "RESURRECCION", "ETERNIDAD", "CIELO", "CONSUELO", "RESTAURACION", "FIDELIDAD", "BONDAD", "COMPASION", "UNIDAD", "LIBERTAD", "GLORIA", "BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "PAZ", "DIOS", "GRACIA", "KENNEDY", "BOGOTA", "SALVACION", "LUZ", "VIDA"];
         let nivelActual = 0;
         let wordsPos = {};
         let foundCount = 0;
@@ -71,11 +83,11 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        function playSound(f, d) {
+        function playSound(f, d, type='sine') {
             if (!audioCtx) return;
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
-            o.type = 'sine';
+            o.type = type;
             o.frequency.setValueAtTime(f, audioCtx.currentTime);
             g.gain.setValueAtTime(0.1, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
@@ -91,10 +103,12 @@
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
             document.getElementById('ad-modal').style.display = 'none';
-            nivelActual++;
-            requestAnimationFrame(() => {
-                setTimeout(cargarNivel, 50);
-            });
+            if(nivelActual === 19) {
+                nivelActual = 0;
+            } else {
+                nivelActual++;
+            }
+            requestAnimationFrame(() => { setTimeout(cargarNivel, 50); });
         });
 
         function cargarNivel() {
@@ -118,12 +132,8 @@
             const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            
-            grid.innerHTML = ''; 
-            list.innerHTML = '';
-            foundCount = 0; 
-            wordsPos = {};
-            
+            grid.innerHTML = ''; list.innerHTML = '';
+            foundCount = 0; wordsPos = {};
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
 
             palabras.forEach(palabra => {
@@ -134,7 +144,6 @@
                     let dc = dir === 1 ? 0 : 1;
                     let r = Math.floor(Math.random() * (TAM - (dr * palabra.length)));
                     let c = Math.floor(Math.random() * (TAM - (dc * palabra.length)));
-                    
                     let ok = true;
                     for(let j=0; j<palabra.length; j++) 
                         if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
@@ -184,26 +193,56 @@
 
         function check() {
             for(let word in wordsPos) {
-                if(wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
-                                             document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                if(wordsPos[word].every(p => {
+                    const cell = document.querySelector(`[data-pos="${p}"]`);
+                    return cell && (cell.classList.contains('sel') || cell.classList.contains('found'));
+                })) {
                     const itm = document.getElementById('w-'+word);
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
                         playSound(523, 0.15); 
                         foundCount++;
-                        if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarAd, 600);
+                        if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarResultado, 600);
                     }
                 }
             }
         }
 
-        function mostrarAd() {
-            const ad = anuncios[nivelActual % anuncios.length];
-            document.getElementById('ad-img').src = ad.img;
-            document.getElementById('ad-txt').textContent = ad.txt;
-            document.getElementById('ad-price').textContent = ad.precio;
-            document.getElementById('ad-modal').style.display = 'flex';
+        function mostrarResultado() {
+            const adModal = document.getElementById('ad-modal');
+            const adContent = document.getElementById('ad-content');
+            const btnNext = document.getElementById('btn-next-lvl');
+            const btnWs = document.getElementById('btn-ws');
+            const adLabel = document.getElementById('ad-label');
+            const infoTienda = document.getElementById('info-tienda');
+
+            if(nivelActual === 19) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                playSound(600, 0.5, 'square');
+                adContent.classList.add('prize-card');
+                adLabel.textContent = "🏆 ¡RETO COMPLETADO!";
+                document.getElementById('ad-img').src = "https://cdn-icons-png.flaticon.com/512/1054/1054944.png";
+                document.getElementById('ad-txt').innerHTML = "Has ganado un Hermoso Separador Bíblico.<br><br>Reclámalo el próximo Sábado en nuestra Librería.<br><br><b>CÓDIGO: 316</b>";
+                document.getElementById('ad-price').textContent = "";
+                infoTienda.style.display = "none";
+                btnNext.textContent = "REINICIAR JUEGO";
+                btnWs.style.display = "block";
+                btnWs.onclick = () => {
+                    window.open("https://wa.me/?text=¡Completé el Reto Bíblico de la Librería Logos! Mi código de premio es 316. ¡Inténtalo tú también!");
+                };
+            } else {
+                adContent.classList.remove('prize-card');
+                adLabel.textContent = "DISPONIBLE EN TIENDA";
+                infoTienda.style.display = "block";
+                const ad = anuncios[nivelActual % anuncios.length];
+                document.getElementById('ad-img').src = ad.img;
+                document.getElementById('ad-txt').textContent = ad.txt;
+                document.getElementById('ad-price').textContent = ad.precio;
+                btnNext.textContent = "SIGUIENTE NIVEL";
+                btnWs.style.display = "none";
+            }
+            adModal.style.display = 'flex';
         }
     </script>
 </body>
