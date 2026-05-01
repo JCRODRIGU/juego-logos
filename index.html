@@ -3,50 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos</title>
+    <title>Reto Logos - Aleatorio</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #ffffff; text-align: center; overflow: hidden; height: 100vh; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1em; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #ccc; border: 2px solid #2e7d32; margin: 5px auto; width: 95vw; max-width: 440px; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border-radius: 2px; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1b5e20; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 0.9em; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #bbb; border: 2px solid #1b5e20; margin: 5px auto; width: 95vw; max-width: 440px; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
         .sel { background: #fff176 !important; }
-        .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
-        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 10px; background: #f5f5f5; height: 130px; overflow-y: auto; border-top: 1px solid #ddd; }
-        .word-item { padding: 3px 8px; border: 1px solid #2e7d32; border-radius: 12px; font-size: 10px; background: white; font-weight: bold; color: #2e7d32; }
-        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
+        .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #2e7d32; }
+        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 8px; background: #f0f0f0; height: 120px; overflow-y: auto; }
+        .word-item { padding: 3px 7px; border: 1px solid #2e7d32; border-radius: 10px; font-size: 10px; background: white; font-weight: bold; color: #2e7d32; }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.6; }
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index: 10000; }
-        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; border: 4px solid #2e7d32; }
-        .btn-main { padding: 15px 40px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.2em; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        #verse-container { background: #e8f5e9; padding: 12px; margin: 5px 10px; border-radius: 10px; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #1b5e20; border-left: 5px solid #2e7d32; font-size: 1.1em; font-style: italic; }
+        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; border: 5px solid #2e7d32; }
+        .btn-main { padding: 15px 40px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.2em; cursor: pointer; }
+        #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 70px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1em; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div id="overlay">
-    <h1 style="margin-bottom: 10px; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
-    <p style="margin-bottom: 30px; opacity: 0.9;">Encuentra las palabras bíblicas</p>
-    <button class="btn-main" onclick="iniciarJuego()">EMPEZAR JUEGO</button>
+    <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
+    <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Palabras en todas las direcciones</p>
+    <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
 <div id="ad-modal" class="modal">
     <div class="modal-content">
-        <div style="font-size: 0.7em; color: #666; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px;">OFERTA LIBRERÍA LOGOS</div>
+        <div style="font-size: 0.7em; color: #666; font-weight: bold; margin-bottom: 5px;">OFERTA DEL DÍA</div>
         <img id="ad-img" src="" style="width:100%; max-height:160px; object-fit:contain; border-radius: 10px; background: #f9f9f9;">
-        <h3 id="ad-txt" style="margin: 10px 0; font-size: 1em; color: #333;"></h3>
-        <h2 id="ad-price" style="color:#c62828; margin: 5px 0;"></h2>
-        <p style="font-size:0.75em; background: #f1f8e9; padding: 8px; border-radius: 5px; color: #555;">Calle 35C Sur No 78A-18 Kennedy Central Bogota</p>
-        <button class="btn-main" id="btn-next" onclick="siguienteNivel()" style="padding: 10px 20px; font-size: 1em; margin-top: 10px;">CONTINUAR</button>
+        <h3 id="ad-txt" style="margin: 8px 0; font-size: 1em; color: #333;"></h3>
+        <h2 id="ad-price" style="color:#c62828; margin: 3px 0;"></h2>
+        <button class="btn-main" id="btn-next" onclick="siguienteNivel()" style="padding: 10px 20px; font-size: 1em; width: 100%;">CONTINUAR</button>
         <div id="msg-final" style="display:none; margin-top:15px; font-weight:bold; color:#2e7d32; border-top: 2px dashed #2e7d32; padding-top: 10px;">
-            ¡RETO COMPLETADO!<br>Reclama un Separador Bíblico<br>Código: 316
+            ¡RETO COMPLETADO!<br>Presenta este mensaje en caja<br>Código: LOGOS-316
         </div>
     </div>
 </div>
 
-<div class="header" id="lvl-info">Reto Logos</div>
-<div id="verse-container">Selecciona el versículo...</div>
+<div class="header" id="lvl-info">Librería Logos</div>
+<div id="verse-container">...</div>
 <div id="grid"></div>
 <div id="word-list"></div>
 
@@ -67,39 +67,34 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && audioCtx) audioCtx.resume();
-    });
-
     function playSound(freq, duration) {
         if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
 
     function iniciarJuego() {
         initAudio();
+        // MEZCLA REAL DE NIVELES
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
-        cargarNivel();
+        cargarNivel(); // Esto cargará ordenNiveles[0], que es aleatorio
     }
 
     function cargarNivel() {
-        const idNivel = ordenNiveles[indiceActual];
-        const data = niveles[idNivel];
+        const idReal = ordenNiveles[indiceActual];
+        const data = niveles[idReal];
         encontradas = 0;
         seleccionadas = [];
         
         document.getElementById('lvl-info').textContent = "RETO " + (indiceActual + 1) + " - " + data.r;
         document.getElementById('verse-container').textContent = '"' + data.v + '"';
         
-        // Limpiar palabras (quitar tildes y símbolos)
         let lista = data.v.toUpperCase()
             .normalize("NFD").replace(/[̀-ͯ]/g, "")
             .replace(/[^A-Z ]/g, "")
@@ -108,7 +103,6 @@
             
         lista = [...new Set(lista)];
         
-        // Rellenar hasta 15 palabras estrictas
         let auxRelleno = [...rellenoLogos].sort(() => Math.random() - 0.5);
         for(let r of auxRelleno) {
             if(lista.length >= 15) break;
@@ -122,39 +116,41 @@
         const TAM = 12;
         let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
         palabrasEnTablero = [];
-        
         lista.sort((a,b) => b.length - a.length);
+
+        const direcciones = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
         lista.forEach(palabra => {
             let puesta = false;
             let intentos = 0;
-            while(!puesta && intentos < 50) {
-                let dir = Math.floor(Math.random() * 3); // 0:Hor, 1:Ver, 2:Diag
-                let dr = (dir === 1 || dir === 2) ? 1 : 0;
-                let dc = (dir === 0 || dir === 2) ? 1 : 0;
-                let r = Math.floor(Math.random() * (TAM - (dr * palabra.length)));
-                let c = Math.floor(Math.random() * (TAM - (dc * palabra.length)));
+            while(!puesta && intentos < 150) {
+                let d = direcciones[Math.floor(Math.random() * direcciones.length)];
+                let dr = d[0], dc = d[1];
+                let r = Math.floor(Math.random() * TAM);
+                let c = Math.floor(Math.random() * TAM);
+                let finalR = r + dr * (palabra.length - 1);
+                let finalC = c + dc * (palabra.length - 1);
                 
-                let ok = true;
-                for(let i=0; i<palabra.length; i++) {
-                    let char = matriz[r + dr*i][c + dc*i];
-                    if(char !== '' && char !== palabra[i]) ok = false;
-                }
-
-                if(ok) {
-                    let coords = [];
+                if (finalR >= 0 && finalR < TAM && finalC >= 0 && finalC < TAM) {
+                    let ok = true;
                     for(let i=0; i<palabra.length; i++) {
-                        matriz[r + dr*i][c + dc*i] = palabra[i];
-                        coords.push((r+dr*i)+"-"+(c+dc*i));
+                        let curr = matriz[r + dr*i][c + dc*i];
+                        if(curr !== '' && curr !== palabra[i]) ok = false;
                     }
-                    palabrasEnTablero.push({w: palabra, coords: coords, ok: false});
-                    puesta = true;
+                    if(ok) {
+                        let coords = [];
+                        for(let i=0; i<palabra.length; i++) {
+                            matriz[r + dr*i][c + dc*i] = palabra[i];
+                            coords.push((r+dr*i)+"-"+(c+dc*i));
+                        }
+                        palabrasEnTablero.push({w: palabra, coords: coords, ok: false});
+                        puesta = true;
+                    }
                 }
                 intentos++;
             }
         });
 
-        // Dibujar
         const gridDiv = document.getElementById('grid');
         gridDiv.innerHTML = '';
         for(let r=0; r<TAM; r++) {
@@ -178,7 +174,6 @@
         });
     }
 
-    // Eventos de Toque
     document.getElementById('grid').addEventListener('touchstart', e => { 
         initAudio(); 
         seleccionadas = []; 
@@ -199,16 +194,18 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(400, 0.05);
+            playSound(440, 0.05);
         }
     }
 
     function validarSeleccion() {
         palabrasEnTablero.forEach(p => {
-            if(!p.ok && p.coords.length === seleccionadas.length && p.coords.every(c => seleccionadas.includes(c))) {
+            let esIgual = p.coords.length === seleccionadas.length && p.coords.every((c, i) => c === seleccionadas[i]);
+            let esInversa = p.coords.length === seleccionadas.length && [...p.coords].reverse().every((c, i) => c === seleccionadas[i]);
+            if(!p.ok && (esIgual || esInversa)) {
                 p.ok = true;
                 encontradas++;
-                playSound(600, 0.2);
+                playSound(880, 0.1);
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
@@ -217,8 +214,8 @@
     }
 
     function mostrarPremio() {
-        const idNivel = ordenNiveles[indiceActual];
-        const ad = anuncios[idNivel % anuncios.length];
+        const idReal = ordenNiveles[indiceActual];
+        const ad = anuncios[idReal % anuncios.length];
         document.getElementById('ad-img').src = ad.img;
         document.getElementById('ad-txt').textContent = ad.txt;
         document.getElementById('ad-price').textContent = ad.precio;
@@ -227,10 +224,10 @@
         if(indiceActual === 19) {
             confetti();
             document.getElementById('msg-final').style.display = 'block';
-            document.getElementById('btn-next').textContent = "JUGAR DE NUEVO";
+            document.getElementById('btn-next').textContent = "VOLVER A JUGAR";
         } else {
             document.getElementById('msg-final').style.display = 'none';
-            document.getElementById('btn-next').textContent = "SIGUIENTE NIVEL";
+            document.getElementById('btn-next').textContent = "SIGUIENTE RETO";
         }
     }
 
