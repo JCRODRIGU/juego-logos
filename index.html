@@ -7,53 +7,53 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #ffffff; text-align: center; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #ffffff; text-align: center; overflow: hidden; height: 100vh; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #999; border: 2px solid #2e7d32; margin: 5px auto; width: 96vw; max-width: 440px; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1em; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #ccc; border: 2px solid #2e7d32; margin: 5px auto; width: 95vw; max-width: 440px; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border-radius: 2px; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
-        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 10px; background: #eee; height: 120px; overflow-y: auto; }
-        .word-item { padding: 4px 8px; border: 1px solid #2e7d32; border-radius: 12px; font-size: 11px; background: white; font-weight: bold; color: #2e7d32; }
-        .word-found { background: #2e7d32; color: white !important; text-decoration: line-through; }
+        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 10px; background: #f5f5f5; height: 130px; overflow-y: auto; border-top: 1px solid #ddd; }
+        .word-item { padding: 3px 8px; border: 1px solid #2e7d32; border-radius: 12px; font-size: 10px; background: white; font-weight: bold; color: #2e7d32; }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index: 10000; }
         .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; border: 4px solid #2e7d32; }
-        button { padding: 15px 30px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.1em; cursor: pointer; }
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 10px; min-height: 100px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #1b5e20; border-left: 5px solid #2e7d32; font-size: 1.2em; }
+        .btn-main { padding: 15px 40px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.2em; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #verse-container { background: #e8f5e9; padding: 12px; margin: 5px 10px; border-radius: 10px; min-height: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #1b5e20; border-left: 5px solid #2e7d32; font-size: 1.1em; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div id="overlay">
-    <h1 style="margin-bottom: 5px;">LIBRERÍA CRISTIANA LOGOS</h1>
-    <p style="margin-bottom: 25px;">Reto de Sopa de Letras Bíblica</p>
-    <button onclick="iniciarJuego()">EMPEZAR JUEGO</button>
+    <h1 style="margin-bottom: 10px; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
+    <p style="margin-bottom: 30px; opacity: 0.9;">Encuentra las palabras bíblicas</p>
+    <button class="btn-main" onclick="iniciarJuego()">EMPEZAR JUEGO</button>
 </div>
 
 <div id="ad-modal" class="modal">
     <div class="modal-content">
-        <div style="font-size: 0.8em; color: #666; font-weight: bold; margin-bottom: 10px;">DISPONIBLE EN TIENDA</div>
-        <img id="ad-img" src="" style="width:100%; max-height:160px; object-fit:contain; border-radius: 10px;">
-        <h3 id="ad-txt" style="margin: 10px 0;"></h3>
+        <div style="font-size: 0.7em; color: #666; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px;">OFERTA LIBRERÍA LOGOS</div>
+        <img id="ad-img" src="" style="width:100%; max-height:160px; object-fit:contain; border-radius: 10px; background: #f9f9f9;">
+        <h3 id="ad-txt" style="margin: 10px 0; font-size: 1em; color: #333;"></h3>
         <h2 id="ad-price" style="color:#c62828; margin: 5px 0;"></h2>
-        <p style="font-size:0.8em; background: #f1f8e9; padding: 8px; border-radius: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota</p>
-        <button id="btn-next" onclick="siguienteNivel()">SIGUIENTE NIVEL</button>
-        <div id="msg-final" style="display:none; margin-top:15px; font-weight:bold; color:#2e7d32; font-size: 1.1em;">
-            ¡HAS COMPLETADO EL RETO!<br>Reclama un Separador Bíblico<br>Código: 316
+        <p style="font-size:0.75em; background: #f1f8e9; padding: 8px; border-radius: 5px; color: #555;">Calle 35C Sur No 78A-18 Kennedy Central Bogota</p>
+        <button class="btn-main" id="btn-next" onclick="siguienteNivel()" style="padding: 10px 20px; font-size: 1em; margin-top: 10px;">CONTINUAR</button>
+        <div id="msg-final" style="display:none; margin-top:15px; font-weight:bold; color:#2e7d32; border-top: 2px dashed #2e7d32; padding-top: 10px;">
+            ¡RETO COMPLETADO!<br>Reclama un Separador Bíblico<br>Código: 316
         </div>
     </div>
 </div>
 
-<div class="header" id="lvl-info">Nivel 1</div>
-<div id="verse-container">Cargando...</div>
+<div class="header" id="lvl-info">Reto Logos</div>
+<div id="verse-container">Selecciona el versículo...</div>
 <div id="grid"></div>
 <div id="word-list"></div>
 
 <script>
     const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
     const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad4.jpg", "txt": "BIBLIA NTV MANUAL BLANCA", "precio": "$160.000"}, {"img": "publicidad5.jpg", "txt": "BIBLIA NTV MANUAL AZUL", "precio": "$160.000"}, {"img": "publicidad6.jpg", "txt": "BIBLIA RV1960 PRIMAVERA FUCSIA LG 11 PUNTOS", "precio": "$160.000"}, {"img": "publicidad7.jpg", "txt": "BIBLIA - NTV - AZUL - ESTUDIO DIARIO VIVIR PARA JOVENES", "precio": "$155.000"}, {"img": "publicidad8.jpg", "txt": "BIBLIA NTV LETRA GRANDE ROSADA", "precio": "$155.000"}, {"img": "publicidad9.jpg", "txt": "LA BIBLIA EN ACCION, TYNDALE", "precio": "$155.000"}, {"img": "publicidad10.jpg", "txt": "BIBLIA - RV 1960 NEGRA - ACOLCHADA", "precio": "$154.000"}, {"img": "publicidad11.jpg", "txt": "BIBLIA - RV 1960 NEGRA FLORES ROSADAS", "precio": "$145.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad13.jpg", "txt": "LIBRO MAS QUE UN CARPINTERO", "precio": "$33.000"}, {"img": "publicidad14.jpg", "txt": "DEVOCIONAL UNA MUJER CONFORME", "precio": "$33.000"}, {"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}, {"img": "publicidad16.jpg", "txt": "EL PODER DE LOS PADRES QUE ORAN", "precio": "$33.000"}, {"img": "publicidad17.jpg", "txt": "EL PODER DEL ESPOSO QUE ORA", "precio": "$33.000"}, {"img": "publicidad18.jpg", "txt": "EL PODER DE LA MUJER QUE ORA", "precio": "$33.000"}, {"img": "publicidad19.jpg", "txt": "CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad20.jpg", "txt": "VICTORIA SOBRE LA OSCURIDAD", "precio": "$33.000"}];
-    const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "ESPIRITU SANTO", "CRUZ", "REDENCION", "PACTO", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "SANTIFICACION", "HUMILDAD", "JUSTIFICACION", "DISCIPULO", "APOSTOL", "PROFETA", "IGLESIA", "ADORACION", "ORACION", "AYUNO", "VICTORIA", "RESURRECCION", "ETERNIDAD", "CIELO", "CONSUELO", "RESTAURACION", "FIDELIDAD", "BONDAD", "COMPASION", "UNIDAD", "LIBERTAD", "GLORIA", "BIBLIA", "CRISTO", "IGLESIA", "LOGOS", "AMOR", "FE", "ORACION", "PAZ", "DIOS", "GRACIA", "KENNEDY", "BOGOTA", "SALVACION", "LUZ", "VIDA"];
+    const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
     
     let ordenNiveles = [];
     let indiceActual = 0;
@@ -62,7 +62,6 @@
     let seleccionadas = [];
     let audioCtx;
 
-    // --- MOTOR DE AUDIO ---
     function initAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -72,23 +71,21 @@
         if (document.visibilityState === "visible" && audioCtx) audioCtx.resume();
     });
 
-    function playSound(freq, duration, type='sine') {
+    function playSound(freq, duration) {
         if (!audioCtx) return;
-        initAudio();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
 
-    // --- LÓGICA DEL JUEGO ---
     function iniciarJuego() {
         initAudio();
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
+        indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
         cargarNivel();
     }
@@ -97,54 +94,67 @@
         const idNivel = ordenNiveles[indiceActual];
         const data = niveles[idNivel];
         encontradas = 0;
+        seleccionadas = [];
+        
         document.getElementById('lvl-info').textContent = "RETO " + (indiceActual + 1) + " - " + data.r;
         document.getElementById('verse-container').textContent = '"' + data.v + '"';
         
-        let lista = data.v.toUpperCase().replace(/[^A-Z ]/g, "").split(" ").filter(w => w.length >= 3);
+        // Limpiar palabras (quitar tildes y símbolos)
+        let lista = data.v.toUpperCase()
+            .normalize("NFD").replace(/[̀-ͯ]/g, "")
+            .replace(/[^A-Z ]/g, "")
+            .split(" ")
+            .filter(w => w.length >= 3);
+            
         lista = [...new Set(lista)];
         
-        let relleno = [...rellenoLogos].sort(() => Math.random() - 0.5);
-        for(let i=0; i<relleno.length; i++) {
+        // Rellenar hasta 15 palabras estrictas
+        let auxRelleno = [...rellenoLogos].sort(() => Math.random() - 0.5);
+        for(let r of auxRelleno) {
             if(lista.length >= 15) break;
-            if(!lista.includes(relleno[i])) lista.push(relleno[i]);
+            if(!lista.includes(r)) lista.push(r);
         }
         
-        generarTablero(lista);
+        generarTablero(lista.slice(0, 15));
     }
 
     function generarTablero(lista) {
         const TAM = 12;
         let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
         palabrasEnTablero = [];
+        
         lista.sort((a,b) => b.length - a.length);
 
         lista.forEach(palabra => {
-            let colocada = false;
-            for(let i=0; i<100; i++) {
-                let dir = Math.floor(Math.random() * 3);
+            let puesta = false;
+            let intentos = 0;
+            while(!puesta && intentos < 50) {
+                let dir = Math.floor(Math.random() * 3); // 0:Hor, 1:Ver, 2:Diag
                 let dr = (dir === 1 || dir === 2) ? 1 : 0;
                 let dc = (dir === 0 || dir === 2) ? 1 : 0;
                 let r = Math.floor(Math.random() * (TAM - (dr * palabra.length)));
                 let c = Math.floor(Math.random() * (TAM - (dc * palabra.length)));
                 
-                let puede = true;
-                for(let j=0; j<palabra.length; j++) {
-                    let charActual = matriz[r+dr*j][c+dc*j];
-                    if(charActual !== '' && charActual !== palabra[j]) puede = false;
+                let ok = true;
+                for(let i=0; i<palabra.length; i++) {
+                    let char = matriz[r + dr*i][c + dc*i];
+                    if(char !== '' && char !== palabra[i]) ok = false;
                 }
 
-                if(puede) {
+                if(ok) {
                     let coords = [];
-                    for(let j=0; j<palabra.length; j++) {
-                        matriz[r+dr*j][c+dc*j] = palabra[j];
-                        coords.push((r+dr*j)+"-"+(c+dc*j));
+                    for(let i=0; i<palabra.length; i++) {
+                        matriz[r + dr*i][c + dc*i] = palabra[i];
+                        coords.push((r+dr*i)+"-"+(c+dc*i));
                     }
                     palabrasEnTablero.push({w: palabra, coords: coords, ok: false});
-                    colocada = true; break;
+                    puesta = true;
                 }
+                intentos++;
             }
         });
 
+        // Dibujar
         const gridDiv = document.getElementById('grid');
         gridDiv.innerHTML = '';
         for(let r=0; r<TAM; r++) {
@@ -168,10 +178,18 @@
         });
     }
 
-    document.getElementById('grid').addEventListener('touchstart', e => { seleccionadas = []; handleMove(e); });
-    document.getElementById('grid').addEventListener('touchmove', e => { e.preventDefault(); handleMove(e); }, {passive:false});
+    // Eventos de Toque
+    document.getElementById('grid').addEventListener('touchstart', e => { 
+        initAudio(); 
+        seleccionadas = []; 
+        handleMove(e); 
+    });
+    document.getElementById('grid').addEventListener('touchmove', e => { 
+        e.preventDefault(); 
+        handleMove(e); 
+    }, {passive:false});
     document.getElementById('grid').addEventListener('touchend', () => { 
-        checkWord(); 
+        validarSeleccion(); 
         document.querySelectorAll('.sel').forEach(el => el.classList.remove('sel'));
     });
 
@@ -181,50 +199,46 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(440, 0.05);
+            playSound(400, 0.05);
         }
     }
 
-    function checkWord() {
+    function validarSeleccion() {
         palabrasEnTablero.forEach(p => {
-            if(!p.ok && p.coords.every(c => seleccionadas.includes(c))) {
-                p.ok = true; encontradas++;
-                playSound(523, 0.2);
+            if(!p.ok && p.coords.length === seleccionadas.length && p.coords.every(c => seleccionadas.includes(c))) {
+                p.ok = true;
+                encontradas++;
+                playSound(600, 0.2);
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
-                if(encontradas === palabrasEnTablero.length) setTimeout(mostrarAnuncio, 500);
+                if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
             }
         });
     }
 
-    function mostrarAnuncio() {
+    function mostrarPremio() {
         const idNivel = ordenNiveles[indiceActual];
         const ad = anuncios[idNivel % anuncios.length];
-        document.getElementById('ad-txt').textContent = ad.txt;
         document.getElementById('ad-img').src = ad.img;
+        document.getElementById('ad-txt').textContent = ad.txt;
         document.getElementById('ad-price').textContent = ad.precio;
         document.getElementById('ad-modal').style.display = 'flex';
-        playSound(660, 0.3, 'square');
         
         if(indiceActual === 19) {
             confetti();
             document.getElementById('msg-final').style.display = 'block';
-            document.getElementById('btn-next').textContent = "REINICIAR TODO";
+            document.getElementById('btn-next').textContent = "JUGAR DE NUEVO";
         } else {
             document.getElementById('msg-final').style.display = 'none';
-            document.getElementById('btn-next').textContent = "SIGUIENTE RETO";
+            document.getElementById('btn-next').textContent = "SIGUIENTE NIVEL";
         }
     }
 
     function siguienteNivel() {
         document.getElementById('ad-modal').style.display = 'none';
         indiceActual++;
-        if(indiceActual >= niveles.length) {
-            indiceActual = 0;
-            iniciarJuego();
-        } else {
-            cargarNivel();
-        }
+        if(indiceActual >= niveles.length) iniciarJuego();
+        else cargarNivel();
     }
 </script>
 </body>
