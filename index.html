@@ -9,35 +9,24 @@
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
-        
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; }
-
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        
         #verse-container { background: #e8f5e9; padding: 20px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 110px; display: flex; align-items: center; justify-content: center; }
         #verse-text { font-size: 1.5rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
-
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
-
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 130px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 13px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
-
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 15px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; border: 4px solid #2e7d32; }
         .ad-card img { width: 100%; max-height: 160px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
-        
         .info-adquisicion { font-size: 0.85rem; color: #444; background: #f1f8e9; padding: 10px; border-radius: 8px; margin: 10px 0; line-height: 1.3; border: 1px dashed #2e7d32; }
-        .info-adquisicion a { color: #2e7d32; font-weight: bold; text-decoration: none; }
-
         .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; }
         .btn-ws { background:#25D366; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 10px; display: none; }
-        
-        .prize-card { background: #fff9c4 !important; border: 5px solid #fbc02d !important; }
     </style>
 </head>
 <body>
@@ -52,11 +41,9 @@
             <img id="ad-img" src="">
             <div id="ad-txt" style="font-weight: bold; margin-bottom: 5px;"></div>
             <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold;"></div>
-            
-            <div class="info-adquisicion" id="info-tienda">
-                Puedes adquirir este producto en <b>Librería Cristiana Logos</b> Calle 35C Sur No 78A-18 Kennedy Central Bogota o por Whatsapp <a href="https://wa.me/573125756581">312-5756581</a>
+            <div class="info-adquisicion">
+                Puedes adquirir este producto en <b>Librería Cristiana Logos</b> Calle 35C Sur No 78A-18 Kennedy Central Bogota
             </div>
-
             <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
             <button class="btn-ws" id="btn-ws">COMPARTIR EN WHATSAPP</button>
         </div>
@@ -76,8 +63,9 @@
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
+        
+        // --- TUS SONIDOS ORIGINALES ---
         let audioCtx;
-
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -95,36 +83,25 @@
             o.start(); o.stop(audioCtx.currentTime + d);
         }
 
+        // --- LÓGICA DE INTERACCIÓN ---
         document.getElementById('start-btn').addEventListener('click', () => {
-            initAudio();
+            initAudio(); // Activa el audio al primer toque
             document.getElementById('overlay').style.display = 'none';
             cargarNivel();
         });
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
             document.getElementById('ad-modal').style.display = 'none';
-            if(nivelActual === 19) {
-                nivelActual = 0;
-            } else {
-                nivelActual++;
-            }
-            requestAnimationFrame(() => { setTimeout(cargarNivel, 50); });
+            nivelActual = (nivelActual + 1) % niveles.length;
+            cargarNivel();
         });
 
         function cargarNivel() {
-            const data = niveles[nivelActual % niveles.length];
+            const data = niveles[nivelActual];
             document.getElementById('lvl-tag').textContent = `NIVEL ${nivelActual + 1} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
             palabras = [...new Set(palabras)];
-            
-            let idx = 0;
-            while(palabras.length < 15) {
-                let r = rellenoLogos[idx % rellenoLogos.length];
-                if(!palabras.includes(r)) palabras.push(r);
-                idx++;
-            }
             generarTablero(palabras.slice(0, 15));
         }
 
@@ -138,7 +115,7 @@
 
             palabras.forEach(palabra => {
                 let puesta = false;
-                for(let i=0; i<150 && !puesta; i++) {
+                for(let i=0; i<100 && !puesta; i++) {
                     let dir = Math.floor(Math.random() * 3);
                     let dr = dir === 0 ? 0 : 1;
                     let dc = dir === 1 ? 0 : 1;
@@ -147,7 +124,6 @@
                     let ok = true;
                     for(let j=0; j<palabra.length; j++) 
                         if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
-                    
                     if(ok) {
                         wordsPos[palabra] = [];
                         for(let j=0; j<palabra.length; j++) {
@@ -181,7 +157,7 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05); 
+                    playSound(440, 0.05); // Tu sonido original al tocar
                     check();
                 }
             }
@@ -201,7 +177,7 @@
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
-                        playSound(523, 0.15); 
+                        playSound(523, 0.15); // Tu sonido original al encontrar palabra
                         foundCount++;
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarResultado, 600);
                     }
@@ -211,36 +187,17 @@
 
         function mostrarResultado() {
             const adModal = document.getElementById('ad-modal');
-            const adContent = document.getElementById('ad-content');
-            const btnNext = document.getElementById('btn-next-lvl');
-            const btnWs = document.getElementById('btn-ws');
-            const adLabel = document.getElementById('ad-label');
-            const infoTienda = document.getElementById('info-tienda');
-
+            const ad = anuncios[nivelActual % anuncios.length];
+            document.getElementById('ad-img').src = ad.img;
+            document.getElementById('ad-txt').textContent = ad.txt;
+            document.getElementById('ad-price').textContent = ad.precio;
+            
             if(nivelActual === 19) {
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-                playSound(600, 0.5, 'square');
-                adContent.classList.add('prize-card');
-                adLabel.textContent = "🏆 ¡RETO COMPLETADO!";
-                document.getElementById('ad-img').src = "https://cdn-icons-png.flaticon.com/512/1054/1054944.png";
-                document.getElementById('ad-txt').innerHTML = "Has ganado un Hermoso Separador Bíblico.<br><br>Reclámalo el próximo Sábado en nuestra Librería.<br><br><b>CÓDIGO: 316</b>";
-                document.getElementById('ad-price').textContent = "";
-                infoTienda.style.display = "none";
-                btnNext.textContent = "REINICIAR JUEGO";
-                btnWs.style.display = "block";
-                btnWs.onclick = () => {
-                    window.open("https://wa.me/?text=¡Completé el Reto Bíblico de la Librería Logos! Mi código de premio es 316. ¡Inténtalo tú también!");
-                };
-            } else {
-                adContent.classList.remove('prize-card');
-                adLabel.textContent = "DISPONIBLE EN TIENDA";
-                infoTienda.style.display = "block";
-                const ad = anuncios[nivelActual % anuncios.length];
-                document.getElementById('ad-img').src = ad.img;
-                document.getElementById('ad-txt').textContent = ad.txt;
-                document.getElementById('ad-price').textContent = ad.precio;
-                btnNext.textContent = "SIGUIENTE NIVEL";
-                btnWs.style.display = "none";
+                playSound(600, 0.5, 'square'); // Tu sonido de premio
+                document.getElementById('ad-txt').innerHTML = "¡Has ganado un Hermoso Separador Bíblico!<br>Reclámalo el próximo Sábado en nuestra Librería.<br>CÓDIGO: 316";
+                document.getElementById('btn-ws').style.display = 'block';
+                document.getElementById('btn-ws').onclick = () => window.open("https://wa.me/?text=¡Gané un premio en la Librería Logos!");
             }
             adModal.style.display = 'flex';
         }
