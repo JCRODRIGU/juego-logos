@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Sonido Original</title>
+    <title>Reto Logos - Versión Completa</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #ffffff; text-align: center; overflow: hidden; height: 100vh; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1b5e20; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 0.9em; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #2e7d32; border: 2px solid #1b5e20; margin: 5px auto; width: 95vw; max-width: 420px; }
-        
-        /* TAMAÑO DE FUENTE INTERMEDIO */
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #333; }
-        
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #2e7d32; border: 2px solid #1b5e20; margin: 5px auto; width: 95vw; max-width: 400px; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #333; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #2e7d32; }
         #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 8px; background: #f0f0f0; height: 120px; overflow-y: auto; }
@@ -31,7 +28,7 @@
 <div id="overlay">
     <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
     <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
-    <p style="margin-bottom: 20px; padding: 0 20px;">Busca las palabras</p>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Encuentra las palabras</p>
     <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
@@ -42,9 +39,6 @@
         <h3 id="ad-txt" style="margin: 8px 0; font-size: 1em; color: #333;"></h3>
         <h2 id="ad-price" style="color:#c62828; margin: 3px 0;"></h2>
         <button class="btn-main" id="btn-next" onclick="siguienteNivel()" style="padding: 10px 20px; font-size: 1em; width: 100%;">CONTINUAR</button>
-        <div id="msg-final" style="display:none; margin-top:15px; font-weight:bold; color:#2e7d32; border-top: 2px dashed #2e7d32; padding-top: 10px;">
-            ¡RETO COMPLETADO!<br>Presenta este mensaje en caja<br>Código: LOGOS-316
-        </div>
     </div>
 </div>
 
@@ -65,7 +59,6 @@
     let seleccionadas = [];
     let audioCtx = null;
 
-    // RESTAURACIÓN DEL SONIDO ORIGINAL (SINE WAVE)
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -78,19 +71,14 @@
     function playSound(freq, duration) {
         initAudio(); 
         if (!audioCtx) return;
-
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        
-        osc.type = 'sine'; // Sonido suave original
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-
         osc.connect(gain);
         gain.connect(audioCtx.destination);
-        
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
     }
@@ -206,7 +194,7 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(100, 0.05); // Tono 100Hz original
+            playSound(100, 0.05);
         }
     }
 
@@ -218,7 +206,7 @@
             if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
-                playSound(300, 0.2); // Tono 300Hz original
+                playSound(300, 0.2);
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
@@ -233,14 +221,6 @@
         document.getElementById('ad-txt').textContent = ad.txt;
         document.getElementById('ad-price').textContent = ad.precio;
         document.getElementById('ad-modal').style.display = 'flex';
-        if(indiceActual === 19) {
-            confetti();
-            document.getElementById('msg-final').style.display = 'block';
-            document.getElementById('btn-next').textContent = "VOLVER A JUGAR";
-        } else {
-            document.getElementById('msg-final').style.display = 'none';
-            document.getElementById('btn-next').textContent = "SIGUIENTE RETO";
-        }
     }
 
     function siguienteNivel() {
