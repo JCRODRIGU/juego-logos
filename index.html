@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Aleatorio</title>
+    <title>Reto Logos - Aleatorio Correcto</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
@@ -72,13 +72,15 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        // Volumen original recuperado
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
 
     function iniciarJuego() {
         initAudio();
+        // Barajado real para asegurar aleatoriedad desde el primer nivel
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
@@ -193,8 +195,8 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            // SONIDO RECUPERADO: 400Hz para deslizamiento
-            playSound(400, 0.05);
+            // SONIDO ORIGINAL: 100Hz para deslizamiento
+            playSound(100, 0.05);
         }
     }
 
@@ -205,8 +207,8 @@
             if(!p.ok && (esIgual || esInversa)) {
                 p.ok = true;
                 encontradas++;
-                // SONIDO RECUPERADO: 600Hz para palabra correcta
-                playSound(600, 0.2);
+                // SONIDO ORIGINAL: 300Hz para palabra correcta
+                playSound(300, 0.2);
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
