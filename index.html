@@ -61,25 +61,23 @@
         let activeCoords = [];
         let isSelecting = false;
         
-        // --- SISTEMA DE AUDIO ---
         let audioCtx = null;
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        function playSound(freq, duration, type = 'sine') {
+        // TONOS ORIGINALES TIPO ARCADE
+        function playTone(freq, type, duration, vol = 0.1) {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = type;
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
@@ -87,8 +85,26 @@
             osc.stop(audioCtx.currentTime + duration);
         }
 
+        function soundSelect() {
+            // Clic agudo (Tono original de selección)
+            playTone(880, 'square', 0.05, 0.05);
+        }
+
+        function soundSuccess() {
+            // Arpegio ascendente rápido (Tono original de hallazgo)
+            playTone(523.25, 'sine', 0.1); // Do5
+            setTimeout(() => playTone(659.25, 'sine', 0.2), 50); // Mi5
+        }
+
+        function soundWin() {
+            // Tono de victoria clásico
+            playTone(523.25, 'square', 0.1);
+            setTimeout(() => playTone(659.25, 'square', 0.1), 100);
+            setTimeout(() => playTone(783.99, 'square', 0.3), 200); // Sol5
+        }
+
         function iniciar() {
-            initAudio(); // Activa el audio al primer toque
+            initAudio();
             niveles = nivelesRaw.sort(() => Math.random() - 0.5);
             document.getElementById('overlay').style.display = 'none';
             cargarNivel();
@@ -98,13 +114,7 @@
             const data = niveles[nivelActual];
             document.getElementById('lvl-tag').textContent = `RETO ${nivelActual + 1} de ${niveles.length}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            
-            let palabras = data.v.toUpperCase()
-                .normalize("NFD").replace(/[̀-ͯ]/g, "")
-                .replace(/[^A-Z ]/g, "")
-                .split(' ')
-                .filter(p => p.length >= 3);
-            
+            let palabras = data.v.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Z ]/g, "").split(' ').filter(p => p.length >= 3);
             palabras = [...new Set(palabras)].sort((a,b) => b.length - a.length).slice(0, 15);
             generarTablero(palabras);
         }
@@ -115,7 +125,6 @@
             const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = '';
             wordsPos = {}; foundCount = 0;
-            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const dirs = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]];
 
@@ -126,9 +135,7 @@
                     let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
                     if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM || c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
                     let ok = true;
-                    for(let j=0; j<palabra.length; j++) {
-                        if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) { ok=false; break; }
-                    }
+                    for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok=false;
                     if(ok) {
                         wordsPos[palabra] = [];
                         for(let j=0; j<palabra.length; j++) {
@@ -149,7 +156,6 @@
                     grid.appendChild(d);
                 }
             }
-            
             palabras.forEach(w => {
                 if (wordsPos[w]) {
                     const s = document.createElement('span'); s.className = 'word-item';
@@ -164,7 +170,7 @@
             if(el && el.dataset.pos && isSelecting) {
                 if(!activeCoords.includes(el.dataset.pos)) {
                     activeCoords.push(el.dataset.pos); el.classList.add('sel');
-                    playSound(400, 0.05); // Sonido de selección suave
+                    soundSelect(); 
                     check();
                 }
             }
@@ -184,7 +190,7 @@
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
-                        playSound(600, 0.2, 'triangle'); // Sonido de palabra encontrada
+                        soundSuccess();
                         foundCount++;
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(ganar, 500);
                     }
@@ -193,7 +199,7 @@
         }
 
         function ganar() {
-            playSound(800, 0.3); // Sonido de victoria
+            soundWin();
             const a = anuncios[Math.floor(Math.random()*anuncios.length)];
             document.getElementById('ad-img').src = a.img;
             document.getElementById('ad-txt').textContent = a.txt;
