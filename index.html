@@ -72,18 +72,17 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
 
     function iniciarJuego() {
         initAudio();
-        // MEZCLA REAL DE NIVELES
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
-        cargarNivel(); // Esto cargará ordenNiveles[0], que es aleatorio
+        cargarNivel();
     }
 
     function cargarNivel() {
@@ -194,7 +193,8 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(440, 0.05);
+            // SONIDO RECUPERADO: 400Hz para deslizamiento
+            playSound(400, 0.05);
         }
     }
 
@@ -205,7 +205,8 @@
             if(!p.ok && (esIgual || esInversa)) {
                 p.ok = true;
                 encontradas++;
-                playSound(880, 0.1);
+                // SONIDO RECUPERADO: 600Hz para palabra correcta
+                playSound(600, 0.2);
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
