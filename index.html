@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Versión Ancla</title>
+    <title>Reto Logos - Versión Ancla Estable</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
@@ -23,12 +23,12 @@
         #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 70px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1em; font-style: italic; }
     </style>
 </head>
-<body onpointerdown="awakeAudio()">
+<body onpointerdown="reactivarAudio()">
 
 <div id="overlay">
     <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
     <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
-    <p style="margin-bottom: 20px; padding: 0 20px;">Mantén el sonido activo</p>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Sopa de letras interactiva</p>
     <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
@@ -59,8 +59,8 @@
     let seleccionadas = [];
     let audioCtx = null;
 
-    // SISTEMA DE AUDIO RESILIENTE
-    function awakeAudio() {
+    // LÓGICA DE AUDIO VERSIÓN ANCLA
+    function reactivarAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
@@ -69,13 +69,13 @@
         }
     }
 
-    // RE-DESPERTAR AUDIO AL VOLVER A LA APP
+    // Evita que el sonido se muera al cambiar de pestaña
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") awakeAudio();
+        if (document.visibilityState === "visible") reactivarAudio();
     });
 
     function playSound(freq, duration) {
-        awakeAudio();
+        reactivarAudio(); 
         if (!audioCtx) return;
         
         const osc = audioCtx.createOscillator();
@@ -91,7 +91,7 @@
     }
 
     function iniciarJuego() {
-        awakeAudio();
+        reactivarAudio();
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
@@ -182,7 +182,7 @@
     }
 
     document.getElementById('grid').addEventListener('touchstart', e => { 
-        awakeAudio(); 
+        reactivarAudio(); 
         seleccionadas = []; 
         handleMove(e); 
     });
@@ -201,7 +201,7 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(100, 0.05); // Tono 100Hz versión ancla
+            playSound(100, 0.05); // TONO DE DESPLAZAMIENTO VERSIÓN ANCLA
         }
     }
 
@@ -213,7 +213,7 @@
             if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
-                playSound(300, 0.2); // Tono 300Hz versión ancla
+                playSound(300, 0.2); // TONO DE ACIERTO VERSIÓN ANCLA
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
