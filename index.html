@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Sonido Corregido</title>
+    <title>Reto Logos - Audio Fix</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
@@ -23,12 +23,12 @@
         #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 70px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1em; font-style: italic; }
     </style>
 </head>
-<body>
+<body onclick="initAudio()">
 
 <div id="overlay">
     <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
     <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
-    <p style="margin-bottom: 20px; padding: 0 20px;">Busca las palabras</p>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Encuentra las palabras</p>
     <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
@@ -59,6 +59,7 @@
     let seleccionadas = [];
     let audioCtx = null;
 
+    // Función crítica para despertar el audio en móviles
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -69,8 +70,9 @@
     }
 
     function playSound(freq, duration) {
-        initAudio(); 
         if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
@@ -84,7 +86,7 @@
     }
 
     function iniciarJuego() {
-        initAudio();
+        initAudio(); // Primera llamada al audio
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
@@ -175,7 +177,7 @@
     }
 
     document.getElementById('grid').addEventListener('touchstart', e => { 
-        initAudio(); 
+        initAudio(); // Refuerzo de audio por cada toque
         seleccionadas = []; 
         handleMove(e); 
     });
@@ -194,7 +196,7 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(100, 0.05);
+            playSound(100, 0.05); // Sonido de selección original
         }
     }
 
@@ -206,7 +208,7 @@
             if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
-                playSound(300, 0.2);
+                playSound(300, 0.2); // Sonido de acierto original
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
