@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Letra Grande</title>
+    <title>Reto Logos - Ajuste Final</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
@@ -11,41 +11,40 @@
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1b5e20; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 0.9em; }
         
-        /* CUADRÍCULA AJUSTADA */
         #grid { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
-            gap: 2px; 
+            gap: 1px; 
             background: #2e7d32; 
-            border: 3px solid #1b5e20; 
+            border: 2px solid #1b5e20; 
             margin: 5px auto; 
-            width: 98vw; 
-            max-width: 460px; 
+            width: 96vw; 
+            max-width: 420px; 
         }
         
-        /* TAMAÑO DE LETRA AUMENTADO */
+        /* FUENTE AJUSTADA A 18PX */
         .cell { 
             aspect-ratio: 1/1; 
             background: white; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-weight: 900; 
-            font-size: 20px; /* Letras más grandes */
+            font-weight: 800; 
+            font-size: 18px; 
             color: #333;
         }
         
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #2e7d32; }
         
-        #word-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; padding: 10px; background: #f0f0f0; height: 130px; overflow-y: auto; }
-        .word-item { padding: 4px 8px; border: 1px solid #2e7d32; border-radius: 12px; font-size: 11px; background: white; font-weight: bold; color: #2e7d32; }
+        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 8px; background: #f0f0f0; height: 125px; overflow-y: auto; }
+        .word-item { padding: 3px 7px; border: 1px solid #2e7d32; border-radius: 10px; font-size: 10px; background: white; font-weight: bold; color: #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.6; }
         
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index: 10000; }
         .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; border: 5px solid #2e7d32; }
         .btn-main { padding: 15px 40px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.2em; cursor: pointer; }
-        #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 75px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1.1em; font-style: italic; }
+        #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 70px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1em; font-style: italic; }
     </style>
 </head>
 <body>
@@ -53,7 +52,7 @@
 <div id="overlay">
     <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
     <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
-    <p style="margin-bottom: 20px; padding: 0 20px;">Busca las palabras en la cuadrícula</p>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Encuentra las palabras ocultas</p>
     <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
@@ -85,26 +84,36 @@
     let palabrasEnTablero = [];
     let encontradas = 0;
     let seleccionadas = [];
+    
+    // SISTEMA DE AUDIO AUDIBLE
     let audioCtx = null;
 
     function initAudio() {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        } catch (e) { console.log("Audio Error"); }
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
 
     function playSound(freq, duration) {
-        initAudio();
+        initAudio(); 
         if (!audioCtx) return;
+
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
+        
+        // Cambio a onda cuadrada para que sea más audible
+        osc.type = 'square';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
         osc.connect(gain);
         gain.connect(audioCtx.destination);
+        
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
     }
@@ -220,7 +229,7 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            playSound(100, 0.05);
+            playSound(100, 0.05); // Tono táctil 100Hz
         }
     }
 
@@ -232,7 +241,7 @@
             if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
-                playSound(300, 0.2);
+                playSound(300, 0.2); // Tono éxito 300Hz
                 document.getElementById('word-' + p.w).classList.add('word-found');
                 p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
