@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Aleatorio Correcto</title>
+    <title>Reto Logos - Corrección Descarte</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
@@ -72,7 +72,6 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        // Volumen original recuperado
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + duration);
@@ -80,7 +79,6 @@
 
     function iniciarJuego() {
         initAudio();
-        // Barajado real para asegurar aleatoriedad desde el primer nivel
         ordenNiveles = niveles.map((_, i) => i).sort(() => Math.random() - 0.5);
         indiceActual = 0;
         document.getElementById('overlay').style.display = 'none';
@@ -195,22 +193,31 @@
         if(el && el.dataset.pos && !seleccionadas.includes(el.dataset.pos)) {
             seleccionadas.push(el.dataset.pos);
             el.classList.add('sel');
-            // SONIDO ORIGINAL: 100Hz para deslizamiento
             playSound(100, 0.05);
         }
     }
 
     function validarSeleccion() {
+        // MEJORA: Validación robusta para descarte inmediato
         palabrasEnTablero.forEach(p => {
-            let esIgual = p.coords.length === seleccionadas.length && p.coords.every((c, i) => c === seleccionadas[i]);
-            let esInversa = p.coords.length === seleccionadas.length && [...p.coords].reverse().every((c, i) => c === seleccionadas[i]);
-            if(!p.ok && (esIgual || esInversa)) {
+            const selStr = seleccionadas.join(",");
+            const coordsStr = p.coords.join(",");
+            const revStr = [...p.coords].reverse().join(",");
+
+            if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
-                // SONIDO ORIGINAL: 300Hz para palabra correcta
                 playSound(300, 0.2);
-                document.getElementById('word-' + p.w).classList.add('word-found');
-                p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
+                
+                // Efecto visual de descarte
+                const wordEl = document.getElementById('word-' + p.w);
+                if(wordEl) wordEl.classList.add('word-found');
+                
+                p.coords.forEach(c => {
+                    const cell = document.querySelector(`[data-pos="${c}"]`);
+                    if(cell) cell.classList.add('found');
+                });
+                
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
             }
         });
