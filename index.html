@@ -8,7 +8,7 @@
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             text-align: center; 
             background: #ffffff; 
             margin: 0; 
@@ -24,7 +24,6 @@
             padding: 12px; 
             font-weight: bold; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 10;
         }
 
         #verse-container {
@@ -32,8 +31,9 @@
             padding: 15px;
             margin: 8px;
             border-radius: 12px;
-            min-height: 90px;
+            min-height: 100px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             border: 1px solid #c8e6c9;
@@ -55,8 +55,6 @@
             gap: 1px; 
             margin: 0 auto; 
             border: 2px solid #2e7d32;
-            border-radius: 4px;
-            touch-action: none;
         }
 
         .cell { 
@@ -66,9 +64,8 @@
             align-items: center; 
             justify-content: center; 
             font-weight: bold; 
-            font-size: clamp(12px, 4vw, 18px); 
+            font-size: 16px; 
             text-transform: uppercase; 
-            transition: background 0.1s;
         }
 
         .sel { background: #fff176 !important; }
@@ -79,18 +76,17 @@
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
-            gap: 6px; 
-            padding: 15px; 
+            gap: 5px; 
+            padding: 10px; 
             overflow-y: auto; 
-            background: #f9f9f9;
-            margin-top: 10px;
+            background: #f5f5f5;
         }
 
         .word-item { 
-            padding: 5px 10px; 
+            padding: 4px 8px; 
             background: white; 
-            border-radius: 15px; 
-            font-size: 12px; 
+            border-radius: 10px; 
+            font-size: 11px; 
             font-weight: bold; 
             color: #2e7d32; 
             border: 1px solid #2e7d32; 
@@ -100,10 +96,8 @@
             background: #2e7d32 !important; 
             color: white !important; 
             text-decoration: line-through; 
-            opacity: 0.7;
         }
 
-        /* OVERLAY INICIAL */
         #overlay { 
             position: fixed; 
             top: 0; left: 0; 
@@ -117,19 +111,6 @@
             color: white; 
         }
 
-        .btn-start { 
-            padding: 20px 50px; 
-            background: white; 
-            color: #2e7d32; 
-            border-radius: 50px; 
-            font-size: 1.5em; 
-            border: none; 
-            font-weight: bold; 
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        /* MODAL DE VICTORIA */
         .modal { 
             position: fixed; 
             top: 0; left: 0; 
@@ -145,101 +126,55 @@
         .card { 
             background: white; 
             padding: 25px; 
-            border-radius: 25px; 
+            border-radius: 20px; 
             width: 90%; 
-            max-width: 380px; 
+            max-width: 360px; 
             text-align: center; 
-            position: relative;
-        }
-
-        .ad-image {
-            width: 100%;
-            height: 200px;
-            object-fit: contain;
-            margin: 15px 0;
-            border-radius: 10px;
-        }
-
-        .price-tag {
-            font-size: 1.8em;
-            color: #d32f2f;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .info-libreria {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 15px;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
         }
     </style>
 </head>
 <body>
     <div id="overlay">
-        <h1 style="margin-bottom:30px;">LIBRERÍA CRISTIANA LOGOS</h1>
-        <button class="btn-start" onclick="iniciar()">EMPEZAR RETO</button>
-        <p style="margin-top:20px; opacity:0.8;">Encuentra las palabras del versículo</p>
+        <h1>LIBRERÍA CRISTIANA LOGOS</h1>
+        <button onclick="iniciar()" style="padding:20px 40px; border-radius:50px; border:none; font-weight:bold; font-size:1.3em; cursor:pointer;">EMPEZAR RETO</button>
     </div>
 
     <div id="modal" class="modal">
         <div class="card">
-            <h2 style="color:#2e7d32; margin:0;">¡EXCELENTE!</h2>
-            <p>Has completado el reto</p>
-            <img id="ad-img" src="" class="ad-image">
-            <p id="ad-txt" style="font-weight:bold; height:40px; display:flex; align-items:center; justify-content:center;"></p>
-            <div id="ad-price" class="price-tag"></div>
-            
-            <button onclick="siguiente()" style="width:100%; padding:18px; background:#2e7d32; color:white; border:none; border-radius:35px; font-weight:bold; font-size:1.1em; cursor:pointer;">SIGUIENTE NIVEL</button>
-            
-            <div class="info-libreria">
-                Calle 35C Sur No 78A-18 Kennedy Central Bogota<br>
-                WhatsApp: 312-5756581
-            </div>
+            <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
+            <img id="ad-img" src="" style="width:100%; height:180px; object-fit:contain;">
+            <p id="ad-txt" style="font-weight:bold;"></p>
+            <h3 id="ad-price" style="color:red; font-size:1.6em;"></h3>
+            <button onclick="siguiente()" style="width:100%; padding:18px; background:#2e7d32; color:white; border:none; border-radius:30px; font-weight:bold; cursor:pointer;">SIGUIENTE</button>
+            <div style="font-size:0.8em; margin-top:15px; color:#666;">Calle 35C Sur No 78A-18 Kennedy Central Bogota</div>
         </div>
     </div>
 
     <div class="header" id="lvl-tag">NIVEL 1</div>
-    
     <div id="verse-container">
         <div id="verse-text"></div>
     </div>
-
     <div id="grid"></div>
-    
     <div id="word-list"></div>
 
     <script>
         const nivelesRaw = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}];
-        let niveles = [];
-        let nivelActual = 0;
-        let wordsPos = {};
-        let foundCount = 0;
-        let activeCoords = [];
-        let isSelecting = false;
-        
-        let audioCtx = null;
+        let niveles = [], nivelActual = 0, wordsPos = {}, foundCount = 0, activeCoords = [], isSelecting = false, audioCtx = null;
 
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // --- SISTEMA DE AUDIO ORIGINAL (100Hz y 300Hz) ---
-        function playOriginalTone(freq, duration) {
+        function playOriginalTone(f, d) {
             if (!audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
         }
 
         function soundSelect() { playOriginalTone(100, 0.1); } 
@@ -256,77 +191,46 @@
             const data = niveles[nivelActual];
             document.getElementById('lvl-tag').textContent = `RETO ${nivelActual + 1} de ${niveles.length}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            
-            let palabras = data.v.toUpperCase()
-                .normalize("NFD").replace(/[̀-ͯ]/g, "")
-                .replace(/[^A-Z ]/g, "")
-                .split(' ')
-                .filter(p => p.length >= 3);
-            
-            palabras = [...new Set(palabras)].sort((a,b) => b.length - a.length).slice(0, 15);
-            generarTablero(palabras);
+            let p = data.v.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Z ]/g, "").split(' ').filter(x => x.length >= 3);
+            p = [...new Set(p)].sort((a,b) => b.length - a.length).slice(0, 15);
+            generarTablero(p);
         }
 
         function generarTablero(palabras) {
-            const TAM = 12; // Matriz de 12x12 confirmada
+            const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            grid.innerHTML = ''; 
-            list.innerHTML = '';
-            wordsPos = {}; 
-            foundCount = 0;
-            
+            grid.innerHTML = ''; list.innerHTML = '';
+            wordsPos = {}; foundCount = 0;
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const dirs = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]];
 
             palabras.forEach(palabra => {
                 let puesta = false;
-                for(let i=0; i<500 && !puesta; i++) {
+                for(let i=0; i<1000 && !puesta; i++) {
                     let [dr, dc] = dirs[Math.floor(Math.random()*dirs.length)];
                     let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
-                    
-                    if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM ||
-                        c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
-
+                    if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM || c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
                     let ok = true;
-                    for(let j=0; j<palabra.length; j++) {
-                        let currR = r + dr*j;
-                        let currC = c + dc*j;
-                        if(matriz[currR][currC] !== '' && matriz[currR][currC] !== palabra[j]) { ok=false; break; }
-                    }
-
+                    for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok=false;
                     if(ok) {
                         wordsPos[palabra] = [];
-                        for(let j=0; j<palabra.length; j++) {
-                            let currR = r + dr*j;
-                            let currC = c + dc*j;
-                            matriz[currR][currC] = palabra[j];
-                            wordsPos[palabra].push(`${currR}-${currC}`);
-                        }
+                        for(let j=0; j<palabra.length; j++) { matriz[r+dr*j][c+dc*j] = palabra[j]; wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`); }
                         puesta = true;
                     }
                 }
             });
 
-            // Renderizado de la matriz
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div');
-                    d.className = 'cell';
-                    d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
-                    d.dataset.pos = `${r}-${c}`;
-                    grid.appendChild(d);
+                    d.className = 'cell'; d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
+                    d.dataset.pos = `${r}-${c}`; grid.appendChild(d);
                 }
             }
-            
-            // Renderizado de lista de palabras
             palabras.forEach(w => {
                 if (wordsPos[w]) {
-                    const s = document.createElement('span'); 
-                    s.className = 'word-item';
-                    s.id = 'w-'+w; 
-                    s.textContent = w; 
-                    list.appendChild(s);
+                    const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+w; s.textContent = w; list.appendChild(s);
                 }
             });
         }
@@ -336,51 +240,26 @@
             const el = document.elementFromPoint(t.clientX, t.clientY);
             if(el && el.dataset.pos && isSelecting) {
                 if(!activeCoords.includes(el.dataset.pos)) {
-                    activeCoords.push(el.dataset.pos); 
-                    el.classList.add('sel');
-                    soundSelect(); 
-                    check();
+                    activeCoords.push(el.dataset.pos); el.classList.add('sel');
+                    soundSelect(); check();
                 }
             }
         }
 
-        // Eventos táctiles
-        const gridEl = document.getElementById('grid');
-        gridEl.addEventListener('touchstart', (e) => { 
-            isSelecting = true; 
-            activeCoords = []; 
-            handleTouch(e); 
-        }, {passive: false});
-
-        gridEl.addEventListener('touchmove', (e) => { 
-            e.preventDefault(); 
-            handleTouch(e); 
-        }, {passive: false});
-
-        window.addEventListener('touchend', () => { 
-            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); 
-            isSelecting = false; 
-        });
+        document.getElementById('grid').addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleTouch(e); }, {passive: false});
+        document.getElementById('grid').addEventListener('touchmove', (e) => { e.preventDefault(); handleTouch(e); }, {passive: false});
+        window.addEventListener('touchend', () => { document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); isSelecting = false; });
 
         function check() {
             for(let w in wordsPos) {
                 const itm = document.getElementById('w-'+w);
-                if(itm && itm.classList.contains('word-found')) continue;
-
-                if(wordsPos[w].every(p => {
+                if(itm && !itm.classList.contains('word-found') && wordsPos[w].every(p => {
                     const cell = document.querySelector(`[data-pos="${p}"]`);
                     return cell && (cell.classList.contains('sel') || cell.classList.contains('found'));
                 })) {
-                    wordsPos[w].forEach(p => {
-                        document.querySelector(`[data-pos="${p}"]`).classList.add('found');
-                    });
-                    itm.classList.add('word-found');
-                    soundSuccess();
-                    foundCount++;
-                    
-                    if(foundCount === Object.keys(wordsPos).length) {
-                        setTimeout(ganar, 600);
-                    }
+                    wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                    itm.classList.add('word-found'); soundSuccess(); foundCount++;
+                    if(foundCount === Object.keys(wordsPos).length) setTimeout(ganar, 600);
                 }
             }
         }
@@ -391,14 +270,289 @@
             document.getElementById('ad-txt').textContent = a.txt;
             document.getElementById('ad-price').textContent = a.precio;
             document.getElementById('modal').style.display = 'flex';
-            
-            // Efecto de celebración
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#2e7d32', '#ffffff', '#fff176']
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function siguiente() {
+            document.getElementById('modal').style.display = 'none';
+            nivelActual = (nivelActual + 1) % niveles.length;
+            cargarNivel();
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reto Bíblico Logos</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        * { touch-action: none; user-select: none; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            text-align: center; 
+            background: #ffffff; 
+            margin: 0; 
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header { 
+            background: #2e7d32; 
+            color: white; 
+            padding: 12px; 
+            font-weight: bold; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #verse-container {
+            background: #e8f5e9;
+            padding: 15px;
+            margin: 8px;
+            border-radius: 12px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #c8e6c9;
+        }
+
+        #verse-text {
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1em;
+            line-height: 1.3;
+        }
+
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            width: 96vw; 
+            max-width: 440px; 
+            background: #2e7d32; 
+            gap: 1px; 
+            margin: 0 auto; 
+            border: 2px solid #2e7d32;
+        }
+
+        .cell { 
+            aspect-ratio: 1/1; 
+            background: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 16px; 
+            text-transform: uppercase; 
+        }
+
+        .sel { background: #fff176 !important; }
+        .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
+
+        #word-list { 
+            flex: 1;
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 5px; 
+            padding: 10px; 
+            overflow-y: auto; 
+            background: #f5f5f5;
+        }
+
+        .word-item { 
+            padding: 4px 8px; 
+            background: white; 
+            border-radius: 10px; 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #2e7d32; 
+            border: 1px solid #2e7d32; 
+        }
+
+        .word-found { 
+            background: #2e7d32 !important; 
+            color: white !important; 
+            text-decoration: line-through; 
+        }
+
+        #overlay { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: #2e7d32; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000; 
+            color: white; 
+        }
+
+        .modal { 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 2000; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 20px; 
+            width: 90%; 
+            max-width: 360px; 
+            text-align: center; 
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay">
+        <h1>LIBRERÍA CRISTIANA LOGOS</h1>
+        <button onclick="iniciar()" style="padding:20px 40px; border-radius:50px; border:none; font-weight:bold; font-size:1.3em; cursor:pointer;">EMPEZAR RETO</button>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="card">
+            <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
+            <img id="ad-img" src="" style="width:100%; height:180px; object-fit:contain;">
+            <p id="ad-txt" style="font-weight:bold;"></p>
+            <h3 id="ad-price" style="color:red; font-size:1.6em;"></h3>
+            <button onclick="siguiente()" style="width:100%; padding:18px; background:#2e7d32; color:white; border:none; border-radius:30px; font-weight:bold; cursor:pointer;">SIGUIENTE</button>
+            <div style="font-size:0.8em; margin-top:15px; color:#666;">Calle 35C Sur No 78A-18 Kennedy Central Bogota</div>
+        </div>
+    </div>
+
+    <div class="header" id="lvl-tag">NIVEL 1</div>
+    <div id="verse-container">
+        <div id="verse-text"></div>
+    </div>
+    <div id="grid"></div>
+    <div id="word-list"></div>
+
+    <script>
+        const nivelesRaw = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}];
+        let niveles = [], nivelActual = 0, wordsPos = {}, foundCount = 0, activeCoords = [], isSelecting = false, audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playOriginalTone(f, d) {
+            if (!audioCtx) return;
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = 'sine'; o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
+        }
+
+        function soundSelect() { playOriginalTone(100, 0.1); } 
+        function soundSuccess() { playOriginalTone(300, 0.4); }
+
+        function iniciar() {
+            initAudio();
+            niveles = nivelesRaw.sort(() => Math.random() - 0.5);
+            document.getElementById('overlay').style.display = 'none';
+            cargarNivel();
+        }
+
+        function cargarNivel() {
+            const data = niveles[nivelActual];
+            document.getElementById('lvl-tag').textContent = `RETO ${nivelActual + 1} de ${niveles.length}`;
+            document.getElementById('verse-text').textContent = `"${data.v}"`;
+            let p = data.v.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Z ]/g, "").split(' ').filter(x => x.length >= 3);
+            p = [...new Set(p)].sort((a,b) => b.length - a.length).slice(0, 15);
+            generarTablero(p);
+        }
+
+        function generarTablero(palabras) {
+            const TAM = 12;
+            const grid = document.getElementById('grid');
+            const list = document.getElementById('word-list');
+            grid.innerHTML = ''; list.innerHTML = '';
+            wordsPos = {}; foundCount = 0;
+            let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
+            const dirs = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]];
+
+            palabras.forEach(palabra => {
+                let puesta = false;
+                for(let i=0; i<1000 && !puesta; i++) {
+                    let [dr, dc] = dirs[Math.floor(Math.random()*dirs.length)];
+                    let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
+                    if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM || c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
+                    let ok = true;
+                    for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok=false;
+                    if(ok) {
+                        wordsPos[palabra] = [];
+                        for(let j=0; j<palabra.length; j++) { matriz[r+dr*j][c+dc*j] = palabra[j]; wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`); }
+                        puesta = true;
+                    }
+                }
             });
+
+            for(let r=0; r<TAM; r++) {
+                for(let c=0; c<TAM; c++) {
+                    const d = document.createElement('div');
+                    d.className = 'cell'; d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
+                    d.dataset.pos = `${r}-${c}`; grid.appendChild(d);
+                }
+            }
+            palabras.forEach(w => {
+                if (wordsPos[w]) {
+                    const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+w; s.textContent = w; list.appendChild(s);
+                }
+            });
+        }
+
+        function handleTouch(e) {
+            const t = e.touches ? e.touches[0] : e;
+            const el = document.elementFromPoint(t.clientX, t.clientY);
+            if(el && el.dataset.pos && isSelecting) {
+                if(!activeCoords.includes(el.dataset.pos)) {
+                    activeCoords.push(el.dataset.pos); el.classList.add('sel');
+                    soundSelect(); check();
+                }
+            }
+        }
+
+        document.getElementById('grid').addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleTouch(e); }, {passive: false});
+        document.getElementById('grid').addEventListener('touchmove', (e) => { e.preventDefault(); handleTouch(e); }, {passive: false});
+        window.addEventListener('touchend', () => { document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); isSelecting = false; });
+
+        function check() {
+            for(let w in wordsPos) {
+                const itm = document.getElementById('w-'+w);
+                if(itm && !itm.classList.contains('word-found') && wordsPos[w].every(p => {
+                    const cell = document.querySelector(`[data-pos="${p}"]`);
+                    return cell && (cell.classList.contains('sel') || cell.classList.contains('found'));
+                })) {
+                    wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                    itm.classList.add('word-found'); soundSuccess(); foundCount++;
+                    if(foundCount === Object.keys(wordsPos).length) setTimeout(ganar, 600);
+                }
+            }
+        }
+
+        function ganar() {
+            const a = anuncios[Math.floor(Math.random()*anuncios.length)];
+            document.getElementById('ad-img').src = a.img;
+            document.getElementById('ad-txt').textContent = a.txt;
+            document.getElementById('ad-price').textContent = a.precio;
+            document.getElementById('modal').style.display = 'flex';
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
         function siguiente() {
