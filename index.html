@@ -55,10 +55,14 @@
     <div id="word-list"></div>
 
     <script>
-        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
-        const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad4.jpg", "txt": "BIBLIA NTV MANUAL BLANCA", "precio": "$160.000"}, {"img": "publicidad5.jpg", "txt": "BIBLIA NTV MANUAL AZUL", "precio": "$160.000"}, {"img": "publicidad6.jpg", "txt": "BIBLIA RV1960 PRIMAVERA FUCSIA LG 11 PUNTOS", "precio": "$160.000"}, {"img": "publicidad7.jpg", "txt": "BIBLIA - NTV - AZUL - ESTUDIO DIARIO VIVIR PARA JOVENES", "precio": "$155.000"}, {"img": "publicidad8.jpg", "txt": "BIBLIA NTV LETRA GRANDE ROSADA", "precio": "$155.000"}, {"img": "publicidad9.jpg", "txt": "LA BIBLIA EN ACCION, TYNDALE", "precio": "$155.000"}, {"img": "publicidad10.jpg", "txt": "BIBLIA - RV 1960 NEGRA - ACOLCHADA", "precio": "$154.000"}, {"img": "publicidad11.jpg", "txt": "BIBLIA - RV 1960 NEGRA FLORES ROSADAS", "precio": "$145.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad13.jpg", "txt": "LIBRO MAS QUE UN CARPINTERO", "precio": "$33.000"}, {"img": "publicidad14.jpg", "txt": "DEVOCIONAL UNA MUJER CONFORME", "precio": "$33.000"}, {"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}, {"img": "publicidad16.jpg", "txt": "EL PODER DE LOS PADRES QUE ORAN", "precio": "$33.000"}, {"img": "publicidad17.jpg", "txt": "EL PODER DEL ESPOSO QUE ORA", "precio": "$33.000"}, {"img": "publicidad18.jpg", "txt": "EL PODER DE LA MUJER QUE ORA", "precio": "$33.000"}, {"img": "publicidad19.jpg", "txt": "CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad20.jpg", "txt": "VICTORIA SOBRE LA OSCURIDAD", "precio": "$33.000"}];
+        const niveles = [{"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}];
+        const anuncios = [{"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}, {"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad7.jpg", "txt": "BIBLIA - NTV - AZUL - ESTUDIO DIARIO VIVIR PARA JOVENES", "precio": "$155.000"}, {"img": "publicidad17.jpg", "txt": "EL PODER DEL ESPOSO QUE ORA", "precio": "$33.000"}, {"img": "publicidad13.jpg", "txt": "LIBRO MAS QUE UN CARPINTERO", "precio": "$33.000"}, {"img": "publicidad10.jpg", "txt": "BIBLIA - RV 1960 NEGRA - ACOLCHADA", "precio": "$154.000"}, {"img": "publicidad14.jpg", "txt": "DEVOCIONAL UNA MUJER CONFORME", "precio": "$33.000"}, {"img": "publicidad9.jpg", "txt": "LA BIBLIA EN ACCION, TYNDALE", "precio": "$155.000"}, {"img": "publicidad11.jpg", "txt": "BIBLIA - RV 1960 NEGRA FLORES ROSADAS", "precio": "$145.000"}, {"img": "publicidad20.jpg", "txt": "VICTORIA SOBRE LA OSCURIDAD", "precio": "$33.000"}, {"img": "publicidad16.jpg", "txt": "EL PODER DE LOS PADRES QUE ORAN", "precio": "$33.000"}, {"img": "publicidad5.jpg", "txt": "BIBLIA NTV MANUAL AZUL", "precio": "$160.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad19.jpg", "txt": "CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad6.jpg", "txt": "BIBLIA RV1960 PRIMAVERA FUCSIA LG 11 PUNTOS", "precio": "$160.000"}, {"img": "publicidad18.jpg", "txt": "EL PODER DE LA MUJER QUE ORA", "precio": "$33.000"}, {"img": "publicidad4.jpg", "txt": "BIBLIA NTV MANUAL BLANCA", "precio": "$160.000"}, {"img": "publicidad8.jpg", "txt": "BIBLIA NTV LETRA GRANDE ROSADA", "precio": "$155.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        let nivelActual = 0;
+        
+        // Iniciamos en un nivel aleatorio de la lista
+        let nivelActual = Math.floor(Math.random() * niveles.length);
+        let nivelesCompletadosEnSesion = 0;
+        
         let wordsPos = {};
         let foundCount = 0;
         let activeCoords = [];
@@ -90,15 +94,16 @@
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
             document.getElementById('ad-modal').style.display = 'none';
-            nivelActual++;
+            nivelActual = (nivelActual + 1) % niveles.length;
+            nivelesCompletadosEnSesion++;
             requestAnimationFrame(() => {
                 setTimeout(cargarNivel, 50);
             });
         });
 
         function cargarNivel() {
-            const data = niveles[nivelActual % niveles.length];
-            document.getElementById('lvl-tag').textContent = `NIVEL ${nivelActual + 1} - ${data.r}`;
+            const data = niveles[nivelActual];
+            document.getElementById('lvl-tag').textContent = `NIVEL ${nivelesCompletadosEnSesion + 1} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
             
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
@@ -117,20 +122,11 @@
             const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            
-            grid.innerHTML = ''; 
-            list.innerHTML = '';
-            foundCount = 0; 
-            wordsPos = {};
+            grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            
-            const direcciones = [
-                [0, 1], [0, -1], [1, 0], [-1, 0], 
-                [1, 1], [1, -1], [-1, 1], [-1, -1]
-            ];
+            const direcciones = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
-            // Algoritmo de posicionamiento aleatorio en tiempo real
             palabras.forEach(palabra => {
                 let puesta = false;
                 let intentos = 0;
@@ -138,7 +134,6 @@
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM);
                     let c = Math.floor(Math.random() * TAM);
-                    
                     let finalR = r + dr * (palabra.length - 1);
                     let finalC = c + dc * (palabra.length - 1);
 
@@ -147,11 +142,8 @@
                         for(let j=0; j<palabra.length; j++) {
                             let charR = r + dr * j;
                             let charC = c + dc * j;
-                            if(matriz[charR][charC] !== '' && matriz[charR][charC] !== palabra[j]) {
-                                ok = false; break;
-                            }
+                            if(matriz[charR][charC] !== '' && matriz[charR][charC] !== palabra[j]) { ok = false; break; }
                         }
-                        
                         if(ok) {
                             wordsPos[palabra] = [];
                             for(let j=0; j<palabra.length; j++) {
@@ -189,8 +181,7 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05); 
-                    check();
+                    playSound(440, 0.05); check();
                 }
             }
         }
@@ -207,8 +198,7 @@
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
-                        playSound(523, 0.15); 
-                        foundCount++;
+                        playSound(523, 0.15); foundCount++;
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarAd, 600);
                     }
                 }
