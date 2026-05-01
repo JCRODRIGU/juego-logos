@@ -7,93 +7,70 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; height: 100vh; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; }
-        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        #verse-container { background: #e8f5e9; padding: 10px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.1rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
-        #grid { display: grid; grid-template-columns: repeat(13, 1fr); width: 98vw; max-width: 450px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; height: 100vh; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            width: 96vw; max-width: 440px; 
+            background: #2e7d32; gap: 1px; margin: 5px auto; 
+            border: 2px solid #2e7d32;
+        }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 120px; overflow-y: auto; background: #f9f9f9; }
-        .word-item { padding: 3px 7px; background: white; border-radius: 10px; font-size: 10px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
+        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
-        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .ad-card { background: white; color: #333; padding: 15px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; border: 4px solid #2e7d32; }
-        .ad-card img { width: 100%; max-height: 160px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
-        .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
+        .card { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; }
     </style>
 </head>
 <body>
     <div id="overlay">
-        <h1 style="margin: 20px;">LIBRERÍA CRISTIANA LOGOS</h1>
-        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
+        <h1>LIBRERÍA CRISTIANA LOGOS</h1>
+        <button class="btn-start" onclick="iniciar()">EMPEZAR RETO</button>
     </div>
 
-    <div id="ad-modal" class="modal-ad">
-        <div class="ad-card">
-            <div style="font-weight: bold; color: #2e7d32; margin-bottom: 10px;">¡NIVEL COMPLETADO!</div>
-            <img id="ad-img" src="">
-            <div id="ad-txt" style="font-weight: bold; margin-bottom: 5px;"></div>
-            <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold;"></div>
+    <div id="modal" class="modal">
+        <div class="card">
+            <h2 style="color:#2e7d32">¡NIVEL COMPLETADO!</h2>
+            <img id="ad-img" src="" style="width:100%; max-height:160px; object-fit:contain;">
+            <p id="ad-txt" style="font-weight:bold;"></p>
+            <h3 id="ad-price" style="color:red;"></h3>
             <p style="font-size: 0.7em;">Calle 35C Sur No 78A-18 Kennedy Central Bogota<br>CEL: 312-5756581</p>
-            <button class="btn-next" onclick="siguienteNivel()">SIGUIENTE NIVEL</button>
+            <button onclick="siguiente()" style="width:100%; padding:15px; background:#2e7d32; color:white; border:none; border-radius:30px; font-weight:bold;">SIGUIENTE</button>
         </div>
     </div>
 
-    <div class="header" id="lvl-tag">CARGANDO...</div>
-    <div id="verse-container"><div id="verse-text"></div></div>
+    <div class="header" id="lvl-tag">NIVEL 1</div>
+    <div id="verse-container" style="background:#e8f5e9; padding:10px; margin:5px; border-radius:10px; min-height:80px; display:flex; align-items:center; justify-content:center;">
+        <div id="verse-text" style="font-weight:bold; color:#1b5e20;"></div>
+    </div>
     <div id="grid"></div>
     <div id="word-list"></div>
 
     <script>
-        const nivelesOriginales = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
-        const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}];
-        let nivelesBarajados = [];
+        const nivelesRaw = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const anuncios = [{"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}];
+        let niveles = [];
         let nivelActual = 0;
         let wordsPos = {};
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
-        let audioCtx;
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function playSound(f, d) {
-            initAudio();
-            if (!audioCtx) return;
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            o.type = 'sine';
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + d);
-        }
-
-        document.getElementById('start-btn').addEventListener('click', () => {
-            nivelesBarajados = shuffle([...nivelesOriginales]);
+        function iniciar() {
+            niveles = nivelesRaw.sort(() => Math.random() - 0.5);
             document.getElementById('overlay').style.display = 'none';
             cargarNivel();
-        });
+        }
 
         function cargarNivel() {
-            const data = nivelesBarajados[nivelActual];
-            document.getElementById('lvl-tag').textContent = `RETO ${nivelActual + 1} de ${nivelesBarajados.length}`;
+            const data = niveles[nivelActual];
+            document.getElementById('lvl-tag').textContent = `RETO ${nivelActual + 1} de ${niveles.length}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
             
             let palabras = data.v.toUpperCase()
@@ -102,38 +79,33 @@
                 .split(' ')
                 .filter(p => p.length >= 3);
             
-            // ELIMINAR DUPLICADOS Y ORDENAR POR LARGO (Crucial para que quepan)
             palabras = [...new Set(palabras)].sort((a,b) => b.length - a.length).slice(0, 15);
             generarTablero(palabras);
         }
 
         function generarTablero(palabras) {
-            const TAM = 13; // Aumentado para dar aire al algoritmo
+            const TAM = 12; // Volvemos a 12x12
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = '';
-            foundCount = 0; wordsPos = {};
+            wordsPos = {}; foundCount = 0;
+            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-
+            // 8 DIRECCIONES COMPLETAS
             const dirs = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]];
 
             palabras.forEach(palabra => {
                 let puesta = false;
-                // 1000 INTENTOS POR PALABRA
-                for(let intento=0; intento<1000 && !puesta; intento++) {
-                    let [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
-                    let r = Math.floor(Math.random() * TAM);
-                    let c = Math.floor(Math.random() * TAM);
+                for(let i=0; i<500 && !puesta; i++) {
+                    let [dr, dc] = dirs[Math.floor(Math.random()*dirs.length)];
+                    let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
                     
                     if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM ||
                         c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
 
                     let ok = true;
                     for(let j=0; j<palabra.length; j++) {
-                        let charExistente = matriz[r+dr*j][c+dc*j];
-                        if(charExistente !== '' && charExistente !== palabra[j]) {
-                            ok = false; break;
-                        }
+                        if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) { ok=false; break; }
                     }
 
                     if(ok) {
@@ -147,7 +119,6 @@
                 }
             });
 
-            // DIBUJAR
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div');
@@ -158,7 +129,6 @@
                 }
             }
             
-            // LISTA DE PALABRAS (Solo las que el algoritmo logró meter)
             palabras.forEach(w => {
                 if (wordsPos[w]) {
                     const s = document.createElement('span'); s.className = 'word-item';
@@ -170,50 +140,47 @@
         function handleTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
-            if(el && el.dataset.pos) {
-                const pos = el.dataset.pos;
-                if(!activeCoords.includes(pos)) {
-                    activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05);
+            if(el && el.dataset.pos && isSelecting) {
+                if(!activeCoords.includes(el.dataset.pos)) {
+                    activeCoords.push(el.dataset.pos); el.classList.add('sel');
                     check();
                 }
             }
         }
 
         document.getElementById('grid').addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleTouch(e); });
-        document.getElementById('grid').addEventListener('touchmove', (e) => { if(isSelecting) e.preventDefault(); handleTouch(e); }, {passive: false});
+        document.getElementById('grid').addEventListener('touchmove', (e) => { e.preventDefault(); handleTouch(e); }, {passive: false});
         window.addEventListener('touchend', () => { document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); isSelecting = false; });
 
         function check() {
-            for(let word in wordsPos) {
-                if(wordsPos[word].every(p => {
+            for(let w in wordsPos) {
+                if(wordsPos[w].every(p => {
                     const cell = document.querySelector(`[data-pos="${p}"]`);
                     return cell && (cell.classList.contains('sel') || cell.classList.contains('found'));
                 })) {
-                    const itm = document.getElementById('w-'+word);
+                    const itm = document.getElementById('w-'+w);
                     if(itm && !itm.classList.contains('word-found')) {
-                        wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                        wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
-                        playSound(523, 0.15);
                         foundCount++;
-                        if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarResultado, 600);
+                        if(foundCount === Object.keys(wordsPos).length) setTimeout(ganar, 500);
                     }
                 }
             }
         }
 
-        function mostrarResultado() {
-            const ad = anuncios[Math.floor(Math.random() * anuncios.length)];
-            document.getElementById('ad-img').src = ad.img;
-            document.getElementById('ad-txt').textContent = ad.txt;
-            document.getElementById('ad-price').textContent = ad.precio;
-            document.getElementById('ad-modal').style.display = 'flex';
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        function ganar() {
+            const a = anuncios[Math.floor(Math.random()*anuncios.length)];
+            document.getElementById('ad-img').src = a.img;
+            document.getElementById('ad-txt').textContent = a.txt;
+            document.getElementById('ad-price').textContent = a.precio;
+            document.getElementById('modal').style.display = 'flex';
+            confetti();
         }
 
-        function siguienteNivel() {
-            document.getElementById('ad-modal').style.display = 'none';
-            nivelActual = (nivelActual + 1) % nivelesBarajados.length;
+        function siguiente() {
+            document.getElementById('modal').style.display = 'none';
+            nivelActual = (nivelActual + 1) % niveles.length;
             cargarNivel();
         }
     </script>
