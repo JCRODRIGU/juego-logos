@@ -23,7 +23,7 @@
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; }
-        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .card { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; }
     </style>
@@ -40,7 +40,6 @@
             <img id="ad-img" src="" style="width:100%; max-height:160px; object-fit:contain;">
             <p id="ad-txt" style="font-weight:bold;"></p>
             <h3 id="ad-price" style="color:red;"></h3>
-            <p style="font-size: 0.7em;">Calle 35C Sur No 78A-18 Kennedy Central Bogota<br>CEL: 312-5756581</p>
             <button onclick="siguiente()" style="width:100%; padding:15px; background:#2e7d32; color:white; border:none; border-radius:30px; font-weight:bold;">SIGUIENTE</button>
         </div>
     </div>
@@ -61,8 +60,35 @@
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
+        
+        // --- SISTEMA DE AUDIO ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(freq, duration, type = 'sine') {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
 
         function iniciar() {
+            initAudio(); // Activa el audio al primer toque
             niveles = nivelesRaw.sort(() => Math.random() - 0.5);
             document.getElementById('overlay').style.display = 'none';
             cargarNivel();
@@ -84,14 +110,13 @@
         }
 
         function generarTablero(palabras) {
-            const TAM = 12; // Volvemos a 12x12
+            const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = '';
             wordsPos = {}; foundCount = 0;
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            // 8 DIRECCIONES COMPLETAS
             const dirs = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]];
 
             palabras.forEach(palabra => {
@@ -99,15 +124,11 @@
                 for(let i=0; i<500 && !puesta; i++) {
                     let [dr, dc] = dirs[Math.floor(Math.random()*dirs.length)];
                     let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
-                    
-                    if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM ||
-                        c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
-
+                    if (r + dr*(palabra.length-1) < 0 || r + dr*(palabra.length-1) >= TAM || c + dc*(palabra.length-1) < 0 || c + dc*(palabra.length-1) >= TAM) continue;
                     let ok = true;
                     for(let j=0; j<palabra.length; j++) {
                         if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) { ok=false; break; }
                     }
-
                     if(ok) {
                         wordsPos[palabra] = [];
                         for(let j=0; j<palabra.length; j++) {
@@ -143,6 +164,7 @@
             if(el && el.dataset.pos && isSelecting) {
                 if(!activeCoords.includes(el.dataset.pos)) {
                     activeCoords.push(el.dataset.pos); el.classList.add('sel');
+                    playSound(400, 0.05); // Sonido de selección suave
                     check();
                 }
             }
@@ -162,6 +184,7 @@
                     if(itm && !itm.classList.contains('word-found')) {
                         wordsPos[w].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                         itm.classList.add('word-found');
+                        playSound(600, 0.2, 'triangle'); // Sonido de palabra encontrada
                         foundCount++;
                         if(foundCount === Object.keys(wordsPos).length) setTimeout(ganar, 500);
                     }
@@ -170,6 +193,7 @@
         }
 
         function ganar() {
+            playSound(800, 0.3); // Sonido de victoria
             const a = anuncios[Math.floor(Math.random()*anuncios.length)];
             document.getElementById('ad-img').src = a.img;
             document.getElementById('ad-txt').textContent = a.txt;
