@@ -3,24 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Logos - Corrección Descarte</title>
+    <title>Reto Logos - Letra Grande</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; touch-action: none; user-select: none; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #ffffff; text-align: center; overflow: hidden; height: 100vh; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1b5e20; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 0.9em; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: #bbb; border: 2px solid #1b5e20; margin: 5px auto; width: 95vw; max-width: 440px; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
+        
+        /* CUADRÍCULA AJUSTADA */
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            gap: 2px; 
+            background: #2e7d32; 
+            border: 3px solid #1b5e20; 
+            margin: 5px auto; 
+            width: 98vw; 
+            max-width: 460px; 
+        }
+        
+        /* TAMAÑO DE LETRA AUMENTADO */
+        .cell { 
+            aspect-ratio: 1/1; 
+            background: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 900; 
+            font-size: 20px; /* Letras más grandes */
+            color: #333;
+        }
+        
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #2e7d32; }
-        #word-list { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; padding: 8px; background: #f0f0f0; height: 120px; overflow-y: auto; }
-        .word-item { padding: 3px 7px; border: 1px solid #2e7d32; border-radius: 10px; font-size: 10px; background: white; font-weight: bold; color: #2e7d32; }
+        
+        #word-list { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; padding: 10px; background: #f0f0f0; height: 130px; overflow-y: auto; }
+        .word-item { padding: 4px 8px; border: 1px solid #2e7d32; border-radius: 12px; font-size: 11px; background: white; font-weight: bold; color: #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.6; }
+        
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; align-items:center; justify-content:center; z-index: 10000; }
         .modal-content { background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 360px; border: 5px solid #2e7d32; }
         .btn-main { padding: 15px 40px; border-radius: 30px; border: none; background: #2e7d32; color: white; font-weight: bold; font-size: 1.2em; cursor: pointer; }
-        #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 70px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1em; font-style: italic; }
+        #verse-container { background: #f1f8e9; padding: 10px; margin: 5px 10px; border-radius: 8px; min-height: 75px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1b5e20; border: 2px solid #c8e6c9; font-size: 1.1em; font-style: italic; }
     </style>
 </head>
 <body>
@@ -28,7 +53,7 @@
 <div id="overlay">
     <h1 style="margin:0; font-size: 1.8em;">LIBRERÍA CRISTIANA LOGOS</h1>
     <h2 style="font-size: 1.2em; color: #a5d6a7;">RETO BÍBLICO</h2>
-    <p style="margin-bottom: 20px; padding: 0 20px;">Palabras en todas las direcciones</p>
+    <p style="margin-bottom: 20px; padding: 0 20px;">Busca las palabras en la cuadrícula</p>
     <button class="btn-main" onclick="iniciarJuego()">¡EMPEZAR!</button>
 </div>
 
@@ -60,21 +85,28 @@
     let palabrasEnTablero = [];
     let encontradas = 0;
     let seleccionadas = [];
-    let audioCtx;
+    let audioCtx = null;
 
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) { console.log("Audio Error"); }
     }
 
     function playSound(freq, duration) {
+        initAudio();
         if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
     }
 
     function iniciarJuego() {
@@ -90,7 +122,6 @@
         const data = niveles[idReal];
         encontradas = 0;
         seleccionadas = [];
-        
         document.getElementById('lvl-info').textContent = "RETO " + (indiceActual + 1) + " - " + data.r;
         document.getElementById('verse-container').textContent = '"' + data.v + '"';
         
@@ -101,13 +132,11 @@
             .filter(w => w.length >= 3);
             
         lista = [...new Set(lista)];
-        
         let auxRelleno = [...rellenoLogos].sort(() => Math.random() - 0.5);
         for(let r of auxRelleno) {
             if(lista.length >= 15) break;
             if(!lista.includes(r)) lista.push(r);
         }
-        
         generarTablero(lista.slice(0, 15));
     }
 
@@ -116,7 +145,6 @@
         let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
         palabrasEnTablero = [];
         lista.sort((a,b) => b.length - a.length);
-
         const direcciones = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
         lista.forEach(palabra => {
@@ -129,7 +157,6 @@
                 let c = Math.floor(Math.random() * TAM);
                 let finalR = r + dr * (palabra.length - 1);
                 let finalC = c + dc * (palabra.length - 1);
-                
                 if (finalR >= 0 && finalR < TAM && finalC >= 0 && finalC < TAM) {
                     let ok = true;
                     for(let i=0; i<palabra.length; i++) {
@@ -198,26 +225,16 @@
     }
 
     function validarSeleccion() {
-        // MEJORA: Validación robusta para descarte inmediato
+        const selStr = seleccionadas.join(",");
         palabrasEnTablero.forEach(p => {
-            const selStr = seleccionadas.join(",");
             const coordsStr = p.coords.join(",");
             const revStr = [...p.coords].reverse().join(",");
-
             if(!p.ok && (selStr === coordsStr || selStr === revStr)) {
                 p.ok = true;
                 encontradas++;
                 playSound(300, 0.2);
-                
-                // Efecto visual de descarte
-                const wordEl = document.getElementById('word-' + p.w);
-                if(wordEl) wordEl.classList.add('word-found');
-                
-                p.coords.forEach(c => {
-                    const cell = document.querySelector(`[data-pos="${c}"]`);
-                    if(cell) cell.classList.add('found');
-                });
-                
+                document.getElementById('word-' + p.w).classList.add('word-found');
+                p.coords.forEach(c => document.querySelector(`[data-pos="${c}"]`).classList.add('found'));
                 if(encontradas === palabrasEnTablero.length) setTimeout(mostrarPremio, 600);
             }
         });
@@ -230,7 +247,6 @@
         document.getElementById('ad-txt').textContent = ad.txt;
         document.getElementById('ad-price').textContent = ad.precio;
         document.getElementById('ad-modal').style.display = 'flex';
-        
         if(indiceActual === 19) {
             confetti();
             document.getElementById('msg-final').style.display = 'block';
