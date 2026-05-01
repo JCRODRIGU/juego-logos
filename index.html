@@ -16,7 +16,6 @@
         
         #verse-container { background: #e8f5e9; padding: 20px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 110px; display: flex; align-items: center; justify-content: center; }
         
-        /* FUENTE DEL VERSÍCULO MAXIMIZADA */
         #verse-text { font-size: 1.5rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
@@ -107,7 +106,7 @@
             
             let idx = 0;
             while(palabras.length < 15) {
-                let r = rellenoLogos[idx % rellenoLogos.length];
+                let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
                 idx++;
             }
@@ -125,28 +124,46 @@
             wordsPos = {};
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
+            
+            const direcciones = [
+                [0, 1], [0, -1], [1, 0], [-1, 0], 
+                [1, 1], [1, -1], [-1, 1], [-1, -1]
+            ];
 
+            // Algoritmo de posicionamiento aleatorio en tiempo real
             palabras.forEach(palabra => {
                 let puesta = false;
-                for(let i=0; i<150 && !puesta; i++) {
-                    let dir = Math.floor(Math.random() * 3);
-                    let dr = dir === 0 ? 0 : 1;
-                    let dc = dir === 1 ? 0 : 1;
-                    let r = Math.floor(Math.random() * (TAM - (dr * palabra.length)));
-                    let c = Math.floor(Math.random() * (TAM - (dc * palabra.length)));
+                let intentos = 0;
+                while(!puesta && intentos < 100) {
+                    let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
+                    let r = Math.floor(Math.random() * TAM);
+                    let c = Math.floor(Math.random() * TAM);
                     
-                    let ok = true;
-                    for(let j=0; j<palabra.length; j++) 
-                        if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
-                    
-                    if(ok) {
-                        wordsPos[palabra] = [];
+                    let finalR = r + dr * (palabra.length - 1);
+                    let finalC = c + dc * (palabra.length - 1);
+
+                    if (finalR >= 0 && finalR < TAM && finalC >= 0 && finalC < TAM) {
+                        let ok = true;
                         for(let j=0; j<palabra.length; j++) {
-                            matriz[r+dr*j][c+dc*j] = palabra[j];
-                            wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`);
+                            let charR = r + dr * j;
+                            let charC = c + dc * j;
+                            if(matriz[charR][charC] !== '' && matriz[charR][charC] !== palabra[j]) {
+                                ok = false; break;
+                            }
                         }
-                        puesta = true;
+                        
+                        if(ok) {
+                            wordsPos[palabra] = [];
+                            for(let j=0; j<palabra.length; j++) {
+                                let charR = r + dr * j;
+                                let charC = c + dc * j;
+                                matriz[charR][charC] = palabra[j];
+                                wordsPos[palabra].push(`${charR}-${charC}`);
+                            }
+                            puesta = true;
+                        }
                     }
+                    intentos++;
                 }
             });
 
