@@ -7,48 +7,83 @@
     <title>Sopa de Letras - Librería Logos</title>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; color: white; padding: 20px; }
-        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        #asistente { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff176; color: #333; padding: 10px; font-size: 0.9em; z-index: 2500; display: none; border-top: 3px solid #fbc02d; font-weight: 800; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
+        
+        /* Pantalla de Inicio */
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        /* Anuncio flotante */
+        #asistente { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            background: #fff176; color: #333; padding: 15px; border-radius: 12px; 
+            font-size: 0.95em; z-index: 1500; display: none; width: 85%; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #fbc02d; font-weight: bold;
+        }
+
+        /* Encabezado y Versículo */
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.15rem; color: #1b5e20; font-weight: 800; line-height: 1.3; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 3px solid #2e7d32; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 19px; text-transform: uppercase; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+
+        /* El Tablero */
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 15px; flex-grow: 1; overflow-y: auto; background: #f9f9f9; }
-        .word-item { padding: 6px 12px; background: white; border-radius: 20px; font-size: 13px; font-weight: bold; color: #2e7d32; border: 1.5px solid #2e7d32; }
+
+        /* Lista de palabras */
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
+        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
+
+        /* Modal de éxito */
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .ad-card { background: white; padding: 30px; border-radius: 20px; width: 85%; text-align: center; border: 4px solid #2e7d32; }
+        .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
+        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
+        
+        .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <div id="overlay">
-        <h1>Librería Logos</h1>
-        <button class="btn-start" id="start-btn">JUGAR</button>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            WhatsApp: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+        </div>
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
-    <div id="asistente"></div>
+
+    <div id="asistente">
+        📢 ¡ATENCIÓN! <br>
+        Todos los Lunes de Mayo tenemos <br>
+        <span style="font-size: 1.1em; color: #d32f2f;">10% DCTO en Biblias Reina Valera</span>
+    </div>
+
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <h2 style="color: #2e7d32;">¡EXCELENTE!</h2>
-            <p id="progreso-text"></p>
-            <button class="btn-start" id="btn-next-lvl" style="background:#2e7d32; color:white;">SIGUIENTE</button>
+            <div style="font-size: 50px;">🏆</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
+            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
-    <div class="header" id="lvl-tag">...</div>
+
+    <div class="header" id="lvl-tag">NIVEL 1</div>
     <div id="verse-container"><div id="verse-text"></div></div>
     <div id="grid"></div>
     <div id="word-list"></div>
 
     <script>
-        const niveles = [{"id": 0, "v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"id": 1, "v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"id": 2, "v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"id": 3, "v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"id": 4, "v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"id": 5, "v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"id": 6, "v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"id": 7, "v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"id": 8, "v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"id": 9, "v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"id": 10, "v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"id": 11, "v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"id": 12, "v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"id": 13, "v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"id": 14, "v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"id": 15, "v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"id": 16, "v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"id": 17, "v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"id": 18, "v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"id": 19, "v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const promosLogos = ["\ud83d\udce2 Lunes de Mayo: 10% DCTO en Biblias Reina Valera", "\ud83d\udcd6 \u00a1Nuevos Devocionales disponibles! Vis\u00edtanos hoy.", "\ud83c\udf81 Regala bendici\u00f3n: Bonos de regalo disponibles en caja.", "\u2615 Ven por tu caf\u00e9 mientras eliges tu pr\u00f3xima lectura.", "\u2728 Descuentos especiales para grupos y congregaciones.", "\ud83d\udce2 \u00a1Sigue nuestra p\u00e1gina para ver las novedades!", "\ud83d\udcd6 Biblia de Estudio Thompson: \u00a1Disponible ahora!", "\ud83c\udf81 Pregunta por nuestros empaques de regalo gratis.", "\ud83d\udce2 Separadores con vers\u00edculos: Colecci\u00f3nalos todos.", "\u2728 Librer\u00eda Logos: Un lugar para encontrarte con Dios.", "\ud83d\udcd6 Tenemos Biblias para ni\u00f1os con ilustraciones hermosas.", "\u2615 Disfruta de un ambiente de paz en nuestra tienda.", "\ud83c\udf81 \u00bfBuscas un regalo? Los libros son la mejor opci\u00f3n.", "\ud83d\udce2 Horario de atenci\u00f3n: Lunes a S\u00e1bado de 9am a 7pm.", "\u2728 Ubicados en Kennedy Central - \u00a1Te esperamos!", "\ud83d\udcd6 Biblias en letra grande para una mejor lectura.", "\ud83c\udf81 Kits de regalo para bautizos y matrimonios.", "\ud83d\udce2 Pregunta por nuestro cat\u00e1logo digital por WhatsApp.", "\u2728 Descuentos por volumen para iglesias locales.", "\ud83d\udcd6 \u00a1La Palabra de Dios es luz para tu camino!"];
         
-        let nivelActual = null;
+        let nivelActualIdx = 0;
         let wordsPos = {};
         let foundCount = 0;
         let isSelecting = false;
@@ -56,80 +91,101 @@
         let currentSelection = [];
         let audioCtx;
 
-        function getResueltos() {
-            return JSON.parse(localStorage.getItem('logos_resueltos') || '[]');
+        function getCompletados() {
+            const data = localStorage.getItem('logos_progreso_vFinal');
+            return data ? JSON.parse(data) : [];
         }
 
-        function guardarResuelto(id) {
-            let resueltos = getResueltos();
-            if (!resueltos.includes(id)) resueltos.push(id);
-            localStorage.setItem('logos_resueltos', JSON.stringify(resueltos));
+        function guardarProgreso(idx) {
+            let lista = getCompletados();
+            if(!lista.includes(idx)) lista.push(idx);
+            localStorage.setItem('logos_progreso_vFinal', JSON.stringify(lista));
+        }
+
+        function seleccionarNivel() {
+            const hechos = getCompletados();
+            if(hechos.length >= niveles.length) {
+                localStorage.setItem('logos_progreso_vFinal', JSON.stringify([]));
+                return 0;
+            }
+            for(let i=0; i<niveles.length; i++) {
+                if(!hechos.includes(i)) return i;
+            }
+            return 0;
+        }
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(f, d) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            initAudio(); 
+            if (!audioCtx || audioCtx.state !== 'running') return;
             const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = 'sine';
             o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
             o.connect(g); g.connect(audioCtx.destination);
             o.start(); o.stop(audioCtx.currentTime + d);
         }
 
         function cargarNivel() {
-            let resueltos = getResueltos();
-            let disponibles = niveles.filter(n => !resueltos.includes(n.id));
+            nivelActualIdx = seleccionarNivel();
+            const data = niveles[nivelActualIdx];
+            const totalCompletados = getCompletados().length + 1;
+            document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
+            document.getElementById('verse-text').textContent = `"${data.v}"`;
             
-            if (disponibles.length === 0) {
-                localStorage.setItem('logos_resueltos', '[]');
-                disponibles = niveles;
+            let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
+            palabras = [...new Set(palabras)];
+            
+            while(palabras.length < 15) {
+                let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
+                if(!palabras.includes(r)) palabras.push(r);
             }
-
-            nivelActual = disponibles[Math.floor(Math.random() * disponibles.length)];
-            document.getElementById('lvl-tag').textContent = nivelActual.r;
-            document.getElementById('verse-text').textContent = nivelActual.v;
-            
-            let palabras = nivelActual.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
-            generarTablero([...new Set(palabras)].slice(0, 10));
-            
-            const asis = document.getElementById('asistente');
-            asis.innerHTML = promosLogos[Math.floor(Math.random() * promosLogos.length)];
-            asis.style.display = 'block';
-            setTimeout(() => asis.style.display = 'none', 6000);
+            generarTablero(palabras.slice(0, 15));
         }
 
         function generarTablero(palabras) {
             const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            grid.innerHTML = ''; list.innerHTML = ''; wordsPos = {}; foundCount = 0;
+            grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
+            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            const dirs = [[0,1],[1,0],[1,1],[0,-1],[-1,0],[-1,-1],[1,-1],[-1,1]];
-
-            palabras.forEach(p => {
-                let puesta = false;
-                for(let i=0; i<100; i++) {
-                    let [dr, dc] = dirs[Math.floor(Math.random()*dirs.length)];
-                    let r = Math.floor(Math.random()*TAM), c = Math.floor(Math.random()*TAM);
-                    if(r+dr*(p.length-1) < TAM && r+dr*(p.length-1) >= 0 && c+dc*(p.length-1) < TAM && c+dc*(p.length-1) >= 0) {
+            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1, -1], [-1, 1], [-1, -1]];
+            
+            palabras.forEach(palabra => {
+                let puesta = false, intentos = 0;
+                while(!puesta && intentos < 50) {
+                    let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
+                    let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
+                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && 
+                        c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
                         let ok = true;
-                        for(let j=0; j<p.length; j++) if(matriz[r+dr*j][c+dc*j] !== '') ok = false;
+                        for(let j=0; j<palabra.length; j++) 
+                            if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
+                        
                         if(ok) {
-                            wordsPos[p] = [];
-                            for(let j=0; j<p.length; j++) {
-                                matriz[r+dr*j][c+dc*j] = p[j];
-                                wordsPos[p].push(`${r+dr*j}-${c+dc*j}`);
+                            wordsPos[palabra] = [];
+                            for(let j=0; j<palabra.length; j++) {
+                                matriz[r+dr*j][c+dc*j] = palabra[j];
+                                wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`);
                             }
-                            const s = document.createElement('span'); s.className='word-item';
-                            s.id='w-'+p; s.textContent=p; list.appendChild(s);
-                            puesta = true; break;
+                            puesta = true;
+                            const s = document.createElement('span'); s.className = 'word-item';
+                            s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
                         }
                     }
+                    intentos++;
                 }
             });
+
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
-                    const d = document.createElement('div'); d.className='cell';
+                    const d = document.createElement('div'); d.className = 'cell';
                     d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
                     d.dataset.r = r; d.dataset.c = c; grid.appendChild(d);
                 }
@@ -142,67 +198,90 @@
             return el && el.classList.contains('cell') ? el : null;
         }
 
-        const gridEl = document.getElementById('grid');
-        gridEl.addEventListener('touchstart', (e) => {
-            isSelecting = true; startCell = getCell(e);
-            if(startCell) {
-                playSound(400, 0.05);
-                startCell.classList.add('sel');
-                currentSelection = [`${startCell.dataset.r}-${startCell.dataset.c}`];
-            }
-        }, {passive:false});
-
-        gridEl.addEventListener('touchmove', (e) => {
-            if(!isSelecting) return;
-            e.preventDefault();
-            const end = getCell(e);
-            if(!startCell || !end) return;
+        function actualizarSeleccion(endCell) {
+            if(!startCell || !endCell) return;
             const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
-            const r2 = parseInt(end.dataset.r), c2 = parseInt(end.dataset.c);
+            const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
+            
             let dr = r2 - r1, dc = c2 - c1;
-            let steps = Math.max(Math.abs(dr), Math.abs(dc));
-            if(steps === 0) return;
-            let sR = dr / steps, sC = dc / steps;
+            if (dr === 0 && dc === 0) return;
+
+            let absR = Math.abs(dr), absC = Math.abs(dc);
+            let stepR = 0, stepC = 0, steps = 0;
+
+            // Lógica de validación de línea recta (Imán para comodidad)
+            if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
+            else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
+            else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
+
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
             currentSelection = [];
-            for(let i=0; i<=steps; i++) {
-                let cr = Math.round(r1 + i * sR), cc = Math.round(c1 + i * sC);
-                let cell = document.querySelector(`[data-r="${cr}"][data-c="${cc}"]`);
-                if(cell) { cell.classList.add('sel'); currentSelection.push(`${cr}-${cc}`); }
+            
+            for(let i = 0; i <= steps; i++) {
+                let cr = r1 + i * stepR, cc = c1 + i * stepC;
+                const cell = document.querySelector(`[data-r="${Math.round(cr)}"][data-c="${Math.round(cc)}"]`);
+                if(cell) {
+                    cell.classList.add('sel');
+                    currentSelection.push(`${Math.round(cr)}-${Math.round(cc)}`);
+                }
             }
-        }, {passive:false});
+        }
+
+        const gridElement = document.getElementById('grid');
+        gridElement.addEventListener('touchstart', (e) => {
+            isSelecting = true;
+            startCell = getCell(e);
+            if(startCell) {
+                playSound(440, 0.05);
+            }
+        });
+
+        gridElement.addEventListener('touchmove', (e) => {
+            if(isSelecting) actualizarSeleccion(getCell(e));
+        });
 
         window.addEventListener('touchend', () => {
             if(!isSelecting) return;
             isSelecting = false;
+            
             const selStr = currentSelection.join(',');
-            for(let p in wordsPos) {
-                if(selStr === wordsPos[p].join(',') || selStr === [...wordsPos[p]].reverse().join(',')) {
-                    const item = document.getElementById('w-'+p);
-                    if(!item.classList.contains('word-found')) {
-                        currentSelection.forEach(pos => {
-                            let [r, c] = pos.split('-');
-                            document.querySelector(`[data-r="${r}"][data-c="${c}"]`).classList.add('found');
-                        });
-                        item.classList.add('word-found');
-                        playSound(550, 0.15); foundCount++;
-                        if(foundCount === Object.keys(wordsPos).length) {
-                            guardarResuelto(nivelActual.id);
-                            document.getElementById('progreso-text').textContent = `Llevas ${getResueltos().length} de 20 completados`;
-                            document.getElementById('ad-modal').style.display='flex';
-                            playSound(700, 0.4);
-                        }
+            for(let pal in wordsPos) {
+                const target = wordsPos[pal].join(',');
+                const targetRev = [...wordsPos[pal]].reverse().join(',');
+                
+                if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
+                    currentSelection.forEach(pos => {
+                        const [r, c] = pos.split('-');
+                        document.querySelector(`[data-r="${r}"][data-c="${c}"]`).classList.add('found');
+                    });
+                    document.getElementById('w-'+pal).classList.add('word-found');
+                    playSound(523, 0.15); foundCount++;
+                    if(foundCount === Object.keys(wordsPos).length) {
+                        guardarProgreso(nivelActualIdx);
+                        setTimeout(() => {
+                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
+                            document.getElementById('ad-modal').style.display = 'flex';
+                            playSound(659, 0.3);
+                        }, 600);
                     }
                 }
             }
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+            currentSelection = [];
         });
 
         document.getElementById('start-btn').addEventListener('click', () => {
-            document.getElementById('overlay').style.display='none'; cargarNivel();
+            initAudio();
+            document.getElementById('overlay').style.display = 'none';
+            cargarNivel();
+            const asis = document.getElementById('asistente');
+            asis.style.display = 'block';
+            setTimeout(() => { asis.style.display = 'none'; }, 6000);
         });
+
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
-            document.getElementById('ad-modal').style.display='none'; cargarNivel();
+            document.getElementById('ad-modal').style.display = 'none';
+            cargarNivel();
         });
     </script>
 </body>
