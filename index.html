@@ -12,7 +12,7 @@
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* ESTILO EMERGENTE DESDE ABAJO (TOAST) */
+        /* ESTILO EMERGENTE DESDE ABAJO */
         #asistente { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
             background: rgba(46, 125, 50, 0.95); color: white; padding: 15px 20px; 
@@ -27,8 +27,8 @@
         }
 
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; touch-action: none; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
@@ -42,24 +42,32 @@
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
+        
+        .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE INICIO ORIGINAL -->
+    <!-- PANTALLA DE INICIO RESTAURADA EXACTAMENTE -->
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Regalo de Librería Logos</div>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+        </div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
-    <!-- MENSAJE EMERGENTE INFERIOR -->
+    <!-- MENSAJE DE PUBLICIDAD DESDE ABAJO -->
     <div id="asistente"></div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
             <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
-            <p id="stats-text"></p>
+            <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
             <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
@@ -72,7 +80,7 @@
     <script>
         const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras > $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Promesas disponibles.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide tu cat\u00e1logo al 312-5756581.", "\u2728 <b>VIS\u00cdTANOS:</b> Kennedy Central Calle 35C Sur.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito contigo hoy!"];
+        const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Promesas ya disponibles.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide nuestro cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
         
         let nivelActualIdx = 0;
         let wordsPos = {};
@@ -136,7 +144,7 @@
             nivelActualIdx = seleccionarNivel();
             cargarNivel();
             
-            // MOSTRAR PUBLICIDAD EMERGENTE DESDE ABAJO POR 4 SEGUNDOS
+            // LÓGICA DE PUBLICIDAD TOAST (4 SEGUNDOS)
             const asis = document.getElementById('asistente');
             const promo = promos[Math.floor(Math.random() * promos.length)];
             asis.innerHTML = promo;
