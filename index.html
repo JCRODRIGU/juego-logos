@@ -93,18 +93,14 @@
         let foundCount = 0;
         let isSelecting = false;
         let startCell = null;
+        let lastCellAdded = null;
         let currentSelection = [];
         let audioCtx;
         let nombreUsuario = "";
 
-        // DESBLOQUEO DE AUDIO (IGUAL AL ORIGINAL PERO MÁS ROBUSTO)
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(f, d) {
@@ -230,14 +226,24 @@
             const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
             const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
             let dr = r2 - r1, dc = c2 - c1;
-            if (dr === 0 && dc === 0) return;
+            
             let absR = Math.abs(dr), absC = Math.abs(dc);
             let stepR = 0, stepC = 0, steps = 0;
-            if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
+
+            if (dr === 0 && dc === 0) { steps = 0; }
+            else if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
             else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
             else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
+
+            // Sonido si la celda final ha cambiado
+            if (endCell !== lastCellAdded) {
+                playSound(440, 0.03);
+                lastCellAdded = endCell;
+            }
+
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
             currentSelection = [];
+            
             for(let i = 0; i <= steps; i++) {
                 let cr = r1 + i * stepR, cc = c1 + i * stepC;
                 const cell = document.querySelector(`[data-r="${Math.round(cr)}"][data-c="${Math.round(cc)}"]`);
@@ -252,6 +258,7 @@
         gridElement.addEventListener('touchstart', (e) => {
             isSelecting = true;
             startCell = getCell(e);
+            lastCellAdded = startCell;
             if(startCell) playSound(440, 0.05);
         });
 
@@ -262,6 +269,8 @@
         window.addEventListener('touchend', () => {
             if(!isSelecting) return;
             isSelecting = false;
+            lastCellAdded = null;
+            
             const selStr = currentSelection.join(',');
             for(let pal in wordsPos) {
                 const target = wordsPos[pal].join(',');
@@ -289,7 +298,7 @@
         });
 
         document.getElementById('start-btn').addEventListener('click', () => {
-            initAudio(); // Activa audio en clic
+            initAudio();
             const inputField = document.getElementById('user-name-field');
             if (document.getElementById('nombre-input-container').style.display === 'block') {
                 if (inputField.value.trim() === "") {
