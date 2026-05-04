@@ -48,7 +48,7 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div id="main-welcome" style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
         <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
         <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
@@ -67,7 +67,7 @@
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
-            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <div id="congrats-title" style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
             <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
             <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
@@ -90,6 +90,18 @@
         let startCell = null;
         let currentSelection = [];
         let audioCtx;
+        let nombreUsuario = "";
+
+        // CAPTURA EL NOMBRE DE LA URL SIN CAMBIAR NADA MÁS
+        function capturarNombre() {
+            const params = new URLSearchParams(window.location.search);
+            const nombre = params.get('nombre');
+            if (nombre) {
+                nombreUsuario = nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+                document.getElementById('main-welcome').innerHTML = `¡Hola, ${nombreUsuario}! <br> Este es un regalo especial para ti`;
+                document.getElementById('congrats-title').innerHTML = `¡MUY BIEN, ${nombreUsuario.toUpperCase()}!`;
+            }
+        }
 
         function getCompletados() {
             const data = localStorage.getItem('logos_progreso_vFinal');
@@ -209,7 +221,6 @@
             let absR = Math.abs(dr), absC = Math.abs(dc);
             let stepR = 0, stepC = 0, steps = 0;
 
-            // Lógica de validación de línea recta (Imán para comodidad)
             if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
             else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
             else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
@@ -259,7 +270,8 @@
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
                         setTimeout(() => {
-                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
+                            let msg = nombreUsuario ? `¡Excelente, ${nombreUsuario}!` : "¡Buen trabajo!";
+                            document.getElementById('stats-text').innerHTML = `${msg}<br>Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
                             document.getElementById('ad-modal').style.display = 'flex';
                             playSound(659, 0.3);
                         }, 600);
@@ -283,6 +295,9 @@
             document.getElementById('ad-modal').style.display = 'none';
             cargarNivel();
         });
+
+        // Se ejecuta al cargar la página
+        capturarNombre();
     </script>
 </body>
 </html>
