@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa de Letras - Librería Logos</title>
     <style>
-        * { touch-action: auto; user-select: none; box-sizing: border-box; }
+        * { touch-action: none; user-select: none; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
@@ -22,8 +22,8 @@
 
         #penalty-msg { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #d32f2f; color: white; padding: 10px 20px; border-radius: 10px;
-            font-weight: bold; z-index: 500; display: none; white-space: nowrap;
+            background: #d32f2f; color: white; padding: 15px 25px; border-radius: 12px;
+            font-weight: bold; z-index: 500; display: none; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
         @keyframes slideUp {
@@ -33,13 +33,13 @@
 
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
         #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+        #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
         #grid-wrapper { position: relative; width: 96vw; max-width: 440px; margin: 0 auto; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); background: #ccc; gap: 1px; border: 2px solid #2e7d32; touch-action: none; transition: opacity 0.3s; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
-        .sel { background: #fff176 !important; }
-        .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); background: #bbb; gap: 1px; border: 3px solid #2e7d32; touch-action: none; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; transition: background 0.1s; }
+        .sel { background: #fff176 !important; transform: scale(0.95); }
+        .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #81c784; }
 
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
@@ -54,32 +54,27 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
-        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
-        <div style="font-size: 1em; margin-top: 8px;">
-            Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
-        </div>
-        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Librería Cristiana Logos</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Encuentra las palabras del versículo para ganar.</div>
+        <button class="btn-start" id="start-btn">JUGAR AHORA</button>
     </div>
 
     <div id="asistente"></div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-size: 50px;">🏆</div>
-            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <div style="font-size: 50px;">🌟</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡EXCELENTE!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
+            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
         </div>
     </div>
 
-    <div class="header" id="lvl-tag">NIVEL 1</div>
+    <div class="header" id="lvl-tag">CARGANDO...</div>
     <div id="verse-container"><div id="verse-text"></div></div>
     
     <div id="grid-wrapper">
-        <div id="penalty-msg">¡ANALIZA MEJOR! (3s)</div>
+        <div id="penalty-msg">¡MIRA CON CUIDADO! (3s)</div>
         <div id="grid"></div>
     </div>
 
@@ -91,7 +86,7 @@
         const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Promesas ya disponibles.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide tu cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
         
         let nivelActualIdx = 0;
-        let wordsPos = {};
+        let wordsPosMap = {}; // Mapea palabra -> lista de IDs de celdas
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
@@ -133,7 +128,7 @@
             if (!audioCtx || audioCtx.state !== 'running') return;
             const o = audioCtx.createOscillator(), g = audioCtx.createGain();
             o.type = 'sine'; o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.05, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
             o.connect(g); g.connect(audioCtx.destination);
             o.start(); o.stop(audioCtx.currentTime + d);
@@ -156,17 +151,17 @@
             isLocked = false;
             nivelActualIdx = seleccionarNivel();
             cargarNivel();
-            
+            mostrarPromo();
+        }
+
+        function mostrarPromo() {
             const asis = document.getElementById('asistente');
-            const promo = promos[Math.floor(Math.random() * promos.length)];
-            asis.innerHTML = promo;
-            asis.style.display = 'block';
-            asis.style.opacity = '1';
-            
+            asis.innerHTML = promos[Math.floor(Math.random() * promos.length)];
+            asis.style.display = 'block'; asis.style.opacity = '1';
             setTimeout(() => { 
                 asis.style.opacity = '0';
                 setTimeout(() => { asis.style.display = 'none'; }, 500);
-            }, 4000); 
+            }, 4000);
         }
 
         function cargarNivel() {
@@ -174,8 +169,14 @@
             const totalCompletados = getCompletados().length + 1;
             document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
+            
+            let palabras = data.v.toUpperCase().split(' ')
+                           .map(p => p.replace(/[^A-Z]/g, ''))
+                           .filter(p => p.length >= 3);
+            
             palabras = [...new Set(palabras)];
+            
+            // Completar hasta 15 palabras para el listado inferior
             while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
@@ -187,117 +188,150 @@
             const TAM = 12;
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
-            grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
+            grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPosMap = {};
             grid.style.opacity = '1';
-            document.getElementById('penalty-msg').style.display = 'none';
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1,-1], [-1,1], [-1,-1]];
+            const direcciones = [[0,1],[1,0],[1,1],[0,-1],[-1,0],[1,-1],[-1,1],[-1,-1]];
+
             palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
-                while(!puesta && intentos < 50) {
+                while(!puesta && intentos < 100) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
+                    
+                    if (r + dr*(palabra.length-1) < TAM && r + dr*(palabra.length-1) >= 0 && 
+                        c + dc*(palabra.length-1) < TAM && c + dc*(palabra.length-1) >= 0) {
+                        
                         let ok = true;
-                        for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
+                        for(let j=0; j<palabra.length; j++) {
+                            let charExistente = matriz[r+dr*j][c+dc*j];
+                            if(charExistente !== '' && charExistente !== palabra[j]) ok = false;
+                        }
+                        
                         if(ok) {
-                            wordsPos[palabra] = [];
-                            for(let j=0; j<palabra.length; j++) { matriz[r+dr*j][c+dc*j] = palabra[j]; wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`); }
+                            wordsPosMap[palabra] = [];
+                            for(let j=0; j<palabra.length; j++) {
+                                matriz[r+dr*j][c+dc*j] = palabra[j];
+                                wordsPosMap[palabra].push(`${r+dr*j}-${c+dc*j}`);
+                            }
                             puesta = true;
-                            const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
+                            const s = document.createElement('span'); s.className = 'word-item'; 
+                            s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
                         }
                     }
                     intentos++;
                 }
             });
+
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div'); d.className = 'cell';
                     d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
-                    d.dataset.pos = `${r}-${c}`; grid.appendChild(d);
+                    d.id = `c-${r}-${c}`;
+                    grid.appendChild(d);
                 }
             }
         }
 
-        function handleTouch(e) {
-            if(isLocked) return;
+        function getCellFromTouch(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
-            if(el && el.classList.contains('cell')) {
-                const pos = el.dataset.pos;
-                if(!activeCoords.includes(pos)) {
-                    activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05);
-                }
-            }
+            return (el && el.classList.contains('cell')) ? el : null;
         }
 
-        document.getElementById('grid').addEventListener('touchstart', (e) => { if(isLocked) return; isSelecting = true; activeCoords = []; handleTouch(e); });
-        document.getElementById('grid').addEventListener('touchmove', (e) => { if(isSelecting && !isLocked) { e.preventDefault(); handleTouch(e); } }, {passive: false});
-        
-        window.addEventListener('touchend', () => { 
+        document.getElementById('grid').addEventListener('touchstart', (e) => {
+            if(isLocked) return;
+            isSelecting = true;
+            activeCoords = [];
+            const cell = getCellFromTouch(e);
+            if(cell) addCellToSelection(cell);
+        });
+
+        document.getElementById('grid').addEventListener('touchmove', (e) => {
+            if(!isSelecting || isLocked) return;
+            e.preventDefault();
+            const cell = getCellFromTouch(e);
+            if(cell) addCellToSelection(cell);
+        }, {passive: false});
+
+        window.addEventListener('touchend', () => {
             if(isSelecting && !isLocked) {
-                checkSelection();
-                document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+                validarSeleccion();
+                limpiarSeleccionVisual();
                 isSelecting = false;
             }
         });
 
-        function checkSelection() {
-            let foundAny = false;
-            for(let word in wordsPos) {
-                const wordBtn = document.getElementById('w-'+word);
-                if(!wordBtn.classList.contains('word-found')) {
-                    
-                    // CORRECCIÓN PARA DIAGONALES: Comparamos conjuntos sin importar el orden
-                    const setWord = new Set(wordsPos[word]);
-                    const setSelected = new Set(activeCoords);
-                    
-                    // Si el tamaño coincide y todas las coordenadas de la palabra están en la selección
-                    const matches = setWord.size === setSelected.size && [...setWord].every(p => setSelected.has(p));
-                    
-                    if(matches) {
-                        wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
-                        wordBtn.classList.add('word-found');
-                        playSound(523, 0.15);
-                        foundCount++;
-                        foundAny = true;
-                        errorCounter = 0; 
-                        if(foundCount === Object.keys(wordsPos).length) { guardarProgreso(nivelActualIdx); setTimeout(mostrarLogro, 600); }
+        function addCellToSelection(cell) {
+            const id = cell.id.replace('c-', '');
+            if(!activeCoords.includes(id)) {
+                activeCoords.push(id);
+                cell.classList.add('sel');
+                playSound(440, 0.05);
+            }
+        }
+
+        function limpiarSeleccionVisual() {
+            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+        }
+
+        function validarSeleccion() {
+            // 1. Obtener el string que el usuario formó
+            let palabraFormada = activeCoords.map(id => document.getElementById('c-'+id).textContent).join('');
+            let palabraInversa = palabraFormada.split('').reverse().join('');
+            
+            let exito = false;
+
+            for(let palabra in wordsPosMap) {
+                const btn = document.getElementById('w-'+palabra);
+                if(btn.classList.contains('word-found')) continue;
+
+                // VALIDACIÓN INTELIGENTE:
+                // Comprobamos si el texto coincide O si las coordenadas coinciden exactamente.
+                const matchTexto = (palabra === palabraFormada || palabra === palabraInversa);
+                
+                if(matchTexto) {
+                    // Marcar como encontradas las celdas ORIGINALES de esa palabra (para que quede bonito)
+                    wordsPosMap[palabra].forEach(id => {
+                        document.getElementById('c-'+id).classList.add('found');
+                    });
+                    btn.classList.add('word-found');
+                    playSound(523, 0.2);
+                    foundCount++;
+                    exito = true;
+                    errorCounter = 0;
+                    if(foundCount === Object.keys(wordsPosMap).length) {
+                        guardarProgreso(nivelActualIdx);
+                        setTimeout(mostrarLogro, 600);
                     }
+                    break;
                 }
             }
 
-            if(!foundAny && activeCoords.length > 0) {
-                // Solo penaliza si realmente intentaron marcar algo mal
+            if(!exito && activeCoords.length > 1) {
                 errorCounter++;
-                playSound(150, 0.2); 
-                if(errorCounter >= 3) {
-                    activarPenalizacion();
-                }
+                playSound(150, 0.2);
+                if(errorCounter >= 3) activarPenalizacion();
             }
         }
 
         function activarPenalizacion() {
-            isLocked = true;
-            errorCounter = 0;
+            isLocked = true; errorCounter = 0;
             const grid = document.getElementById('grid');
             const msg = document.getElementById('penalty-msg');
-            grid.style.opacity = '0.2';
-            msg.style.display = 'block';
+            grid.style.opacity = '0.2'; msg.style.display = 'block';
             setTimeout(() => {
-                grid.style.opacity = '1';
-                msg.style.display = 'none';
+                grid.style.opacity = '1'; msg.style.display = 'none';
                 isLocked = false;
-            }, 3000); 
+            }, 3000);
         }
 
         function mostrarLogro() {
             const total = getCompletados().length;
-            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
+            document.getElementById('stats-text').innerHTML = `Has completado <br><b>${total} Versículos Bíblicos</b>`;
             document.getElementById('ad-modal').style.display = 'flex';
-            playSound(659, 0.3);
+            playSound(659, 0.4);
         }
     </script>
 </body>
