@@ -1,190 +1,329 @@
-import random
-import string
-import pandas as pd
+import json
 
-def generar_sopa_logos_sonido_ok(df):
-    # Detectar la columna producto (posición 9 / Columna J)
-    columna = 'producto' if 'producto' in df.columns else df.columns[9] if len(df.columns) > 9 else df.columns[0]
-    
-    productos = df[columna].dropna().astype(str).tolist()
-    
-    # Extrae todas las palabras de la descripción que cumplan el largo
-    palabras_totales = []
-    for frase in productos:
-        palabras_frase = frase.upper().replace(",", " ").split()
-        for p in palabras_frase:
-            limpia = p.replace("Á","A").replace("É","E").replace("Í","I").replace("Ó","O").replace("Ú","U")
-            if 3 <= len(limpia) <= 10:
-                palabras_totales.append(limpia)
-    
-    candidatas_unicas = list(set(palabras_totales))
-    seleccionadas = random.sample(candidatas_unicas, min(15, len(candidatas_unicas)))
-    
-    TAMANO = 15
-    matriz = [['' for _ in range(TAMANO)] for _ in range(TAMANO)]
-    posiciones = {}
+# ================================================================
+# LISTA DE 20 NIVELES - CONFIGURACIÓN ORIGINAL
+# ================================================================
 
-    for palabra in seleccionadas:
-        colocada = False
-        for _ in range(150):
-            if colocada: break
-            dir = random.choice(['H', 'V', 'D'])
-            f, c = (random.randint(0, TAMANO-1), random.randint(0, TAMANO-len(palabra))) if dir == 'H' else \
-                   (random.randint(0, TAMANO-len(palabra)), random.randint(0, TAMANO-1)) if dir == 'V' else \
-                   (random.randint(0, TAMANO-len(palabra)), random.randint(0, TAMANO-len(palabra)))
-            
-            coords = []
-            for i in range(len(palabra)):
-                nf, nc = (f, c+i) if dir == 'H' else (f+i, c) if dir == 'V' else (f+i, c+i)
-                coords.append(f"{nf}-{nc}")
+NIVELES_BIBLICOS = [
+    {"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"},
+    {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"},
+    {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"},
+    {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"},
+    {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"},
+    {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"},
+    {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"},
+    {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"},
+    {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"},
+    {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"},
+    {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"},
+    {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"},
+    {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"},
+    {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"},
+    {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"},
+    {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"},
+    {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"},
+    {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"},
+    {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"},
+    {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}
+]
 
-            if all(matriz[int(p.split('-')[0])][int(p.split('-')[1])] in ('', palabra[i]) for i, p in enumerate(coords)):
-                for i, p in enumerate(coords):
-                    matriz[int(p.split('-')[0])][int(p.split('-')[1])] = palabra[i]
-                posiciones[palabra] = coords
-                colocada = True
+RELLENO_LOGOS = ["DIOS","AMOR","FE","GRACIA","PERDON","SALVACION","MISERICORDIA","JUSTICIA","VERDAD","VIDA","LUZ","ESPIRITU","CRUZ","REINO","EVANGELIO","PALABRA","PROMESA","OBEDIENCIA","SABIDURIA","ESPERANZA","GOZO","PAZ","FORTALEZA","BENDICION","SANTIDAD","HUMILDAD","IGLESIA","ADORACION","ORACION","VICTORIA","ETERNIDAD","CIELO","BONDAD","GLORIA","BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"]
 
-    for f in range(TAMANO):
-        for c in range(TAMANO):
-            if matriz[f][c] == '': matriz[f][c] = random.choice(string.ascii_uppercase)
+def generar_archivo_sopa():
+    niveles_js = json.dumps(NIVELES_BIBLICOS)
+    relleno_js = json.dumps(RELLENO_LOGOS)
 
-    matrix_js = str(matriz).replace("'", '"')
-    words_pos_js = str(posiciones).replace("'", '"')
-    botones_html = "".join([f'<span class="word-item" id="w-{w}">{w}</span>' for w in seleccionadas])
-
-    html_template = """
+    html_content = f"""
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa Logos</title>
+    <title>Sopa de Letras - Librería Logos</title>
     <style>
-        * { touch-action: none; user-select: none; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { font-family: sans-serif; text-align: center; background: #fff; margin: 0; overflow: hidden; }
-        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; }
+        * {{ touch-action: none; user-select: none; box-sizing: border-box; }}
+        body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }}
         
-        /* AJUSTE PARA QUE EL CUADRO SEA VISIBLE SIEMPRE */
-        #grid { 
-            display: grid; grid-template-columns: repeat(15, 1fr); 
-            width: 96vw; /* Un poco más pequeño para dejar margen al borde */
-            max-width: 450px; background: #444; gap: 1px; margin: 10px auto;
-            border: 4px solid #2e7d32; /* Borde verde reforzado */
-            border-radius: 4px;
-        }
+        /* Pantalla de Inicio */
+        #overlay {{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }}
+        .btn-start {{ padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }}
+
+        /* Anuncio flotante */
+        #asistente {{ 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            background: #fff176; color: #333; padding: 15px; border-radius: 12px; 
+            font-size: 0.95em; z-index: 1500; display: none; width: 85%; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #fbc02d; font-weight: bold;
+        }}
+
+        /* Encabezado y Versículo */
+        .header {{ background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }}
+        #verse-container {{ background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }}
+        #verse-text {{ font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }}
+
+        /* El Tablero */
+        #grid {{ display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }}
+        .cell {{ aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }}
+        .sel {{ background: #fff176 !important; }}
+        .found {{ background: #c8e6c9 !important; color: #1b5e20 !important; }}
+
+        /* Lista de palabras */
+        #word-list {{ display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }}
+        .word-item {{ padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }}
+        .word-found {{ background: #2e7d32 !important; color: white !important; text-decoration: line-through; }}
+
+        /* Modal de éxito */
+        .modal-ad {{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }}
+        .ad-card {{ background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }}
+        .btn-next {{ background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }}
         
-        .cell { 
-            aspect-ratio: 1/1; background: white; display: flex; align-items: center; 
-            justify-content: center; font-weight: bold; font-size: 16px; color: #000;
-        }
-        .sel { background: #fff176 !important; }
-        .found { background: #4caf50 !important; color: white !important; }
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; }
-        .word-item { padding: 4px 8px; background: #eee; border-radius: 4px; font-size: 11px; border: 1px solid #ccc; }
-        .word-found { background: #c8e6c9; color: #2e7d32; text-decoration: line-through; border-color: #2e7d32; }
-        .win { display: none; background: #25D366; color: white; padding: 15px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 10px; display: inline-block; }
+        .wa-link {{ color: white; text-decoration: none; font-weight: bold; }}
     </style>
 </head>
 <body>
-    <div class="header">LIBRERÍA LOGOS</div>
+
+    <div id="overlay">
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            WhatsApp: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+        </div>
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
+    </div>
+
+    <div id="asistente">
+        📢 ¡ATENCIÓN! <br>
+        Todos los Lunes de Mayo tenemos <br>
+        <span style="font-size: 1.1em; color: #d32f2f;">10% DCTO en Biblias Reina Valera</span>
+    </div>
+
+    <div id="ad-modal" class="modal-ad">
+        <div class="ad-card">
+            <div style="font-size: 50px;">🏆</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
+            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
+        </div>
+    </div>
+
+    <div class="header" id="lvl-tag">NIVEL 1</div>
+    <div id="verse-container"><div id="verse-text"></div></div>
     <div id="grid"></div>
-    <div id="word-list">__BOTONES__</div>
-    <a href="https://wa.me/573125756581?text=Gane" id="win-btn" style="display:none" class="win">✅ RECLAMAR PREMIO</a>
+    <div id="word-list"></div>
 
     <script>
-        const wordsPos = __WORDS_POS__;
-        const matrix = __MATRIX__;
-        let activeCoords = [];
+        const niveles = {niveles_js};
+        const rellenoLogos = {relleno_js};
+        
+        let nivelActualIdx = 0;
+        let wordsPos = {{}};
         let foundCount = 0;
         let isSelecting = false;
-        let audioCtx = null;
+        let startCell = null;
+        let currentSelection = [];
+        let audioCtx;
 
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
+        function getCompletados() {{
+            const data = localStorage.getItem('logos_progreso_vFinal');
+            return data ? JSON.parse(data) : [];
+        }}
 
-        function playBeep(f, d) {
-            if (!audioCtx) return;
-            const o = audioCtx.createOscillator(); 
-            const g = audioCtx.createGain();
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
+        function guardarProgreso(idx) {{
+            let lista = getCompletados();
+            if(!lista.includes(idx)) lista.push(idx);
+            localStorage.setItem('logos_progreso_vFinal', JSON.stringify(lista));
+        }}
+
+        function seleccionarNivel() {{
+            const hechos = getCompletados();
+            if(hechos.length >= niveles.length) {{
+                localStorage.setItem('logos_progreso_vFinal', JSON.stringify([]));
+                return 0;
+            }}
+            for(let i=0; i<niveles.length; i++) {{
+                if(!hechos.includes(i)) return i;
+            }}
+            return 0;
+        }}
+
+        function initAudio() {{
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }}
+
+        function playSound(f, d) {{
+            initAudio(); 
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
             o.type = 'sine';
+            o.frequency.setValueAtTime(f, audioCtx.currentTime);
             g.gain.setValueAtTime(0.1, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); 
-            g.connect(audioCtx.destination); 
-            o.start(); 
-            o.stop(audioCtx.currentTime + d);
-        }
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
+        }}
 
-        const grid = document.getElementById('grid');
-        matrix.forEach((row, r) => row.forEach((char, c) => {
-            const div = document.createElement('div');
-            div.className = 'cell'; div.textContent = char;
-            div.dataset.pos = r + '-' + c;
-            grid.appendChild(div);
-        }));
+        function cargarNivel() {{
+            nivelActualIdx = seleccionarNivel();
+            const data = niveles[nivelActualIdx];
+            const totalCompletados = getCompletados().length + 1;
+            document.getElementById('lvl-tag').textContent = `RETO #${{totalCompletados}} - ${{data.r}}`;
+            document.getElementById('verse-text').textContent = `"${{data.v}}"`;
+            
+            let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
+            palabras = [...new Set(palabras)];
+            
+            while(palabras.length < 15) {{
+                let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
+                if(!palabras.includes(r)) palabras.push(r);
+            }}
+            generarTablero(palabras.slice(0, 15));
+        }}
 
-        function handleTouch(e) {
+        function generarTablero(palabras) {{
+            const TAM = 12;
+            const grid = document.getElementById('grid');
+            const list = document.getElementById('word-list');
+            grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {{}};
+            
+            let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
+            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1, -1], [-1, 1], [-1, -1]];
+            
+            palabras.forEach(palabra => {{
+                let puesta = false, intentos = 0;
+                while(!puesta && intentos < 50) {{
+                    let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
+                    let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
+                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && 
+                        c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {{
+                        let ok = true;
+                        for(let j=0; j<palabra.length; j++) 
+                            if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
+                        
+                        if(ok) {{
+                            wordsPos[palabra] = [];
+                            for(let j=0; j<palabra.length; j++) {{
+                                matriz[r+dr*j][c+dc*j] = palabra[j];
+                                wordsPos[palabra].push(`${{r+dr*j}}-${{c+dc*j}}`);
+                            }}
+                            puesta = true;
+                            const s = document.createElement('span'); s.className = 'word-item';
+                            s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
+                        }}
+                    }}
+                    intentos++;
+                }}
+            }});
+
+            for(let r=0; r<TAM; r++) {{
+                for(let c=0; c<TAM; c++) {{
+                    const d = document.createElement('div'); d.className = 'cell';
+                    d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
+                    d.dataset.r = r; d.dataset.c = c; grid.appendChild(d);
+                }}
+            }}
+        }}
+
+        function getCell(e) {{
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
-            if (el && el.classList.contains('cell')) {
-                const pos = el.dataset.pos;
-                if (!activeCoords.includes(pos)) {
-                    activeCoords.push(pos);
-                    el.classList.add('sel');
-                    playBeep(440, 0.1); 
-                    checkWords();
-                }
-            }
-        }
+            return el && el.classList.contains('cell') ? el : null;
+        }}
 
-        grid.addEventListener('touchstart', (e) => {
-            initAudio(); 
-            isSelecting = true;
-            activeCoords = [];
-            handleTouch(e);
-        });
+        function actualizarSeleccion(endCell) {{
+            if(!startCell || !endCell) return;
+            const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
+            const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
+            
+            let dr = r2 - r1, dc = c2 - c1;
+            if (dr === 0 && dc === 0) return;
 
-        grid.addEventListener('touchmove', (e) => {
-            if (isSelecting) handleTouch(e);
-        });
+            let absR = Math.abs(dr), absC = Math.abs(dc);
+            let stepR = 0, stepC = 0, steps = 0;
 
-        window.addEventListener('touchend', () => {
-            isSelecting = false;
+            // Lógica de validación de línea recta (Imán para comodidad)
+            if (absR > absC * 2) {{ stepR = dr / absR; stepC = 0; steps = absR; }} 
+            else if (absC > absR * 2) {{ stepR = 0; stepC = dc / absC; steps = absC; }} 
+            else {{ stepR = dr / absR; stepC = dc / absC; steps = absR; }}
+
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
-            activeCoords = [];
-        });
+            currentSelection = [];
+            
+            for(let i = 0; i <= steps; i++) {{
+                let cr = r1 + i * stepR, cc = c1 + i * stepC;
+                const cell = document.querySelector(`[data-r="${{Math.round(cr)}}"][data-c="${{Math.round(cc)}}"]`);
+                if(cell) {{
+                    cell.classList.add('sel');
+                    currentSelection.push(`${{Math.round(cr)}}-${{Math.round(cc)}}`);
+                }}
+            }}
+        }}
 
-        function checkWords() {
-            for (let word in wordsPos) {
-                const coords = wordsPos[word];
-                if (coords.every(p => {
-                    const el = document.querySelector(`[data-pos="${p}"]`);
-                    return el.classList.contains('sel') || el.classList.contains('found');
-                })) {
-                    coords.forEach(p => {
-                        const el = document.querySelector(`[data-pos="${p}"]`);
-                        el.classList.add('found');
-                    });
-                    const btn = document.getElementById('w-' + word);
-                    if (btn && !btn.classList.contains('word-found')) {
-                        btn.classList.add('word-found');
-                        foundCount++;
-                        playBeep(600, 0.4); 
-                        if (foundCount === Object.keys(wordsPos).length) document.getElementById('win-btn').style.display = 'block';
-                    }
-                }
-            }
-        }
+        const gridElement = document.getElementById('grid');
+        gridElement.addEventListener('touchstart', (e) => {{
+            isSelecting = true;
+            startCell = getCell(e);
+            if(startCell) {{
+                playSound(440, 0.05);
+            }}
+        }});
+
+        gridElement.addEventListener('touchmove', (e) => {{
+            if(isSelecting) actualizarSeleccion(getCell(e));
+        }});
+
+        window.addEventListener('touchend', () => {{
+            if(!isSelecting) return;
+            isSelecting = false;
+            
+            const selStr = currentSelection.join(',');
+            for(let pal in wordsPos) {{
+                const target = wordsPos[pal].join(',');
+                const targetRev = [...wordsPos[pal]].reverse().join(',');
+                
+                if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {{
+                    currentSelection.forEach(pos => {{
+                        const [r, c] = pos.split('-');
+                        document.querySelector(`[data-r="${{r}}"][data-c="${{c}}"]`).classList.add('found');
+                    }});
+                    document.getElementById('w-'+pal).classList.add('word-found');
+                    playSound(523, 0.15); foundCount++;
+                    if(foundCount === Object.keys(wordsPos).length) {{
+                        guardarProgreso(nivelActualIdx);
+                        setTimeout(() => {{
+                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${{getCompletados().length}} Versículos Bíblicos</b>`;
+                            document.getElementById('ad-modal').style.display = 'flex';
+                            playSound(659, 0.3);
+                        }}, 600);
+                    }}
+                }}
+            }}
+            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+            currentSelection = [];
+        }});
+
+        document.getElementById('start-btn').addEventListener('click', () => {{
+            initAudio();
+            document.getElementById('overlay').style.display = 'none';
+            cargarNivel();
+            const asis = document.getElementById('asistente');
+            asis.style.display = 'block';
+            setTimeout(() => {{ asis.style.display = 'none'; }}, 6000);
+        }});
+
+        document.getElementById('btn-next-lvl').addEventListener('click', () => {{
+            document.getElementById('ad-modal').style.display = 'none';
+            cargarNivel();
+        }});
     </script>
 </body>
 </html>
-    """
-    final_html = html_template.replace("__BOTONES__", botones_html).replace("__WORDS_POS__", words_pos_js).replace("__MATRIX__", matrix_js)
-    with open("index.html", "w", encoding="utf-8") as f: f.write(final_html)
+"""
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+if __name__ == "__main__":
+    generar_archivo_sopa()
