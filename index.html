@@ -4,78 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reto Bíblico - Librería Logos</title>
+    <title>Sopa de Letras - Librería Logos</title>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f4f7f4; margin: 0; overflow: hidden; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
         /* Pantalla de Inicio */
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1b5e20; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; color: white; padding: 30px; }
-        .btn-start { padding: 18px 45px; background: #fff; color: #1b5e20; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* Anuncio flotante superior */
+        /* Anuncio flotante */
         #asistente { 
-            position: fixed; top: 15px; left: 50%; transform: translateX(-50%); 
-            background: #fff9c4; color: #333; padding: 12px; border-radius: 12px; 
-            font-size: 0.9em; z-index: 1500; display: none; width: 90%; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid #fbc02d; font-weight: bold;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            background: #fff176; color: #333; padding: 15px; border-radius: 12px; 
+            font-size: 0.95em; z-index: 1500; display: none; width: 85%; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #fbc02d; font-weight: bold;
         }
 
-        /* Diseño del Juego */
-        .header { background: #2e7d32; color: white; padding: 12px; font-weight: bold; font-size: 1em; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        #verse-container { background: white; padding: 15px; margin: 10px; border-radius: 15px; border-left: 8px solid #2e7d32; min-height: 90px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: 700; line-height: 1.3; font-style: italic; }
+        /* Encabezado y Versículo */
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
-        /* Tablero */
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 95vw; max-width: 450px; background: #bdc3c7; gap: 1px; margin: 5px auto; border: 3px solid #2e7d32; border-radius: 4px; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; transition: background 0.2s; }
-        .sel { background: #fff176 !important; color: #000; }
-        .found { background: #a5d6a7 !important; color: #1b5e20 !important; }
+        /* El Tablero */
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+        .sel { background: #fff176 !important; }
+        .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        /* Lista de palabras inferior */
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 15px; height: 120px; overflow-y: auto; background: #fafafa; border-top: 2px solid #eee; }
-        .word-item { padding: 5px 10px; background: white; border-radius: 8px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #c8e6c9; text-transform: uppercase; }
-        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
+        /* Lista de palabras */
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
+        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
-        /* Modal Éxito */
-        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
-        .ad-card { background: white; padding: 35px 25px; border-radius: 25px; width: 85%; max-width: 350px; text-align: center; border: 5px solid #2e7d32; }
-        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 40px; font-weight: bold; width: 100%; font-size: 1.2em; cursor: pointer; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        /* Modal de éxito */
+        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
+        .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
+        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
         
-        .wa-link { color: #a5d6a7; text-decoration: none; font-weight: bold; }
+        .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.8em; font-weight: 900; margin-bottom: 10px;">¡Bienvenido!</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; opacity: 0.9;">Completa el versículo encontrando las palabras clave.</div>
-        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
-            <div style="font-weight: bold; font-size: 1.3em;">Librería Cristiana Logos</div>
-            <div style="font-size: 0.85em; margin-top: 10px; opacity: 0.8;">Calle 35C Sur No 78A-18<br>Kennedy Central, Bogotá</div>
-            <div style="margin-top: 15px;">
-                <a href="https://wa.me/573125756581" class="wa-link">📲 WhatsApp: 312-5756581</a>
-            </div>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            WhatsApp: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
         </div>
-        <button class="btn-start" id="start-btn">INICIAR JUEGO</button>
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="asistente">
-        🎁 PROMO DEL MES <br>
+        📢 ¡ATENCIÓN! <br>
+        Todos los Lunes de Mayo tenemos <br>
         <span style="font-size: 1.1em; color: #d32f2f;">10% DCTO en Biblias Reina Valera</span>
     </div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-size: 60px;">🌟</div>
-            <div style="font-size: 1.6em; font-weight: 900; color: #1b5e20;">¡EXCELENTE TRABAJO!</div>
-            <p id="stats-text" style="font-size: 1.1em; margin: 20px 0; color: #555;"></p>
-            <button class="btn-next" id="btn-next-lvl">SIGUIENTE RETO</button>
+            <div style="font-size: 50px;">🏆</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
+            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
 
     <div class="header" id="lvl-tag">NIVEL 1</div>
-    <div id="verse-container"><div id="verse-text">Cargando versículo...</div></div>
+    <div id="verse-container"><div id="verse-text"></div></div>
     <div id="grid"></div>
     <div id="word-list"></div>
 
@@ -125,7 +125,7 @@
             const o = audioCtx.createOscillator(), g = audioCtx.createGain();
             o.type = 'sine';
             o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
             g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
             o.connect(g); g.connect(audioCtx.destination);
             o.start(); o.stop(audioCtx.currentTime + d);
@@ -135,20 +135,13 @@
             nivelActualIdx = seleccionarNivel();
             const data = niveles[nivelActualIdx];
             const totalCompletados = getCompletados().length + 1;
-            
             document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
             
-            // Limpiar palabras: solo letras, min 3 caracteres
-            let palabras = data.v.toUpperCase()
-                .normalize("NFD").replace(/[̀-ͯ]/g, "") // Quitar acentos
-                .split(/[\s,.;?]+/)
-                .filter(p => p.length >= 3);
-            
+            let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
             palabras = [...new Set(palabras)];
             
-            // Rellenar con palabras de la librería si hay pocas
-            while(palabras.length < 12) {
+            while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
             }
@@ -164,19 +157,16 @@
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1, -1], [-1, 1], [-1, -1]];
             
-            palabras.sort((a,b) => b.length - a.length).forEach(palabra => {
+            palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
-                while(!puesta && intentos < 100) {
+                while(!puesta && intentos < 50) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    
                     if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && 
                         c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
                         let ok = true;
-                        for(let j=0; j<palabra.length; j++) {
-                            let targetR = r+dr*j, targetC = c+dc*j;
-                            if(matriz[targetR][targetC] !== '' && matriz[targetR][targetC] !== palabra[j]) ok = false;
-                        }
+                        for(let j=0; j<palabra.length; j++) 
+                            if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
                         
                         if(ok) {
                             wordsPos[palabra] = [];
@@ -219,19 +209,20 @@
             let absR = Math.abs(dr), absC = Math.abs(dc);
             let stepR = 0, stepC = 0, steps = 0;
 
-            if (absR > absC * 1.5) { stepR = dr / absR; stepC = 0; steps = absR; } 
-            else if (absC > absR * 1.5) { stepR = 0; stepC = dc / absC; steps = absC; } 
+            // Lógica de validación de línea recta (Imán para comodidad)
+            if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
+            else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
             else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
 
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
             currentSelection = [];
             
             for(let i = 0; i <= steps; i++) {
-                let cr = Math.round(r1 + i * stepR), cc = Math.round(c1 + i * stepC);
-                const cell = document.querySelector(`[data-r="${cr}"][data-c="${cc}"]`);
+                let cr = r1 + i * stepR, cc = c1 + i * stepC;
+                const cell = document.querySelector(`[data-r="${Math.round(cr)}"][data-c="${Math.round(cc)}"]`);
                 if(cell) {
                     cell.classList.add('sel');
-                    currentSelection.push(`${cr}-${cc}`);
+                    currentSelection.push(`${Math.round(cr)}-${Math.round(cc)}`);
                 }
             }
         }
@@ -240,7 +231,9 @@
         gridElement.addEventListener('touchstart', (e) => {
             isSelecting = true;
             startCell = getCell(e);
-            if(startCell) playSound(440, 0.05);
+            if(startCell) {
+                playSound(440, 0.05);
+            }
         });
 
         gridElement.addEventListener('touchmove', (e) => {
@@ -263,11 +256,10 @@
                     });
                     document.getElementById('w-'+pal).classList.add('word-found');
                     playSound(523, 0.15); foundCount++;
-                    
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
                         setTimeout(() => {
-                            document.getElementById('stats-text').innerHTML = `¡Has memorizado ya <br><b>${getCompletados().length} versículos</b> con nosotros!`;
+                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
                             document.getElementById('ad-modal').style.display = 'flex';
                             playSound(659, 0.3);
                         }, 600);
@@ -284,7 +276,7 @@
             cargarNivel();
             const asis = document.getElementById('asistente');
             asis.style.display = 'block';
-            setTimeout(() => { asis.style.display = 'none'; }, 7000);
+            setTimeout(() => { asis.style.display = 'none'; }, 6000);
         });
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
