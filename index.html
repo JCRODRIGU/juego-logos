@@ -11,12 +11,11 @@
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         
-        /* Estilos para el input de nombre */
         #nombre-input-container { margin: 20px 0; display: none; width: 100%; max-width: 300px; }
         #user-name-field { 
             width: 100%; padding: 15px; border-radius: 10px; border: none; 
             font-size: 1.2em; text-align: center; color: #2e7d32; font-weight: bold;
-            outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: text; touch-action: auto;
         }
 
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
@@ -55,7 +54,7 @@
         
         <div id="nombre-input-container">
             <p style="margin-bottom: 10px;">Escribe tu nombre para empezar:</p>
-            <input type="text" id="user-name-field" placeholder="Tu nombre aquí..." ontouchstart="event.stopPropagation()">
+            <input type="text" id="user-name-field" placeholder="Tu nombre aquí...">
         </div>
 
         <div id="desc-text" style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras.</div>
@@ -86,7 +85,7 @@
     <div id="word-list"></div>
 
     <script>
-        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confidencialmente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
         
         let nivelActualIdx = 0;
@@ -98,15 +97,33 @@
         let audioCtx;
         let nombreUsuario = "";
 
-        // CAPTURA O PIDE EL NOMBRE
+        // DESBLOQUEO DE AUDIO (IGUAL AL ORIGINAL PERO MÁS ROBUSTO)
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(f, d) {
+            if (!audioCtx) return;
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
+        }
+
         function manejarNombre() {
             const params = new URLSearchParams(window.location.search);
             const nombreURL = params.get('nombre');
-            
             if (nombreURL) {
                 actualizarInterfazNombre(nombreURL);
             } else {
-                // Si no hay nombre en la URL, mostramos el campo para escribirlo
                 document.getElementById('nombre-input-container').style.display = 'block';
             }
         }
@@ -139,23 +156,6 @@
                 if(!hechos.includes(i)) return i;
             }
             return 0;
-        }
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function playSound(f, d) {
-            initAudio(); 
-            if (!audioCtx || audioCtx.state !== 'running') return;
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.type = 'sine';
-            o.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + d);
         }
 
         function cargarNivel() {
@@ -229,20 +229,15 @@
             if(!startCell || !endCell) return;
             const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
             const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
-            
             let dr = r2 - r1, dc = c2 - c1;
             if (dr === 0 && dc === 0) return;
-
             let absR = Math.abs(dr), absC = Math.abs(dc);
             let stepR = 0, stepC = 0, steps = 0;
-
             if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
             else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
             else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
-
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
             currentSelection = [];
-            
             for(let i = 0; i <= steps; i++) {
                 let cr = r1 + i * stepR, cc = c1 + i * stepC;
                 const cell = document.querySelector(`[data-r="${Math.round(cr)}"][data-c="${Math.round(cc)}"]`);
@@ -257,9 +252,7 @@
         gridElement.addEventListener('touchstart', (e) => {
             isSelecting = true;
             startCell = getCell(e);
-            if(startCell) {
-                playSound(440, 0.05);
-            }
+            if(startCell) playSound(440, 0.05);
         });
 
         gridElement.addEventListener('touchmove', (e) => {
@@ -269,12 +262,10 @@
         window.addEventListener('touchend', () => {
             if(!isSelecting) return;
             isSelecting = false;
-            
             const selStr = currentSelection.join(',');
             for(let pal in wordsPos) {
                 const target = wordsPos[pal].join(',');
                 const targetRev = [...wordsPos[pal]].reverse().join(',');
-                
                 if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
                     currentSelection.forEach(pos => {
                         const [r, c] = pos.split('-');
@@ -298,7 +289,7 @@
         });
 
         document.getElementById('start-btn').addEventListener('click', () => {
-            // Si el input de nombre está visible, capturamos el valor
+            initAudio(); // Activa audio en clic
             const inputField = document.getElementById('user-name-field');
             if (document.getElementById('nombre-input-container').style.display === 'block') {
                 if (inputField.value.trim() === "") {
@@ -307,8 +298,6 @@
                 }
                 actualizarInterfazNombre(inputField.value);
             }
-
-            initAudio();
             document.getElementById('overlay').style.display = 'none';
             cargarNivel();
             const asis = document.getElementById('asistente');
@@ -321,7 +310,6 @@
             cargarNivel();
         });
 
-        // Iniciar lógica de nombre al cargar
         manejarNombre();
     </script>
 </body>
