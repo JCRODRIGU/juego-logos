@@ -7,30 +7,31 @@
     <title>Sopa de Letras - Librería Logos</title>
     <style>
         * { touch-action: none; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* ASISTENTE ABAJO */
+        /* ASISTENTE EN LA PARTE MÁS BAJA */
         #asistente { 
-            position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); 
-            background: #fff176; color: #333; padding: 12px; border-radius: 12px; 
-            font-size: 0.9em; z-index: 1500; display: none; width: 90%; 
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.2); border: 2px solid #fbc02d; font-weight: bold;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #fff176; color: #333; padding: 10px; 
+            font-size: 0.9em; z-index: 2500; display: none; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2); border-top: 3px solid #fbc02d; font-weight: bold;
         }
 
-        .header { background: #2e7d32; color: white; padding: 8px; font-weight: bold; font-size: 1em; }
-        #verse-container { background: #e8f5e9; padding: 12px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.15rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+        .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
+        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+        #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #bbb; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; flex-shrink: 0; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        #word-list { flex-grow: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
-        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; height: fit-content; }
+        /* LISTA DE PALABRAS ORIGINAL */
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
+        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
@@ -43,16 +44,18 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Regalo de la Librería Logos</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo.</div>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
         <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Clombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            Celular <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+        </div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="asistente">
-        📢 ¡ATENCIÓN! <br>
-        Lunes de Mayo: <span style="color: #d32f2f;">10% DCTO en Biblias RVR</span>
+        📢 ¡ATENCIÓN! - Todos los Lunes de Mayo tenemos <span style="color: #d32f2f;">10% DCTO en Biblias Reina Valera</span>
     </div>
 
     <div id="ad-modal" class="modal-ad">
@@ -60,7 +63,7 @@
             <div style="font-size: 50px;">🏆</div>
             <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
 
@@ -92,19 +95,16 @@
             localStorage.setItem('logos_progreso_vFinal', JSON.stringify(lista));
         }
 
-        // BARREJADO ALEATORIO DE NIVELES NO HECHOS
         function seleccionarNivel() {
             const hechos = getCompletados();
             const pendientes = [];
             for(let i=0; i<niveles.length; i++) {
                 if(!hechos.includes(i)) pendientes.push(i);
             }
-            
             if(pendientes.length === 0) {
                 localStorage.setItem('logos_progreso_vFinal', JSON.stringify([]));
                 return Math.floor(Math.random() * niveles.length);
             }
-            
             return pendientes[Math.floor(Math.random() * pendientes.length)];
         }
 
@@ -200,7 +200,6 @@
             let dr = r2 - r1, dc = c2 - c1;
             if (dr === 0 && dc === 0) return;
 
-            // DETERMINAR DIRECCIÓN PRINCIPAL (MÁS TOLERANTE)
             let stepR = 0, stepC = 0, steps = 0;
             if (Math.abs(dr) > Math.abs(dc) * 1.5) { stepR = Math.sign(dr); stepC = 0; steps = Math.abs(dr); }
             else if (Math.abs(dc) > Math.abs(dr) * 1.5) { stepR = 0; stepC = Math.sign(dc); steps = Math.abs(dc); }
@@ -218,7 +217,6 @@
                     currentSelection.push(`${cr}-${cc}`);
                 }
             }
-
             if(currentSelection.length !== prevLength) playSound(440, 0.05);
         }
 
@@ -248,7 +246,6 @@
             for(let pal in wordsPos) {
                 const target = wordsPos[pal].join(',');
                 const targetRev = [...wordsPos[pal]].reverse().join(',');
-                
                 if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
                     currentSelection.forEach(pos => {
                         const [r, c] = pos.split('-');
@@ -259,7 +256,7 @@
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
                         setTimeout(() => {
-                            document.getElementById('stats-text').innerHTML = `Has completado <br><b>${getCompletados().length} Versículos</b>`;
+                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
                             document.getElementById('ad-modal').style.display = 'flex';
                             playSound(659, 0.3);
                         }, 500);
@@ -276,7 +273,7 @@
             cargarNivel();
             const asis = document.getElementById('asistente');
             asis.style.display = 'block';
-            setTimeout(() => { asis.style.display = 'none'; }, 7000);
+            setTimeout(() => { asis.style.display = 'none'; }, 8000);
         });
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
