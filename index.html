@@ -203,9 +203,14 @@
             let absR = Math.abs(dr), absC = Math.abs(dc);
             let stepR = 0, stepC = 0, steps = 0;
 
-            if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
-            else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
-            else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
+            // Lógica de "Imán" mejorada para que no sea tan rígida
+            if (absR > absC * 1.5) { // Más vertical que horizontal
+                stepR = dr / absR; stepC = 0; steps = absR;
+            } else if (absC > absR * 1.5) { // Más horizontal que vertical
+                stepR = 0; stepC = dc / absC; steps = absC;
+            } else { // Diagonal
+                stepR = dr / absR; stepC = dc / absC; steps = absR;
+            }
 
             const prevLength = currentSelection.length;
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
@@ -220,7 +225,6 @@
                 }
             }
 
-            // SONIDO POR LETRA: Si la longitud de la selección cambió, suena
             if(currentSelection.length !== prevLength) {
                 playSound(440, 0.05);
             }
