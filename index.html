@@ -28,9 +28,30 @@
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; flex-grow: 1; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; padding-bottom: 50px; }
-        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; height: fit-content; }
-        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
+        #word-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-content: flex-start; 
+            gap: 6px; 
+            padding: 15px 10px 60px 10px; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            background: #f9f9f9; 
+            border-top: 1px solid #ddd; 
+        }
+        .word-item { 
+            padding: 6px 12px; 
+            background: white; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: #2e7d32; 
+            border: 1px solid #2e7d32; 
+            white-space: nowrap;
+            height: fit-content;
+        }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
 
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
@@ -255,7 +276,7 @@
                 if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
                     currentSelection.forEach(pos => {
                         const [r, c] = pos.split('-');
-                        document.querySelector(`[data-r="${r}"][data-c="${c}"]`).classList.add('found');
+                        document.querySelector(`[data-r="${r}"][data-c="${cc}"]`).classList.add('found');
                     });
                     document.getElementById('w-'+pal).classList.add('word-found');
                     playSound(523, 0.15); foundCount++;
