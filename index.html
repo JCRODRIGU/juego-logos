@@ -18,7 +18,7 @@
             background: rgba(46, 125, 50, 0.95); color: white; padding: 15px 20px; 
             border-radius: 25px; font-size: 0.9em; z-index: 1500; display: none; 
             width: 90%; max-width: 400px; box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-            border: 1px solid #fff; animation: slideUp 0.5s ease-out;
+            border: 1px solid #fff; animation: slideUp 0.5s ease-out; transition: opacity 0.5s;
         }
 
         @keyframes slideUp {
@@ -42,27 +42,25 @@
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
-        
-        .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <!-- PANTALLA DE INICIO ORIGINAL -->
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Librería Cristiana Logos</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Encuentra las palabras del versículo deslizando tu dedo.</div>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Regalo de Librería Logos</div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
-    <!-- EL MENSAJE AHORA APARECERÁ AQUÍ ABAJO -->
+    <!-- MENSAJE EMERGENTE INFERIOR -->
     <div id="asistente"></div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
-            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡BIEN HECHO!</div>
-            <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <p id="stats-text"></p>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
 
@@ -143,10 +141,11 @@
             const promo = promos[Math.floor(Math.random() * promos.length)];
             asis.innerHTML = promo;
             asis.style.display = 'block';
+            asis.style.opacity = '1';
             
             setTimeout(() => { 
-                asis.style.opacity = '0'; // Efecto desaparición
-                setTimeout(() => { asis.style.display = 'none'; asis.style.opacity = '1'; }, 500);
+                asis.style.opacity = '0';
+                setTimeout(() => { asis.style.display = 'none'; }, 500);
             }, 4000); 
         }
 
@@ -155,10 +154,8 @@
             const totalCompletados = getCompletados().length + 1;
             document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
             palabras = [...new Set(palabras)];
-            
             while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
@@ -171,36 +168,26 @@
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
-            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]];
-            
             palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
                 while(!puesta && intentos < 50) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && 
-                        c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
+                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
                         let ok = true;
-                        for(let j=0; j<palabra.length; j++) 
-                            if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
-                        
+                        for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
                         if(ok) {
                             wordsPos[palabra] = [];
-                            for(let j=0; j<palabra.length; j++) {
-                                matriz[r+dr*j][c+dc*j] = palabra[j];
-                                wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`);
-                            }
+                            for(let j=0; j<palabra.length; j++) { matriz[r+dr*j][c+dc*j] = palabra[j]; wordsPos[palabra].push(`${r+dr*j}-${c+dc*j}`); }
                             puesta = true;
-                            const s = document.createElement('span'); s.className = 'word-item';
-                            s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
+                            const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
                         }
                     }
                     intentos++;
                 }
             });
-
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div'); d.className = 'cell';
@@ -228,16 +215,11 @@
 
         function check() {
             for(let word in wordsPos) {
-                if(!document.getElementById('w-'+word).classList.contains('word-found') && 
-                   wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
-                                             document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                if(!document.getElementById('w-'+word).classList.contains('word-found') && wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
                     wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     document.getElementById('w-'+word).classList.add('word-found');
                     playSound(523, 0.15); foundCount++;
-                    if(foundCount === Object.keys(wordsPos).length) {
-                        guardarProgreso(nivelActualIdx);
-                        setTimeout(mostrarLogro, 600);
-                    }
+                    if(foundCount === Object.keys(wordsPos).length) { guardarProgreso(nivelActualIdx); setTimeout(mostrarLogro, 600); }
                 }
             }
         }
