@@ -11,8 +11,9 @@
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        #input-nombre { padding: 12px; border-radius: 10px; border: none; margin-top: 15px; width: 80%; max-width: 300px; font-size: 1.1em; text-align: center; }
 
-        /* NUEVO ESTILO: BANNER DE PUBLICIDAD INFERIOR */
         #banner-publicidad { 
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); 
             background: rgba(46, 125, 50, 0.95); color: white; padding: 12px 20px; 
@@ -45,19 +46,15 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
-        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
-        <div style="font-size: 1em; margin-top: 8px;">
-            Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
-        </div>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Regalo de Librería Cristiana Logos</div>
+        <div style="font-size: 1.1em; margin-bottom: 10px;">Busca las palabras del versículo deslizando tu dedo.</div>
+        <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí" maxlength="20">
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
+        <div style="font-size: 0.8em; margin-top: 20px;">Kennedy Central, Bogotá - Cel: 312-5756581</div>
     </div>
 
-    <!-- BANNER DE PUBLICIDAD QUE APARECE ABAJO -->
     <div id="banner-publicidad">
-        📢 <span id="publi-texto">Cargando mensaje...</span>
+        📢 <span id="publi-texto">Cargando bendición...</span>
     </div>
 
     <div id="ad-modal" class="modal-ad">
@@ -65,7 +62,7 @@
             <div style="font-size: 50px;">🏆</div>
             <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
+            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu!</div>
             <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
@@ -78,7 +75,8 @@
     <script>
         const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const anuncios = ["\u00a1Lunes de Mayo: 10% DCTO en Biblias Reina Valera!", "\u00bfBuscas un regalo? Pregunta por nuestras cajas de promesas.", "Nuevos separadores con vers\u00edculos disponibles en caja.", "Vis\u00edtanos en Kennedy Central para conocer m\u00e1s novedades.", "Pregunta por nuestro cat\u00e1logo de Biblias de estudio.", "\u00a1Mensaje Publicitario 6 aqu\u00ed!", "\u00a1Mensaje Publicitario 7 aqu\u00ed!", "\u00a1Mensaje Publicitario 8 aqu\u00ed!", "\u00a1Mensaje Publicitario 9 aqu\u00ed!", "\u00a1Mensaje Publicitario 10 aqu\u00ed!", "\u00a1Mensaje Publicitario 11 aqu\u00ed!", "\u00a1Mensaje Publicitario 12 aqu\u00ed!", "\u00a1Mensaje Publicitario 13 aqu\u00ed!", "\u00a1Mensaje Publicitario 14 aqu\u00ed!", "\u00a1Mensaje Publicitario 15 aqu\u00ed!", "\u00a1Mensaje Publicitario 16 aqu\u00ed!", "\u00a1Mensaje Publicitario 17 aqu\u00ed!", "\u00a1Mensaje Publicitario 18 aqu\u00ed!", "\u00a1Mensaje Publicitario 19 aqu\u00ed!", "\u00a1Mensaje Publicitario 20 aqu\u00ed!"];
+        const anuncios = ["\u00a1Lunes de Mayo: 10% DCTO en Biblias Reina Valera!", "\u00bfBuscas un regalo? Pregunta por nuestras cajas de promesas.", "Nuevos separadores con vers\u00edculos disponibles en caja.", "Vis\u00edtanos en Kennedy Central para conocer m\u00e1s novedades.", "Pregunta por nuestro cat\u00e1logo de Biblias de estudio.", "Tenemos Biblias para ni\u00f1os con ilustraciones hermosas.", "\u00bfYa conoces nuestro cat\u00e1logo digital? P\u00eddelo por WhatsApp.", "Regala bendici\u00f3n con nuestros libros devocionales.", "\u00a1Pregunta por las promociones especiales de esta semana!", "Librer\u00eda Logos: Alimentando tu esp\u00edritu con la Palabra.", "\u00bfNecesitas una Biblia letra grande? Aqu\u00ed la encuentras.", "Incentiva el h\u00e1bito de la lectura con buenos libros cristianos.", "Vis\u00edtanos hoy mismo, estamos en Kennedy Central.", "\u00a1Pregunta por los precios especiales para congregaciones!", "Nuevos dise\u00f1os de forros para Biblias en varios tama\u00f1os.", "\u00bfBuscas m\u00fasica cristiana? Tenemos los mejores salmistas.", "Inicia tu d\u00eda con un buen devocional, vis\u00edtanos.", "\u00a1Gracias por ser un cliente especial de Librer\u00eda Logos!", "Pregunta por nuestras promociones en agendas cristianas.", "Dios te bendiga, disfruta de este reto b\u00edblico."];
+        const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxgXpHlAcMh5wMY1ea23GBLAnpJlM8xC_tAooWgHljg3D7ZimGBtdOaBKyTZbTYDmEF/exec";
         
         let nivelActualIdx = 0;
         let wordsPos = {};
@@ -86,6 +84,30 @@
         let activeCoords = [];
         let isSelecting = false;
         let audioCtx;
+        let nombreUsuario = "Anónimo";
+        let tiempoInicioNivel = 0;
+
+        function enviarTracking(evento, nivel) {
+            const segs = Math.floor((Date.now() - tiempoInicioNivel) / 1000);
+            fetch(GOOGLE_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    usuario: nombreUsuario,
+                    evento: evento,
+                    nivel: nivel + 1,
+                    tiempo: evento === 'Inicio' ? 0 : segs
+                })
+            }).catch(e => console.log("Tracking offline"));
+        }
+
+        function mostrarBannerPublicidad() {
+            const texto = anuncios[Math.floor(Math.random() * anuncios.length)];
+            const banner = document.getElementById('banner-publicidad');
+            document.getElementById('publi-texto').textContent = texto;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 4000);
+        }
 
         function getCompletados() {
             const data = localStorage.getItem('logos_progreso_vFinal');
@@ -110,28 +132,9 @@
             return 0;
         }
 
-        // NUEVA FUNCIÓN: MOSTRAR BANNER DE PUBLICIDAD
-        function mostrarBannerPublicidad() {
-            const texto = anuncios[Math.floor(Math.random() * anuncios.length)];
-            const banner = document.getElementById('banner-publicidad');
-            const span = document.getElementById('publi-texto');
-            
-            span.textContent = texto;
-            banner.classList.add('show');
-            
-            // Se quita automáticamente a los 4 segundos
-            setTimeout(() => {
-                banner.classList.remove('show');
-            }, 4000);
-        }
-
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(f, d) {
@@ -147,6 +150,8 @@
         }
 
         document.getElementById('start-btn').addEventListener('click', () => {
+            const val = document.getElementById('input-nombre').value.trim();
+            if(val) nombreUsuario = val;
             initAudio();
             document.getElementById('overlay').style.display = 'none';
             comenzarJuego();
@@ -159,8 +164,9 @@
 
         function comenzarJuego() {
             nivelActualIdx = seleccionarNivel();
+            tiempoInicioNivel = Date.now();
+            enviarTracking('Inicio', nivelActualIdx);
             cargarNivel();
-            // Mostramos el banner publicitario al iniciar cada nivel
             setTimeout(mostrarBannerPublicidad, 1000);
         }
 
@@ -169,10 +175,8 @@
             const totalCompletados = getCompletados().length + 1;
             document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
-            
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
             palabras = [...new Set(palabras)];
-            
             while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
@@ -185,10 +189,8 @@
             const grid = document.getElementById('grid');
             const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
-            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]];
-            
             palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
                 while(!puesta && intentos < 50) {
@@ -199,7 +201,6 @@
                         let ok = true;
                         for(let j=0; j<palabra.length; j++) 
                             if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
-                        
                         if(ok) {
                             wordsPos[palabra] = [];
                             for(let j=0; j<palabra.length; j++) {
@@ -214,7 +215,6 @@
                     intentos++;
                 }
             });
-
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div'); d.className = 'cell';
@@ -251,6 +251,7 @@
                     playSound(523, 0.15); foundCount++;
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
+                        enviarTracking('Nivel Superado', nivelActualIdx);
                         setTimeout(mostrarLogro, 600);
                     }
                 }
