@@ -43,7 +43,7 @@
         <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
         <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
         <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Clombia</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Celular 312-5756581</div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
@@ -103,13 +103,18 @@
             return 0;
         }
 
-        // --- SONIDO RESTAURADO ---
+        // --- SISTEMA DE AUDIO AUTO-REACTIVABLE ---
         function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted') {
+                audioCtx.resume();
+            }
         }
 
         function playSound(f, d) {
+            initAudio(); // Re-intenta iniciar audio en cada sonido
             if (!audioCtx || audioCtx.state !== 'running') return;
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
@@ -128,6 +133,7 @@
         });
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
+            initAudio();
             document.getElementById('ad-modal').style.display = 'none';
             comenzarJuego();
         });
@@ -201,6 +207,7 @@
         }
 
         function handleTouch(e) {
+            initAudio(); // Reactiva audio si se perdió por cambiar de app
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
             if(el && el.classList.contains('cell')) {
