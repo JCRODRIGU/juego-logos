@@ -18,11 +18,12 @@
             overflow: hidden; 
         }
         
+        /* Overlay de Bienvenida */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; color: white; padding: 25px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); width: 80%; max-width: 300px; }
-        
         #input-nombre { padding: 12px; border-radius: 10px; border: none; margin-top: 10px; width: 85%; max-width: 300px; font-size: 1.1em; text-align: center; color: #333; font-weight: bold; }
 
+        /* Banner Publicitario */
         #banner-publicidad { 
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); 
             background: rgba(46, 125, 50, 0.95); color: white; padding: 12px 20px; 
@@ -33,20 +34,62 @@
         }
         #banner-publicidad.show { bottom: 0; }
 
-        .header { background: #2e7d32; color: white; padding: 12px; font-weight: bold; font-size: 1.1em; flex-shrink: 0; }
-        #verse-container { background: #e8f5e9; padding: 12px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 80px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        #verse-text { font-size: 1.1rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+        /* Cabecera del Juego - AJUSTADA */
+        .header { 
+            background: #2e7d32; 
+            color: white; 
+            padding: 15px 10px 10px 10px; 
+            font-weight: bold; 
+            font-size: 1em; 
+            flex-shrink: 0; 
+            border-bottom: 2px solid #fff176;
+        }
+        
+        #verse-container { 
+            background: #e8f5e9; 
+            padding: 10px; 
+            margin: 5px 10px; 
+            border-radius: 12px; 
+            border-left: 6px solid #2e7d32; 
+            min-height: 70px; 
+            max-height: 90px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+            overflow-y: auto;
+        }
+        #verse-text { font-size: 1rem; color: #1b5e20; font-weight: 800; line-height: 1.1; }
 
-        #grid-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 5px; overflow: hidden; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 98vw; max-width: 440px; background: #ccc; gap: 1px; border: 2px solid #2e7d32; touch-action: none; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; text-transform: uppercase; }
+        /* Cuadrícula - AJUSTADA */
+        #grid-container { 
+            flex-grow: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 5px; 
+            overflow: hidden; 
+        }
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            width: 92vw; 
+            max-width: 400px; 
+            background: #ccc; 
+            gap: 1px; 
+            border: 2px solid #2e7d32; 
+            touch-action: none; 
+        }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 100px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; flex-shrink: 0; }
-        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
+        /* Lista de Palabras */
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 90px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; flex-shrink: 0; }
+        .word-item { padding: 3px 6px; background: white; border-radius: 8px; font-size: 10px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
+        /* Modal de éxito */
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 4000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
@@ -56,26 +99,27 @@
             text-decoration: none; 
             font-weight: 800; 
             display: inline-block; 
-            margin: 15px 0; 
-            padding: 12px 25px; 
+            margin: 10px 0; 
+            padding: 10px 20px; 
             background: #25d366; 
             border-radius: 30px; 
-            font-size: 1.1em;
+            font-size: 1em;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        .info-box { margin-bottom: 20px; line-height: 1.4; }
+        .info-box { margin-bottom: 15px; line-height: 1.3; }
     </style>
 </head>
 <body>
 
+    <!-- Pantalla de Bienvenida -->
     <div id="overlay">
         <div class="info-box">
             <div style="font-size: 1.8em; font-weight: 900; margin-bottom: 5px;">¡ESTO ES UN REGALO!</div>
-            <div style="font-size: 1.3em; font-weight: 700; color: #fff176;">POR SER NUESTRO CLIENTE</div>
+            <div style="font-size: 1.2em; font-weight: 700; color: #fff176;">POR SER NUESTRO CLIENTE</div>
         </div>
 
-        <div class="info-box" style="font-size: 1.1em;">
-            <b style="font-size: 1.4em;">Librería Cristiana Logos</b><br>
+        <div class="info-box" style="font-size: 1em;">
+            <b style="font-size: 1.3em;">Librería Cristiana Logos</b><br>
             Calle 35 C Sur #78A-18<br>
             Kennedy Central, Bogotá
         </div>
@@ -84,18 +128,20 @@
             🟢 WhatsApp: 312-5756581
         </a>
 
-        <div style="margin-top: 20px; width: 100%;">
-            <div style="margin-bottom: 8px; font-weight: bold; font-size: 1.1em;">Escribe tu nombre aquí:</div>
+        <div style="margin-top: 15px; width: 100%;">
+            <div style="margin-bottom: 5px; font-weight: bold;">Escribe tu nombre aquí:</div>
             <input type="text" id="input-nombre" placeholder="Tu nombre..." maxlength="20">
         </div>
 
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
+    <!-- Banner de anuncios -->
     <div id="banner-publicidad">
         📢 <span id="publi-texto">Cargando bendición...</span>
     </div>
 
+    <!-- Modal Nivel Superado -->
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
@@ -106,7 +152,8 @@
         </div>
     </div>
 
-    <div class="header" id="lvl-tag">NIVEL 1</div>
+    <!-- Estructura del Juego -->
+    <div class="header" id="lvl-tag">CARGANDO RETO...</div>
     <div id="verse-container"><div id="verse-text"></div></div>
     
     <div id="grid-container">
@@ -205,7 +252,7 @@
         document.getElementById('start-btn').addEventListener('click', () => {
             const val = document.getElementById('input-nombre').value.trim();
             if(!val) {
-                alert("Por favor, ingresa tu nombre para que guardemos tus puntos.");
+                alert("Por favor, ingresa tu nombre.");
                 return;
             }
             nombreUsuario = val;
