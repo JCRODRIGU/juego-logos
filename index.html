@@ -12,12 +12,13 @@
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
+        /* ASISTENTE DE MENSAJES EMERGENTES */
         #asistente { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
             background: rgba(46, 125, 50, 0.95); color: white; padding: 15px 20px; 
             border-radius: 25px; font-size: 0.9em; z-index: 1500; display: none; 
             width: 90%; max-width: 400px; box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-            border: 1px solid #fff; animation: slideUp 0.5s ease-out; transition: opacity 0.5s;
+            border: 1px solid #fff; transition: opacity 0.5s;
         }
 
         #penalty-msg { 
@@ -26,18 +27,13 @@
             font-weight: bold; z-index: 500; display: none; white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
-        @keyframes slideUp {
-            from { bottom: -100px; opacity: 0; }
-            to { bottom: 20px; opacity: 1; }
-        }
-
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
         #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
         #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
         #grid-wrapper { position: relative; width: 96vw; max-width: 440px; margin: 0 auto; }
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); background: #bbb; gap: 1px; border: 3px solid #2e7d32; touch-action: none; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; transition: background 0.1s; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
         .sel { background: #fff176 !important; transform: scale(0.95); }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; border: 1px solid #81c784; }
 
@@ -54,27 +50,33 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Librería Cristiana Logos</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Encuentra las palabras del versículo para ganar.</div>
-        <button class="btn-start" id="start-btn">JUGAR AHORA</button>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
+        <div style="font-size: 1em; margin-top: 8px;">
+            Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+        </div>
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
+    <!-- Div para los mensajes emergentes -->
     <div id="asistente"></div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-size: 50px;">🌟</div>
-            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡EXCELENTE!</div>
+            <div style="font-size: 50px;">🏆</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
 
-    <div class="header" id="lvl-tag">CARGANDO...</div>
+    <div class="header" id="lvl-tag">NIVEL 1</div>
     <div id="verse-container"><div id="verse-text"></div></div>
     
     <div id="grid-wrapper">
-        <div id="penalty-msg">¡MIRA CON CUIDADO! (3s)</div>
+        <div id="penalty-msg">¡ANALIZA MEJOR! (3s)</div>
         <div id="grid"></div>
     </div>
 
@@ -83,15 +85,14 @@
     <script>
         const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Promesas ya disponibles.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide tu cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
+        const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide tu cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda.", "\u2728 \u00a1Sigue adelante, vas por muy buen camino!"];
         
         let nivelActualIdx = 0;
-        let wordsPosMap = {}; // Mapea palabra -> lista de IDs de celdas
+        let wordsPosMap = {};
         let foundCount = 0;
         let activeCoords = [];
         let isSelecting = false;
         let audioCtx;
-        
         let errorCounter = 0;
         let isLocked = false;
 
@@ -147,13 +148,13 @@
         });
 
         function comenzarJuego() {
-            errorCounter = 0;
-            isLocked = false;
+            errorCounter = 0; isLocked = false;
             nivelActualIdx = seleccionarNivel();
             cargarNivel();
-            mostrarPromo();
+            mostrarPromo(); // <-- Aquí se activa el mensaje emergente
         }
 
+        // FUNCIÓN PARA MOSTRAR MENSAJES EMERGENTES
         function mostrarPromo() {
             const asis = document.getElementById('asistente');
             asis.innerHTML = promos[Math.floor(Math.random() * promos.length)];
@@ -161,7 +162,7 @@
             setTimeout(() => { 
                 asis.style.opacity = '0';
                 setTimeout(() => { asis.style.display = 'none'; }, 500);
-            }, 4000);
+            }, 4500);
         }
 
         function cargarNivel() {
@@ -173,10 +174,8 @@
             let palabras = data.v.toUpperCase().split(' ')
                            .map(p => p.replace(/[^A-Z]/g, ''))
                            .filter(p => p.length >= 3);
-            
             palabras = [...new Set(palabras)];
             
-            // Completar hasta 15 palabras para el listado inferior
             while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
@@ -199,16 +198,10 @@
                 while(!puesta && intentos < 100) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    
                     if (r + dr*(palabra.length-1) < TAM && r + dr*(palabra.length-1) >= 0 && 
                         c + dc*(palabra.length-1) < TAM && c + dc*(palabra.length-1) >= 0) {
-                        
                         let ok = true;
-                        for(let j=0; j<palabra.length; j++) {
-                            let charExistente = matriz[r+dr*j][c+dc*j];
-                            if(charExistente !== '' && charExistente !== palabra[j]) ok = false;
-                        }
-                        
+                        for(let j=0; j<palabra.length; j++) if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
                         if(ok) {
                             wordsPosMap[palabra] = [];
                             for(let j=0; j<palabra.length; j++) {
@@ -242,8 +235,7 @@
 
         document.getElementById('grid').addEventListener('touchstart', (e) => {
             if(isLocked) return;
-            isSelecting = true;
-            activeCoords = [];
+            isSelecting = true; activeCoords = [];
             const cell = getCellFromTouch(e);
             if(cell) addCellToSelection(cell);
         });
@@ -258,7 +250,7 @@
         window.addEventListener('touchend', () => {
             if(isSelecting && !isLocked) {
                 validarSeleccion();
-                limpiarSeleccionVisual();
+                document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
                 isSelecting = false;
             }
         });
@@ -272,35 +264,19 @@
             }
         }
 
-        function limpiarSeleccionVisual() {
-            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
-        }
-
         function validarSeleccion() {
-            // 1. Obtener el string que el usuario formó
-            let palabraFormada = activeCoords.map(id => document.getElementById('c-'+id).textContent).join('');
-            let palabraInversa = palabraFormada.split('').reverse().join('');
-            
+            let textoFormado = activeCoords.map(id => document.getElementById('c-'+id).textContent).join('');
+            let textoInverso = textoFormado.split('').reverse().join('');
             let exito = false;
 
             for(let palabra in wordsPosMap) {
                 const btn = document.getElementById('w-'+palabra);
                 if(btn.classList.contains('word-found')) continue;
 
-                // VALIDACIÓN INTELIGENTE:
-                // Comprobamos si el texto coincide O si las coordenadas coinciden exactamente.
-                const matchTexto = (palabra === palabraFormada || palabra === palabraInversa);
-                
-                if(matchTexto) {
-                    // Marcar como encontradas las celdas ORIGINALES de esa palabra (para que quede bonito)
-                    wordsPosMap[palabra].forEach(id => {
-                        document.getElementById('c-'+id).classList.add('found');
-                    });
+                if(palabra === textoFormado || palabra === textoInverso) {
+                    wordsPosMap[palabra].forEach(id => document.getElementById('c-'+id).classList.add('found'));
                     btn.classList.add('word-found');
-                    playSound(523, 0.2);
-                    foundCount++;
-                    exito = true;
-                    errorCounter = 0;
+                    playSound(523, 0.2); foundCount++; exito = true; errorCounter = 0;
                     if(foundCount === Object.keys(wordsPosMap).length) {
                         guardarProgreso(nivelActualIdx);
                         setTimeout(mostrarLogro, 600);
@@ -310,8 +286,7 @@
             }
 
             if(!exito && activeCoords.length > 1) {
-                errorCounter++;
-                playSound(150, 0.2);
+                errorCounter++; playSound(150, 0.2);
                 if(errorCounter >= 3) activarPenalizacion();
             }
         }
@@ -321,15 +296,12 @@
             const grid = document.getElementById('grid');
             const msg = document.getElementById('penalty-msg');
             grid.style.opacity = '0.2'; msg.style.display = 'block';
-            setTimeout(() => {
-                grid.style.opacity = '1'; msg.style.display = 'none';
-                isLocked = false;
-            }, 3000);
+            setTimeout(() => { grid.style.opacity = '1'; msg.style.display = 'none'; isLocked = false; }, 3000);
         }
 
         function mostrarLogro() {
             const total = getCompletados().length;
-            document.getElementById('stats-text').innerHTML = `Has completado <br><b>${total} Versículos Bíblicos</b>`;
+            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
             document.getElementById('ad-modal').style.display = 'flex';
             playSound(659, 0.4);
         }
