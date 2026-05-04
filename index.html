@@ -4,190 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras Bíblica - Librería Logos</title>
+    <title>Reto Bíblico Logos</title>
     <style>
         * { touch-action: auto; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
-        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; }
 
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
-        #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 90px; display: flex; align-items: center; justify-content: center; }
-        #verse-text { font-size: 1.2rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
+        
+        #verse-container { background: #e8f5e9; padding: 20px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 110px; display: flex; align-items: center; justify-content: center; }
+        
+        #verse-text { font-size: 1.5rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
-        #grid-container { position: relative; margin: 0 auto; width: 96vw; max-width: 440px; }
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); background: #ccc; gap: 1px; border: 2px solid #2e7d32; touch-action: none; }
-        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; }
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; touch-action: none; }
+        .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
-        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 11px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
-        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 130px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
+        .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 13px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
+        .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
-        #asistente-container { position: absolute; bottom: 10px; right: 10px; width: 140px; display: none; flex-direction: column; align-items: center; z-index: 500; pointer-events: none; }
-        .burbuja { background: white; border: 2px solid #2e7d32; border-radius: 12px; padding: 8px; font-size: 0.75em; font-weight: bold; color: #333; position: relative; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .burbuja::after { content: ''; position: absolute; bottom: -10px; right: 15px; border-width: 10px 10px 0; border-style: solid; border-color: #2e7d32 transparent; }
-        .personaje-img { width: 50px; height: 50px; background: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; font-size: 24px; }
-
-        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .ad-card { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
-        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; }
-
-        .show-asistente { display: flex !important; animation: slideIn 0.4s ease-out; }
-        .hide-asistente { animation: slideOut 0.4s ease-in forwards; }
-        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100px); opacity: 0; } }
+        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
+        .ad-card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; }
+        .ad-card img { width: 100%; max-height: 180px; object-fit: contain; margin: 10px 0; border-radius: 10px; }
+        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 10px; }
+        .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
-
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; text-align: center;">Reto Bíblico Logos</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; text-align: center;">¡Hola! Este es un regalo para ti por ser nuestro cliente.</div>
-        <div style="font-size: 1.3em; font-weight: bold;">¡Diviértete!</div>
-        <button class="btn-start" id="start-btn">EMPEZAR</button>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">
+            Este es un regalo especial para ti por ser Nuestro Cliente
+        </div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 10px; opacity: 0.9;">
+            Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b>
+        </div>
+        <hr style="width: 80%; border: 0; border-top: 1px solid rgba(255,255,255,0.4); margin-bottom: 15px;">
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">
+            <a href="https://wa.me/573125756581" class="wa-link" target="_blank">Whatsapp 312-5756581</a>
+        </div>
+        <hr style="width: 80%; border: 0; border-top: 1px solid rgba(255,255,255,0.4); margin-top: 15px;">
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-weight: bold; color: #1b5e20; font-size: 1.4em;">¡Nivel Completado!</div>
-            <p id="mensaje-ad">¡Sigue así, lo estás haciendo genial!</p>
+            <div style="font-size: 0.8em; color: #666; font-weight: bold;">DISPONIBLE EN TIENDA</div>
+            <img id="ad-img" src="">
+            <div id="ad-txt" style="font-weight: bold; margin-bottom: 5px;"></div>
+            <div id="ad-price" style="color:#c62828; font-size: 1.4em; font-weight: bold; margin-bottom: 15px;"></div>
             <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
         </div>
     </div>
 
     <div class="header" id="lvl-tag">NIVEL 1</div>
-    <div id="verse-container"><div id="verse-text">Cargando versículo...</div></div>
-    
-    <div id="grid-container">
-        <div id="grid"></div>
-        <div id="asistente-container">
-            <div class="burbuja" id="asistente-msg">¡Hola!</div>
-            <div class="personaje-img">📖</div>
-        </div>
-    </div>
-
+    <div id="verse-container"><div id="verse-text"></div></div>
+    <div id="grid"></div>
     <div id="word-list"></div>
 
     <script>
-        const niveles = [{"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
+        const niveles = [{"v": "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", "r": "Salmo 46:1"}, {"v": "Sean vuestras costumbres sin avaricia, contentos con lo que teneis ahora; porque el dijo: No te desamparare, ni te dejare;", "r": "Hebreos 13:5"}, {"v": "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece;", "r": "1 Corintios 13:4"}, {"v": "Pedid, y se os dara; buscad, y hallareis; llamad, y se os abrira.", "r": "Mateo 7:7"}, {"v": "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os seran anadidas.", "r": "Mateo 6:33"}, {"v": "El corazon alegre constituye buen remedio; Mas el espiritu triste seca los huesos.", "r": "Proverbios 17:22"}, {"v": "En el principio creo Dios los cielos y la tierra.", "r": "Genesis 1:1"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}, {"v": "Me mostraras la senda de la vida; En tu presencia hay plenitud de gozo; Delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehova tu Dios estara contigo en dondequiera que vayas.", "r": "Josue 1:9"}, {"v": "Jesus le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mi.", "r": "Juan 14:6"}, {"v": "Todo lo puedo en Cristo que me fortalece.", "r": "Filipenses 4:13"}, {"v": "Lampara es a mis pies tu palabra, Y lumbrera a mi camino.", "r": "Salmo 119:105"}, {"v": "Jehova es mi pastor; nada me faltara.", "r": "Salmo 23:1"}, {"v": "Bienaventurados los pacificadores, porque ellos seran llamados hijos de Dios.", "r": "Mateo 5:9"}, {"v": "Acerquemonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.", "r": "Hebreos 4:16"}, {"v": "Porque nada hay imposible para Dios.", "r": "Lucas 1:37"}, {"v": "Ellos dijeron: Cree en el Senor Jesucristo, y seras salvo, tu y tu casa.", "r": "Hechos 16:31"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}];
+        const anuncios = [{"img": "publicidad16.jpg", "txt": "EL PODER DE LOS PADRES QUE ORAN", "precio": "$33.000"}, {"img": "publicidad4.jpg", "txt": "BIBLIA NTV MANUAL BLANCA", "precio": "$160.000"}, {"img": "publicidad15.jpg", "txt": "EL PODER DE LA ESPOSA QUE ORA", "precio": "$33.000"}, {"img": "publicidad10.jpg", "txt": "BIBLIA - RV 1960 NEGRA - ACOLCHADA", "precio": "$154.000"}, {"img": "publicidad20.jpg", "txt": "VICTORIA SOBRE LA OSCURIDAD", "precio": "$33.000"}, {"img": "publicidad7.jpg", "txt": "BIBLIA - NTV - AZUL - ESTUDIO DIARIO VIVIR PARA JOVENES", "precio": "$155.000"}, {"img": "publicidad1.jpg", "txt": "BIBLIA DE ESTUDIO DIARIO VIVIR PARA JOVENES NTV", "precio": "$220.000"}, {"img": "publicidad6.jpg", "txt": "BIBLIA RV1960 PRIMAVERA FUCSIA LG 11 PUNTOS", "precio": "$160.000"}, {"img": "publicidad17.jpg", "txt": "EL PODER DEL ESPOSO QUE ORA", "precio": "$33.000"}, {"img": "publicidad14.jpg", "txt": "DEVOCIONAL UNA MUJER CONFORME", "precio": "$33.000"}, {"img": "publicidad13.jpg", "txt": "LIBRO MAS QUE UN CARPINTERO", "precio": "$33.000"}, {"img": "publicidad12.jpg", "txt": "LIBRO CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad11.jpg", "txt": "BIBLIA - RV 1960 NEGRA FLORES ROSADAS", "precio": "$145.000"}, {"img": "publicidad8.jpg", "txt": "BIBLIA NTV LETRA GRANDE ROSADA", "precio": "$155.000"}, {"img": "publicidad2.jpg", "txt": "LA BIBLIA PASTORAL", "precio": "$200.000"}, {"img": "publicidad5.jpg", "txt": "BIBLIA NTV MANUAL AZUL", "precio": "$160.000"}, {"img": "publicidad18.jpg", "txt": "EL PODER DE LA MUJER QUE ORA", "precio": "$33.000"}, {"img": "publicidad3.jpg", "txt": "BIBLIA LEON RVR1960", "precio": "$160.000"}, {"img": "publicidad19.jpg", "txt": "CUANDO LO QUE DIOS HACE NO TIENE SENTIDO", "precio": "$33.000"}, {"img": "publicidad9.jpg", "txt": "LA BIBLIA EN ACCION, TYNDALE", "precio": "$155.000"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const mensajesOriginales = ["Recuerda que en Mayo, los lunes tenemos 10% de descuento en Biblias.", "\u00bfYa conoces nuestra secci\u00f3n de libros infantiles? \u00a1Te encantar\u00e1!", "Vis\u00edtanos en Kennedy Central: Calle 35C Sur No 78A-18.", "\u00a1Tenemos forros personalizados para proteger tu Biblia!", "\u00bfBuscas un regalo especial? Pregunta por nuestras Biblias de lujo.", "\u00a1Sigue as\u00ed! Est\u00e1s demostrando un gran conocimiento b\u00edblico.", "Servicio a domicilio: 312-5756581.", "\u00bfYa viste nuestros nuevos cuadros decorativos con vers\u00edculos?", "Aprovecha nuestros descuentos especiales para congregaciones.", "\u00a1Divi\u00e9rtete encontrando las palabras!", "\u00a1Eres muy r\u00e1pido! \u00a1Sigue adelante!", "Cada palabra encontrada es una promesa recordada.", "\u00a1Felicidades! Si llegas al nivel 20 tenemos una sorpresa para ti."];
         
-        let mazoMensajes = [...mensajesOriginales]; 
-        let nivelActualIndex = 0;
-        let nivelesSesionContador = 0;
-        let palabrasEncontradasNivel = 0;
-        let asistenteYaAparecio = false;
+        let nivelActual = Math.floor(Math.random() * niveles.length);
+        let nivelesCompletadosEnSesion = 0;
+        
+        let wordsPos = {};
+        let foundCount = 0;
+        let activeCoords = [];
+        let isSelecting = false;
+        let audioCtx;
 
-        function obtenerSiguienteNivel() {
-            let completados = JSON.parse(localStorage.getItem('logos_progreso_v2')) || [];
-            if (completados.length >= niveles.length) {
-                completados = [];
-                localStorage.setItem('logos_progreso_v2', JSON.stringify(completados));
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            let disponibles = niveles.map((_, i) => i).filter(i => !completados.includes(i));
-            return disponibles[Math.floor(Math.random() * disponibles.length)];
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        nivelActualIndex = obtenerSiguienteNivel();
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }
+        });
 
-        function mostrarAsistente() {
-            if (asistenteYaAparecio) return;
-            if (mazoMensajes.length === 0) mazoMensajes = [...mensajesOriginales];
-            const indexRandom = Math.floor(Math.random() * mazoMensajes.length);
-            const mensajeElegido = mazoMensajes.splice(indexRandom, 1)[0];
-            const container = document.getElementById('asistente-container');
-            const msgBox = document.getElementById('asistente-msg');
-            msgBox.textContent = mensajeElegido;
-            container.classList.remove('hide-asistente');
-            container.classList.add('show-asistente');
-            asistenteYaAparecio = true;
-            setTimeout(() => {
-                container.classList.add('hide-asistente');
-                setTimeout(() => container.classList.remove('show-asistente'), 400);
-            }, 5000);
+        function playSound(f, d) {
+            initAudio();
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(f, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(); o.stop(audioCtx.currentTime + d);
         }
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            initAudio();
+            document.getElementById('overlay').style.display = 'none';
+            cargarNivel();
+        });
+
+        document.getElementById('btn-next-lvl').addEventListener('click', () => {
+            initAudio();
+            document.getElementById('ad-modal').style.display = 'none';
+            nivelActual = (nivelActual + 1) % niveles.length;
+            nivelesCompletadosEnSesion++;
+            requestAnimationFrame(() => {
+                setTimeout(cargarNivel, 50);
+            });
+        });
 
         function cargarNivel() {
-            palabrasEncontradasNivel = 0;
-            asistenteYaAparecio = false;
-            const data = niveles[nivelActualIndex];
-            document.getElementById('lvl-tag').textContent = "NIVEL " + (nivelesSesionContador + 1) + " - " + data.r;
-            document.getElementById('verse-text').textContent = '"' + data.v + '"';
+            const data = niveles[nivelActual];
+            document.getElementById('lvl-tag').textContent = `NIVEL ${nivelesCompletadosEnSesion + 1} - ${data.r}`;
+            document.getElementById('verse-text').textContent = `"${data.v}"`;
+            
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
             palabras = [...new Set(palabras)];
-            while(palabras.length < 12) {
+            
+            while(palabras.length < 15) {
                 let r = rellenoLogos[Math.floor(Math.random() * rellenoLogos.length)];
                 if(!palabras.includes(r)) palabras.push(r);
             }
-            generarTablero(palabras.slice(0, 12));
+            generarTablero(palabras.slice(0, 15));
         }
 
-        let wordsPos = {}; let foundCount = 0; let activeCoords = []; let isSelecting = false;
-
         function generarTablero(palabras) {
-            const TAM = 12; const grid = document.getElementById('grid'); const list = document.getElementById('word-list');
+            const TAM = 12;
+            const grid = document.getElementById('grid');
+            const list = document.getElementById('word-list');
             grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
+            
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
             const direcciones = [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+            
+            let palabrasColocadasRealmente = [];
 
             palabras.forEach(palabra => {
-                let puesta = false; let intentos = 0;
+                let puesta = false;
+                let intentos = 0;
                 while(!puesta && intentos < 100) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
-                    let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    let finalR = r + dr * (palabra.length - 1), finalC = c + dc * (palabra.length - 1);
+                    let r = Math.floor(Math.random() * TAM);
+                    let c = Math.floor(Math.random() * TAM);
+                    let finalR = r + dr * (palabra.length - 1);
+                    let finalC = c + dc * (palabra.length - 1);
+
                     if (finalR >= 0 && finalR < TAM && finalC >= 0 && finalC < TAM) {
                         let ok = true;
                         for(let j=0; j<palabra.length; j++) {
-                            let cr = r + dr * j, cc = c + dc * j;
-                            if(matriz[cr][cc] !== '' && matriz[cr][cc] !== palabra[j]) { ok = false; break; }
+                            let charR = r + dr * j;
+                            let charC = c + dc * j;
+                            if(matriz[charR][charC] !== '' && matriz[charR][charC] !== palabra[j]) { ok = false; break; }
                         }
                         if(ok) {
                             wordsPos[palabra] = [];
                             for(let j=0; j<palabra.length; j++) {
-                                let cr = r + dr * j, cc = c + dc * j;
-                                matriz[cr][cc] = palabra[j];
-                                wordsPos[palabra].push(cr + "-" + cc);
+                                let charR = r + dr * j;
+                                let charC = c + dc * j;
+                                matriz[charR][charC] = palabra[j];
+                                wordsPos[palabra].push(`${charR}-${charC}`);
                             }
                             puesta = true;
-                            const s = document.createElement('span'); s.className = 'word-item'; s.id = 'w-'+palabra; s.textContent = palabra; list.appendChild(s);
+                            palabrasColocadasRealmente.push(palabra);
                         }
                     }
                     intentos++;
                 }
             });
+
             for(let r=0; r<TAM; r++) {
                 for(let c=0; c<TAM; c++) {
-                    const d = document.createElement('div'); d.className = 'cell';
+                    const d = document.createElement('div');
+                    d.className = 'cell';
                     d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
-                    d.dataset.pos = r + "-" + c; grid.appendChild(d);
+                    d.dataset.pos = `${r}-${c}`;
+                    grid.appendChild(d);
                 }
             }
-        }
-
-        function check() {
-            for(let word in wordsPos) {
-                if(wordsPos[word].every(p => {
-                    const el = document.querySelector('[data-pos="' + p + '"]');
-                    return el.classList.contains('sel') || el.classList.contains('found');
-                })) {
-                    const itm = document.getElementById('w-'+word);
-                    if(itm && !itm.classList.contains('word-found')) {
-                        wordsPos[word].forEach(p => document.querySelector('[data-pos="' + p + '"]').classList.add('found'));
-                        itm.classList.add('word-found');
-                        foundCount++;
-                        palabrasEncontradasNivel++;
-                        if(palabrasEncontradasNivel === 3) mostrarAsistente();
-                        if(foundCount === Object.keys(wordsPos).length) {
-                            setTimeout(() => { document.getElementById('ad-modal').style.display = 'flex'; }, 500);
-                        }
-                    }
-                }
-            }
+            
+            palabrasColocadasRealmente.forEach(w => {
+                const s = document.createElement('span'); s.className = 'word-item';
+                s.id = 'w-'+w; s.textContent = w; list.appendChild(s);
+            });
         }
 
         function handleTouch(e) {
@@ -197,24 +210,43 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
-                    check();
+                    playSound(440, 0.05); check();
                 }
             }
         }
 
-        document.getElementById('grid').addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleTouch(e); });
+        document.getElementById('grid').addEventListener('touchstart', (e) => { 
+            initAudio(); 
+            isSelecting = true; 
+            activeCoords = []; 
+            handleTouch(e); 
+        });
+
         document.getElementById('grid').addEventListener('touchmove', (e) => { if(isSelecting) e.preventDefault(); handleTouch(e); }, {passive: false});
         window.addEventListener('touchend', () => { document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); isSelecting = false; });
 
-        document.getElementById('start-btn').addEventListener('click', () => { document.getElementById('overlay').style.display = 'none'; cargarNivel(); });
-        document.getElementById('btn-next-lvl').addEventListener('click', () => {
-            document.getElementById('ad-modal').style.display = 'none';
-            let historial = JSON.parse(localStorage.getItem('logos_progreso_v2')) || [];
-            if (!historial.includes(nivelActualIndex)) { historial.push(nivelActualIndex); localStorage.setItem('logos_progreso_v2', JSON.stringify(historial)); }
-            nivelActualIndex = obtenerSiguienteNivel();
-            nivelesSesionContador++;
-            cargarNivel();
-        });
+        function check() {
+            for(let word in wordsPos) {
+                if(wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
+                                             document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                    const itm = document.getElementById('w-'+word);
+                    if(itm && !itm.classList.contains('word-found')) {
+                        wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                        itm.classList.add('word-found');
+                        playSound(523, 0.15); foundCount++;
+                        if(foundCount === Object.keys(wordsPos).length) setTimeout(mostrarAd, 600);
+                    }
+                }
+            }
+        }
+
+        function mostrarAd() {
+            const ad = anuncios[nivelActual % anuncios.length];
+            document.getElementById('ad-img').src = ad.img;
+            document.getElementById('ad-txt').textContent = ad.txt;
+            document.getElementById('ad-price').textContent = ad.precio;
+            document.getElementById('ad-modal').style.display = 'flex';
+        }
     </script>
 </body>
 </html>
