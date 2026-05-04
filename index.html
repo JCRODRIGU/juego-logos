@@ -20,7 +20,6 @@
             border: 1px solid #fff; animation: slideUp 0.5s ease-out; transition: opacity 0.5s;
         }
 
-        /* ESTILO PARA EL BLOQUEO ANTITRAMPA */
         #penalty-msg { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #d32f2f; color: white; padding: 10px 20px; border-radius: 10px;
@@ -80,7 +79,7 @@
     <div id="verse-container"><div id="verse-text"></div></div>
     
     <div id="grid-wrapper">
-        <div id="penalty-msg">¡OBSERVA BIEN! (3s)</div>
+        <div id="penalty-msg">¡ANALIZA MEJOR! (3s)</div>
         <div id="grid"></div>
     </div>
 
@@ -98,7 +97,6 @@
         let isSelecting = false;
         let audioCtx;
         
-        // VARIABLES DE CONTROL ANTITRAMPA
         let errorCounter = 0;
         let isLocked = false;
 
@@ -194,7 +192,7 @@
             document.getElementById('penalty-msg').style.display = 'none';
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]];
+            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1,-1], [-1,1], [-1,-1]];
             palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
                 while(!puesta && intentos < 50) {
@@ -251,8 +249,13 @@
             for(let word in wordsPos) {
                 const wordBtn = document.getElementById('w-'+word);
                 if(!wordBtn.classList.contains('word-found')) {
-                    // Verifica si la selección actual coincide exactamente con las posiciones de una palabra
-                    const matches = wordsPos[word].every(p => activeCoords.includes(p)) && activeCoords.length === wordsPos[word].length;
+                    
+                    // CORRECCIÓN PARA DIAGONALES: Comparamos conjuntos sin importar el orden
+                    const setWord = new Set(wordsPos[word]);
+                    const setSelected = new Set(activeCoords);
+                    
+                    // Si el tamaño coincide y todas las coordenadas de la palabra están en la selección
+                    const matches = setWord.size === setSelected.size && [...setWord].every(p => setSelected.has(p));
                     
                     if(matches) {
                         wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
@@ -260,15 +263,16 @@
                         playSound(523, 0.15);
                         foundCount++;
                         foundAny = true;
-                        errorCounter = 0; // Reinicia el contador de errores si acierta
+                        errorCounter = 0; 
                         if(foundCount === Object.keys(wordsPos).length) { guardarProgreso(nivelActualIdx); setTimeout(mostrarLogro, 600); }
                     }
                 }
             }
 
             if(!foundAny && activeCoords.length > 0) {
+                // Solo penaliza si realmente intentaron marcar algo mal
                 errorCounter++;
-                playSound(150, 0.2); // Sonido de error
+                playSound(150, 0.2); 
                 if(errorCounter >= 3) {
                     activarPenalizacion();
                 }
@@ -280,15 +284,13 @@
             errorCounter = 0;
             const grid = document.getElementById('grid');
             const msg = document.getElementById('penalty-msg');
-            
             grid.style.opacity = '0.2';
             msg.style.display = 'block';
-            
             setTimeout(() => {
                 grid.style.opacity = '1';
                 msg.style.display = 'none';
                 isLocked = false;
-            }, 3000); // Bloqueo de 3 segundos
+            }, 3000); 
         }
 
         function mostrarLogro() {
