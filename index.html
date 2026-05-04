@@ -29,34 +29,19 @@
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
         #word-list { 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-content: flex-start; 
-            gap: 6px; 
-            padding: 15px 10px 60px 10px; 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            background: #f9f9f9; 
-            border-top: 1px solid #ddd; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; 
+            gap: 6px; padding: 15px 10px 60px 10px; flex-grow: 1; 
+            overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; 
         }
         .word-item { 
-            padding: 6px 12px; 
-            background: white; 
-            border-radius: 20px; 
-            font-size: 13px; 
-            font-weight: bold; 
-            color: #2e7d32; 
-            border: 1px solid #2e7d32; 
-            white-space: nowrap;
-            height: fit-content;
+            padding: 6px 12px; background: white; border-radius: 20px; 
+            font-size: 13px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; 
         }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; opacity: 0.7; }
 
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
-        
         .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
@@ -67,14 +52,11 @@
         <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
         <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
-        <div style="font-size: 1em; margin-top: 8px;">
-            Celular <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
-        </div>
+        <div style="font-size: 1em; margin-top: 8px;">Celular <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a></div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="asistente"></div>
-
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
@@ -116,9 +98,7 @@
         function seleccionarNivel() {
             const hechos = getCompletados();
             const pendientes = [];
-            for(let i=0; i<niveles.length; i++) {
-                if(!hechos.includes(i)) pendientes.push(i);
-            }
+            for(let i=0; i<niveles.length; i++) { if(!hechos.includes(i)) pendientes.push(i); }
             if(pendientes.length === 0) {
                 localStorage.setItem('logos_progreso_vFinal', JSON.stringify([]));
                 return Math.floor(Math.random() * niveles.length);
@@ -145,8 +125,7 @@
 
         function mostrarPromo() {
             const asis = document.getElementById('asistente');
-            const promoAleatoria = promosLogos[Math.floor(Math.random() * promosLogos.length)];
-            asis.innerHTML = promoAleatoria;
+            asis.innerHTML = promosLogos[Math.floor(Math.random() * promosLogos.length)];
             asis.style.display = 'block';
             setTimeout(() => { asis.style.display = 'none'; }, 8000);
         }
@@ -223,34 +202,25 @@
             if(!startCell || !endCell) return;
             const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
             const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
-            
             let dr = r2 - r1, dc = c2 - c1;
             if (dr === 0 && dc === 0) return;
-
             let stepR = 0, stepC = 0, steps = 0;
-            if (Math.abs(dr) > Math.abs(dc) * 1.5) { stepR = Math.sign(dr); stepC = 0; steps = Math.abs(dr); }
-            else if (Math.abs(dc) > Math.abs(dr) * 1.5) { stepR = 0; stepC = Math.sign(dc); steps = Math.abs(dc); }
+            if (Math.abs(dr) > Math.abs(dc) * 1.5) { stepR = Math.sign(dr); steps = Math.abs(dr); }
+            else if (Math.abs(dc) > Math.abs(dr) * 1.5) { stepC = Math.sign(dc); steps = Math.abs(dc); }
             else { stepR = Math.sign(dr); stepC = Math.sign(dc); steps = Math.abs(dr); }
-
-            const prevLength = currentSelection.length;
+            
             document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
             currentSelection = [];
-            
             for(let i = 0; i <= steps; i++) {
                 let cr = r1 + i * stepR, cc = c1 + i * stepC;
                 const cell = document.querySelector(`[data-r="${cr}"][data-c="${cc}"]`);
-                if(cell) {
-                    cell.classList.add('sel');
-                    currentSelection.push(`${cr}-${cc}`);
-                }
+                if(cell) { cell.classList.add('sel'); currentSelection.push(`${cr}-${cc}`); }
             }
-            if(currentSelection.length !== prevLength) playSound(440, 0.05);
         }
 
         const gridElement = document.getElementById('grid');
         gridElement.addEventListener('touchstart', (e) => {
-            isSelecting = true;
-            startCell = getCell(e);
+            isSelecting = true; startCell = getCell(e);
             if(startCell) {
                 currentSelection = [`${startCell.dataset.r}-${startCell.dataset.c}`];
                 startCell.classList.add('sel');
@@ -259,16 +229,12 @@
         }, {passive: false});
 
         gridElement.addEventListener('touchmove', (e) => {
-            if(isSelecting) {
-                e.preventDefault();
-                actualizarSeleccion(getCell(e));
-            }
+            if(isSelecting) { e.preventDefault(); actualizarSeleccion(getCell(e)); }
         }, {passive: false});
 
         window.addEventListener('touchend', () => {
             if(!isSelecting) return;
             isSelecting = false;
-            
             const selStr = currentSelection.join(',');
             for(let pal in wordsPos) {
                 const target = wordsPos[pal].join(',');
@@ -276,7 +242,7 @@
                 if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
                     currentSelection.forEach(pos => {
                         const [r, c] = pos.split('-');
-                        document.querySelector(`[data-r="${r}"][data-c="${cc}"]`).classList.add('found');
+                        document.querySelector(`[data-r="${r}"][data-c="${c}"]`).classList.add('found');
                     });
                     document.getElementById('w-'+pal).classList.add('word-found');
                     playSound(523, 0.15); foundCount++;
@@ -295,14 +261,11 @@
         });
 
         document.getElementById('start-btn').addEventListener('click', () => {
-            initAudio();
-            document.getElementById('overlay').style.display = 'none';
-            cargarNivel();
+            initAudio(); document.getElementById('overlay').style.display = 'none'; cargarNivel();
         });
 
         document.getElementById('btn-next-lvl').addEventListener('click', () => {
-            document.getElementById('ad-modal').style.display = 'none';
-            cargarNivel();
+            document.getElementById('ad-modal').style.display = 'none'; cargarNivel();
         });
     </script>
 </body>
