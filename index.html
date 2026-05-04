@@ -9,11 +9,9 @@
         * { touch-action: auto; user-select: none; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
-        /* PANTALLA INICIAL */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
-        /* ASISTENTE - PROMO LUNES DE MAYO */
         #asistente { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
             background: #fff176; color: #333; padding: 15px; border-radius: 12px; 
@@ -21,23 +19,19 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #fbc02d; font-weight: bold;
         }
 
-        /* CABECERA Y VERSÍCULO */
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
         #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
         #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
-        /* GRILLA DEL JUEGO */
         #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; touch-action: none; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
-        /* LISTA DE PALABRAS */
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
-        /* TARJETA DE LOGROS (MODAL) */
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
@@ -46,15 +40,16 @@
 <body>
 
     <div id="overlay">
-        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px;">Librería Cristiana Logos</div>
-        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Encuentra las palabras del versículo y acumula logros.</div>
-        <div style="font-size: 0.9em;">Calle 35C Sur No 78A-18</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Kennedy Central - Bogotá</div>
-        <button class="btn-start" id="start-btn">JUGAR AHORA</button>
+        <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
+        <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
+        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Clombia</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Celular 312-5756581</div>
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="asistente">
-        📢 SUGERENCIA LOGOS: <br>
+        📢 ¡ATENCIÓN! <br>
         Todos los Lunes de Mayo tenemos <br>
         <span style="font-size: 1.1em; color: #d32f2f;">10% DCTO en Biblias Reina Valera</span>
     </div>
@@ -62,10 +57,10 @@
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
             <div style="font-size: 50px;">🏆</div>
-            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO COMPLETADO!</div>
+            <div style="font-size: 1.5em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
             <p id="stats-text" style="font-size: 1.1em; margin: 15px 0;"></p>
-            <div style="font-size: 0.85em; color: #666;">Sigue jugando para descubrir más promesas bíblicas.</div>
-            <button class="btn-next" id="btn-next-lvl">SIGUIENTE NIVEL</button>
+            <div style="font-size: 0.9em; color: #666;">¡Sigue alimentando tu espíritu con la Palabra!</div>
+            <button class="btn-next" id="btn-next-lvl">CONTINUAR</button>
         </div>
     </div>
 
@@ -85,33 +80,30 @@
         let isSelecting = false;
         let audioCtx;
 
-        // --- SISTEMA PARA NO REPETIR SOPAS ---
         function getCompletados() {
-            const data = localStorage.getItem('logos_progreso_v2');
+            const data = localStorage.getItem('logos_progreso_vFinal');
             return data ? JSON.parse(data) : [];
         }
 
         function guardarProgreso(idx) {
             let lista = getCompletados();
             if(!lista.includes(idx)) lista.push(idx);
-            localStorage.setItem('logos_progreso_v2', JSON.stringify(lista));
+            localStorage.setItem('logos_progreso_vFinal', JSON.stringify(lista));
         }
 
         function seleccionarNivel() {
             const hechos = getCompletados();
-            // Si ya hizo todos, reiniciamos la lista para que pueda volver a jugar
             if(hechos.length >= niveles.length) {
-                localStorage.setItem('logos_progreso_v2', JSON.stringify([]));
+                localStorage.setItem('logos_progreso_vFinal', JSON.stringify([]));
                 return 0;
             }
-            // Busca el primer índice que no esté en la lista de hechos
             for(let i=0; i<niveles.length; i++) {
                 if(!hechos.includes(i)) return i;
             }
             return 0;
         }
 
-        // --- AUDIO ---
+        // --- SONIDO RESTAURADO ---
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -129,7 +121,6 @@
             o.start(); o.stop(audioCtx.currentTime + d);
         }
 
-        // --- MANEJO DE EVENTOS ---
         document.getElementById('start-btn').addEventListener('click', () => {
             initAudio();
             document.getElementById('overlay').style.display = 'none';
@@ -144,17 +135,15 @@
         function comenzarJuego() {
             nivelActualIdx = seleccionarNivel();
             cargarNivel();
-            
-            // Mostrar asistente con la promo por 4 segundos
             const asis = document.getElementById('asistente');
             asis.style.display = 'block';
-            setTimeout(() => { asis.style.display = 'none'; }, 4000);
+            setTimeout(() => { asis.style.display = 'none'; }, 6000);
         }
 
         function cargarNivel() {
             const data = niveles[nivelActualIdx];
-            const totalCompletados = getCompletados().length;
-            document.getElementById('lvl-tag').textContent = `RETOS LOGRADOS: ${totalCompletados}`;
+            const totalCompletados = getCompletados().length + 1;
+            document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
             document.getElementById('verse-text').textContent = `"${data.v}"`;
             
             let palabras = data.v.toUpperCase().split(' ').map(p => p.replace(/[^A-Z]/g, '')).filter(p => p.length >= 3);
@@ -181,8 +170,8 @@
                 while(!puesta && intentos < 50) {
                     let [dr, dc] = direcciones[Math.floor(Math.random() * direcciones.length)];
                     let r = Math.floor(Math.random() * TAM), c = Math.floor(Math.random() * TAM);
-                    if (r + dr * palabra.length < TAM && r + dr * palabra.length >= 0 && 
-                        c + dc * palabra.length < TAM && c + dc * palabra.length >= 0) {
+                    if (r + dr * (palabra.length-1) < TAM && r + dr * (palabra.length-1) >= 0 && 
+                        c + dc * (palabra.length-1) < TAM && c + dc * (palabra.length-1) >= 0) {
                         let ok = true;
                         for(let j=0; j<palabra.length; j++) 
                             if(matriz[r+dr*j][c+dc*j] !== '' && matriz[r+dr*j][c+dc*j] !== palabra[j]) ok = false;
@@ -218,6 +207,7 @@
                 const pos = el.dataset.pos;
                 if(!activeCoords.includes(pos)) {
                     activeCoords.push(pos); el.classList.add('sel');
+                    playSound(440, 0.05); 
                     check();
                 }
             }
@@ -234,7 +224,7 @@
                                              document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
                     wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     document.getElementById('w-'+word).classList.add('word-found');
-                    playSound(523, 0.1); foundCount++;
+                    playSound(523, 0.15); foundCount++;
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
                         setTimeout(mostrarLogro, 600);
@@ -245,7 +235,7 @@
 
         function mostrarLogro() {
             const total = getCompletados().length;
-            document.getElementById('stats-text').innerHTML = `¡Felicidades! Has resuelto <br><b>${total} Sopas de Letras</b> bíblicas.`;
+            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
             document.getElementById('ad-modal').style.display = 'flex';
             playSound(659, 0.3);
         }
