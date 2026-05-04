@@ -1,17 +1,19 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa de Letras - Librería Logos</title>
     <style>
-        * { touch-action: auto; user-select: none; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
+        * { touch-action: none; user-select: none; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
+        /* Pantalla de Inicio */
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
         .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
+        /* Anuncio flotante */
         #asistente { 
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
             background: #fff176; color: #333; padding: 15px; border-radius: 12px; 
@@ -19,24 +21,27 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid #fbc02d; font-weight: bold;
         }
 
+        /* Encabezado y Versículo */
         .header { background: #2e7d32; color: white; padding: 10px; font-weight: bold; font-size: 1.1em; }
         #verse-container { background: #e8f5e9; padding: 15px; margin: 5px 10px; border-radius: 12px; border-left: 6px solid #2e7d32; min-height: 100px; display: flex; align-items: center; justify-content: center; }
         #verse-text { font-size: 1.3rem; color: #1b5e20; font-weight: 800; line-height: 1.2; }
 
-        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; touch-action: none; }
+        /* El Tablero */
+        #grid { display: grid; grid-template-columns: repeat(12, 1fr); width: 96vw; max-width: 440px; background: #ccc; gap: 1px; margin: 0 auto; border: 2px solid #2e7d32; }
         .cell { aspect-ratio: 1/1; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
         .sel { background: #fff176 !important; }
         .found { background: #c8e6c9 !important; color: #1b5e20 !important; }
 
+        /* Lista de palabras */
         #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px; height: 110px; overflow-y: auto; background: #f9f9f9; border-top: 1px solid #ddd; }
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
+        /* Modal de éxito */
         .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
         .ad-card { background: white; color: #333; padding: 30px 20px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; border: 4px solid #2e7d32; }
         .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
         
-        /* Estilo para el link de WhatsApp */
         .wa-link { color: white; text-decoration: none; font-weight: bold; }
     </style>
 </head>
@@ -48,7 +53,7 @@
         <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
         <div style="font-size: 1em; margin-top: 8px;">
-            Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
+            WhatsApp: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a>
         </div>
         <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
@@ -81,8 +86,9 @@
         let nivelActualIdx = 0;
         let wordsPos = {};
         let foundCount = 0;
-        let activeCoords = [];
         let isSelecting = false;
+        let startCell = null;
+        let currentSelection = [];
         let audioCtx;
 
         function getCompletados() {
@@ -108,21 +114,15 @@
             return 0;
         }
 
-        // --- SISTEMA DE AUDIO AUTO-REACTIVABLE ---
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
         function playSound(f, d) {
             initAudio(); 
             if (!audioCtx || audioCtx.state !== 'running') return;
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
             o.type = 'sine';
             o.frequency.setValueAtTime(f, audioCtx.currentTime);
             g.gain.setValueAtTime(0.1, audioCtx.currentTime);
@@ -131,27 +131,8 @@
             o.start(); o.stop(audioCtx.currentTime + d);
         }
 
-        document.getElementById('start-btn').addEventListener('click', () => {
-            initAudio();
-            document.getElementById('overlay').style.display = 'none';
-            comenzarJuego();
-        });
-
-        document.getElementById('btn-next-lvl').addEventListener('click', () => {
-            initAudio();
-            document.getElementById('ad-modal').style.display = 'none';
-            comenzarJuego();
-        });
-
-        function comenzarJuego() {
-            nivelActualIdx = seleccionarNivel();
-            cargarNivel();
-            const asis = document.getElementById('asistente');
-            asis.style.display = 'block';
-            setTimeout(() => { asis.style.display = 'none'; }, 6000);
-        }
-
         function cargarNivel() {
+            nivelActualIdx = seleccionarNivel();
             const data = niveles[nivelActualIdx];
             const totalCompletados = getCompletados().length + 1;
             document.getElementById('lvl-tag').textContent = `RETO #${totalCompletados} - ${data.r}`;
@@ -174,7 +155,7 @@
             grid.innerHTML = ''; list.innerHTML = ''; foundCount = 0; wordsPos = {};
             
             let matriz = Array(TAM).fill().map(() => Array(TAM).fill(''));
-            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0]];
+            const direcciones = [[0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [1, -1], [-1, 1], [-1, -1]];
             
             palabras.forEach(palabra => {
                 let puesta = false, intentos = 0;
@@ -206,51 +187,102 @@
                 for(let c=0; c<TAM; c++) {
                     const d = document.createElement('div'); d.className = 'cell';
                     d.textContent = matriz[r][c] || String.fromCharCode(65+Math.floor(Math.random()*26));
-                    d.dataset.pos = `${r}-${c}`; grid.appendChild(d);
+                    d.dataset.r = r; d.dataset.c = c; grid.appendChild(d);
                 }
             }
         }
 
-        function handleTouch(e) {
-            initAudio(); 
+        function getCell(e) {
             const t = e.touches ? e.touches[0] : e;
             const el = document.elementFromPoint(t.clientX, t.clientY);
-            if(el && el.classList.contains('cell')) {
-                const pos = el.dataset.pos;
-                if(!activeCoords.includes(pos)) {
-                    activeCoords.push(pos); el.classList.add('sel');
-                    playSound(440, 0.05); 
-                    check();
+            return el && el.classList.contains('cell') ? el : null;
+        }
+
+        function actualizarSeleccion(endCell) {
+            if(!startCell || !endCell) return;
+            const r1 = parseInt(startCell.dataset.r), c1 = parseInt(startCell.dataset.c);
+            const r2 = parseInt(endCell.dataset.r), c2 = parseInt(endCell.dataset.c);
+            
+            let dr = r2 - r1, dc = c2 - c1;
+            if (dr === 0 && dc === 0) return;
+
+            let absR = Math.abs(dr), absC = Math.abs(dc);
+            let stepR = 0, stepC = 0, steps = 0;
+
+            // Lógica de validación de línea recta (Imán para comodidad)
+            if (absR > absC * 2) { stepR = dr / absR; stepC = 0; steps = absR; } 
+            else if (absC > absR * 2) { stepR = 0; stepC = dc / absC; steps = absC; } 
+            else { stepR = dr / absR; stepC = dc / absC; steps = absR; }
+
+            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+            currentSelection = [];
+            
+            for(let i = 0; i <= steps; i++) {
+                let cr = r1 + i * stepR, cc = c1 + i * stepC;
+                const cell = document.querySelector(`[data-r="${Math.round(cr)}"][data-c="${Math.round(cc)}"]`);
+                if(cell) {
+                    cell.classList.add('sel');
+                    currentSelection.push(`${Math.round(cr)}-${Math.round(cc)}`);
                 }
             }
         }
 
-        document.getElementById('grid').addEventListener('touchstart', (e) => { isSelecting = true; activeCoords = []; handleTouch(e); });
-        document.getElementById('grid').addEventListener('touchmove', (e) => { if(isSelecting) e.preventDefault(); handleTouch(e); }, {passive: false});
-        window.addEventListener('touchend', () => { document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); isSelecting = false; });
+        const gridElement = document.getElementById('grid');
+        gridElement.addEventListener('touchstart', (e) => {
+            isSelecting = true;
+            startCell = getCell(e);
+            if(startCell) {
+                playSound(440, 0.05);
+            }
+        });
 
-        function check() {
-            for(let word in wordsPos) {
-                if(!document.getElementById('w-'+word).classList.contains('word-found') && 
-                   wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
-                                             document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
-                    wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
-                    document.getElementById('w-'+word).classList.add('word-found');
+        gridElement.addEventListener('touchmove', (e) => {
+            if(isSelecting) actualizarSeleccion(getCell(e));
+        });
+
+        window.addEventListener('touchend', () => {
+            if(!isSelecting) return;
+            isSelecting = false;
+            
+            const selStr = currentSelection.join(',');
+            for(let pal in wordsPos) {
+                const target = wordsPos[pal].join(',');
+                const targetRev = [...wordsPos[pal]].reverse().join(',');
+                
+                if((selStr === target || selStr === targetRev) && !document.getElementById('w-'+pal).classList.contains('word-found')) {
+                    currentSelection.forEach(pos => {
+                        const [r, c] = pos.split('-');
+                        document.querySelector(`[data-r="${r}"][data-c="${c}"]`).classList.add('found');
+                    });
+                    document.getElementById('w-'+pal).classList.add('word-found');
                     playSound(523, 0.15); foundCount++;
                     if(foundCount === Object.keys(wordsPos).length) {
                         guardarProgreso(nivelActualIdx);
-                        setTimeout(mostrarLogro, 600);
+                        setTimeout(() => {
+                            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${getCompletados().length} Versículos Bíblicos</b>`;
+                            document.getElementById('ad-modal').style.display = 'flex';
+                            playSound(659, 0.3);
+                        }, 600);
                     }
                 }
             }
-        }
+            document.querySelectorAll('.sel').forEach(c => c.classList.remove('sel'));
+            currentSelection = [];
+        });
 
-        function mostrarLogro() {
-            const total = getCompletados().length;
-            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
-            document.getElementById('ad-modal').style.display = 'flex';
-            playSound(659, 0.3);
-        }
+        document.getElementById('start-btn').addEventListener('click', () => {
+            initAudio();
+            document.getElementById('overlay').style.display = 'none';
+            cargarNivel();
+            const asis = document.getElementById('asistente');
+            asis.style.display = 'block';
+            setTimeout(() => { asis.style.display = 'none'; }, 6000);
+        });
+
+        document.getElementById('btn-next-lvl').addEventListener('click', () => {
+            document.getElementById('ad-modal').style.display = 'none';
+            cargarNivel();
+        });
     </script>
 </body>
 </html>
