@@ -95,6 +95,51 @@
         let isSelecting = false;
         let audioCtx = null;
 
+        // FUNCIÓN PARA ENVIAR LOS DATOS A GOOGLE SHEETS
+        async function enviarDatosGoogle(datos) {
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+            } catch (e) { console.error("Error al enviar a la hoja"); }
+        }
+
+        function check() {
+            for(let word in wordsPos) {
+                if(!document.getElementById('w-'+word).classList.contains('word-found') && 
+                   wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
+                   document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                    
+                    wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
+                    document.getElementById('w-'+word).classList.add('word-found');
+                    playSound(523, 0.15); 
+                    foundCount++;
+
+                    // SI SE ENCONTRARON TODAS LAS PALABRAS
+                    if(foundCount === Object.keys(wordsPos).length) { 
+                        // REGISTRAMOS EN LA HOJA DE TRACKING
+                        enviarDatosGoogle({
+                            fecha: new Date().toLocaleDateString(),
+                            usuario: nombreUsuario,
+                            evento: "Nivel Completado",
+                            nivel: nivelActualIdx + 1,
+                            tiempo: new Date().toLocaleTimeString()
+                        });
+
+                        const hechos = getCompletados();
+                        if(!hechos.includes(nivelActualIdx)) {
+                            hechos.push(nivelActualIdx);
+                            localStorage.setItem('logos_progreso_vFinal', JSON.stringify(hechos));
+                        }
+                        setTimeout(mostrarLogro, 600); 
+                    }
+                }
+            }
+        }
+
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
