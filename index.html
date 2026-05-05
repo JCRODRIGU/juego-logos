@@ -84,8 +84,8 @@
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
         const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83d\udce2 <b>RECUERDA</b> Estamos ubicados en Kennedy Central.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Letra Grande  ya disponibles.", "\ud83d\udcd6 <b>EL PODER DE LA ESPOSA QUE ORA:</b> Super redomendado $33.000.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide nuestro cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Si nos sigues en Tik-Tok puedes participar en un concurso en nuestra Librer\u00eda!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
         
-        // URL de tu implementación nueva (Método doGet)
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztPxy9xtgXbTWeHw6rkVvMCSzoN7kgzLZ4ePO5visP2AZsh0Q-xwaD-k6t-0CLxWzx/exec";
+        // TU NUEVA URL COMPLETA
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxy6QkHrhZ_puEN1kAEeNajEVb8DkbaMdIUAo4ZJ8Z5_rMHE4p9lQ-thRunb_P8tZdJ/exec";
         
         let nombreUsuario = "";
         let nivelActualIdx = 0;
@@ -95,7 +95,7 @@
         let isSelecting = false;
         let audioCtx = null;
 
-        // FUNCIÓN INFALIBLE DE ENVÍO (Mediante parámetro de URL)
+        // ESTA FUNCIÓN ENVÍA LOS DATOS POR LA URL
         function enviarDatosGoogle(datos) {
             const queryParams = "?" + 
                 "fecha=" + encodeURIComponent(datos.fecha) +
@@ -104,10 +104,10 @@
                 "&nivel=" + encodeURIComponent(datos.nivel) +
                 "&tiempo=" + encodeURIComponent(datos.tiempo);
             
-            // Usamos una petición de imagen invisible para asegurar que el dato llegue sin bloqueos
+            // Usamos una imagen invisible para "disparar" el envío sin errores de CORS
             const img = new Image();
             img.src = GOOGLE_SCRIPT_URL + queryParams;
-            console.log("Enviando datos a la hoja...");
+            console.log("Datos enviados a la hoja con éxito.");
         }
 
         function check() {
@@ -121,12 +121,12 @@
                     playSound(523, 0.15); 
                     foundCount++;
 
-                    // MOMENTO DEL REGISTRO EN LA HOJA
+                    // AQUÍ ES DONDE SE ACTIVA EL TRACKING
                     if(foundCount === Object.keys(wordsPos).length) { 
                         enviarDatosGoogle({
                             fecha: new Date().toLocaleDateString(),
                             usuario: nombreUsuario || "Cliente Logos",
-                            evento: "Victoria Sopa",
+                            evento: "Nivel Completado",
                             nivel: nivelActualIdx + 1,
                             tiempo: new Date().toLocaleTimeString()
                         });
