@@ -278,11 +278,38 @@
 
         function check() {
             for(let word in wordsPos) {
-                if(!document.getElementById('w-'+word).classList.contains('word-found') && wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                // Si la palabra no ha sido marcada y todas sus letras están seleccionadas...
+                if(!document.getElementById('w-'+word).classList.contains('word-found') && 
+                   wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
+                   document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                    
                     wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     document.getElementById('w-'+word).classList.add('word-found');
-                    playSound(523, 0.15); foundCount++;
-                    if(foundCount === Object.keys(wordsPos).length) { guardarProgreso(nivelActualIdx); setTimeout(mostrarLogro, 600); }
+                    playSound(523, 0.15); 
+                    foundCount++;
+
+                    // --- AQUÍ ESTÁ EL TRUCO: SI GANÓ EL NIVEL ---
+                    if(foundCount === Object.keys(wordsPos).length) { 
+                        
+                        // 1. Enviamos a la hoja de Tracking
+                        enviarDatosGoogle({
+                            fecha: new Date().toLocaleDateString(),
+                            usuario: nombreUsuario,
+                            evento: "Nivel Completado",
+                            nivel: nivelActualIdx + 1,
+                            tiempo: new Date().toLocaleTimeString()
+                        });
+
+                        // 2. Guardamos progreso local
+                        const hechos = getCompletados();
+                        if(!hechos.includes(nivelActualIdx)) {
+                            hechos.push(nivelActualIdx);
+                            localStorage.setItem('logos_progreso_vFinal', JSON.stringify(hechos));
+                        }
+                        
+                        // 3. Mostramos el trofeo
+                        setTimeout(mostrarLogro, 600); 
+                    }
                 }
             }
         }
