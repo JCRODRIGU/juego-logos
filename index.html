@@ -84,7 +84,8 @@
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
         const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83d\udce2 <b>RECUERDA</b> Estamos ubicados en Kennedy Central.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Letra Grande  ya disponibles.", "\ud83d\udcd6 <b>EL PODER DE LA ESPOSA QUE ORA:</b> Super redomendado $33.000.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide nuestro cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Si nos sigues en Tik-Tok puedes participar en un concurso en nuestra Librer\u00eda!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
         
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwG9xI8gvTykdlk2CGRchZBpTqsWWxe4pU38vU_nPUb0aErS6ibZTvpmHrUozZk_5a1/exec";
+        // URL de tu implementación nueva (Método doGet)
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztPxy9xtgXbTWeHw6rkVvMCSzoN7kgzLZ4ePO5visP2AZsh0Q-xwaD-k6t-0CLxWzx/exec";
         
         let nombreUsuario = "";
         let nivelActualIdx = 0;
@@ -94,30 +95,19 @@
         let isSelecting = false;
         let audioCtx = null;
 
-        // ESTA ES LA FUNCIÓN QUE FALTA O ESTÁ FALLANDO
+        // FUNCIÓN INFALIBLE DE ENVÍO (Mediante parámetro de URL)
         function enviarDatosGoogle(datos) {
-            // Usamos un formulario invisible (técnica img o sendBeacon) para saltar bloqueos de seguridad
-            const urlFinal = GOOGLE_SCRIPT_URL + 
-                "?fecha=" + encodeURIComponent(datos.fecha) +
+            const queryParams = "?" + 
+                "fecha=" + encodeURIComponent(datos.fecha) +
                 "&usuario=" + encodeURIComponent(datos.usuario) +
                 "&evento=" + encodeURIComponent(datos.evento) +
                 "&nivel=" + encodeURIComponent(datos.nivel) +
                 "&tiempo=" + encodeURIComponent(datos.tiempo);
             
-            // Intentar envío por fetch silencioso
-            fetch(urlFinal, { mode: 'no-cors' }).catch(e => console.log("Error de red"));
-        }
-        
-        // FUNCIÓN PARA ENVIAR LOS DATOS A GOOGLE SHEETS
-        async function enviarDatosGoogle(datos) {
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datos)
-                });
-            } catch (e) { console.error("Error al enviar a la hoja"); }
+            // Usamos una petición de imagen invisible para asegurar que el dato llegue sin bloqueos
+            const img = new Image();
+            img.src = GOOGLE_SCRIPT_URL + queryParams;
+            console.log("Enviando datos a la hoja...");
         }
 
         function check() {
@@ -131,13 +121,12 @@
                     playSound(523, 0.15); 
                     foundCount++;
 
-                    // SI SE ENCONTRARON TODAS LAS PALABRAS
+                    // MOMENTO DEL REGISTRO EN LA HOJA
                     if(foundCount === Object.keys(wordsPos).length) { 
-                        // REGISTRAMOS EN LA HOJA DE TRACKING
                         enviarDatosGoogle({
                             fecha: new Date().toLocaleDateString(),
-                            usuario: nombreUsuario,
-                            evento: "Nivel Completado",
+                            usuario: nombreUsuario || "Cliente Logos",
+                            evento: "Victoria Sopa",
                             nivel: nivelActualIdx + 1,
                             tiempo: new Date().toLocaleTimeString()
                         });
@@ -152,7 +141,7 @@
                 }
             }
         }
-
+        
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
