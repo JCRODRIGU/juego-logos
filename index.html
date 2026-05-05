@@ -10,7 +10,12 @@
         body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #ffffff; margin: 0; overflow: hidden; }
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2e7d32; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; color: white; padding: 20px; }
-        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .btn-start { padding: 18px 40px; background: white; color: #2e7d32; border-radius: 50px; font-size: 1.4em; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        #input-nombre { 
+            width: 85%; max-width: 300px; padding: 12px; margin: 15px 0; 
+            border-radius: 10px; border: none; font-size: 1.1em; text-align: center; outline: none;
+        }
 
         #asistente { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
@@ -49,10 +54,13 @@
     <div id="overlay">
         <div style="font-size: 1.6em; font-weight: 800; margin-bottom: 15px; line-height: 1.2;">Este es un regalo especial para ti por ser Nuestro Cliente</div>
         <div style="font-size: 1.1em; margin-bottom: 25px; padding: 0 15px;">Busca las palabras del versículo deslizando tu dedo en la sopa de letras. <br><b>¡Diviértete!</b></div>
-        <div style="font-weight: bold; font-size: 1.4em;">Librería Cristiana Logos</div>
+        
+        <input type="text" id="input-nombre" placeholder="Escribe tu nombre aquí..." maxlength="25">
+        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
+
+        <div style="font-weight: bold; font-size: 1.4em; margin-top: 20px;">Librería Cristiana Logos</div>
         <div style="font-size: 0.9em; margin-top: 5px;">Calle 35C Sur No 78A-18 Kennedy Central Bogota, Colombia</div>
         <div style="font-size: 1em; margin-top: 8px;">Celular: <a href="https://wa.me/573125756581" class="wa-link">312-5756581</a></div>
-        <button class="btn-start" id="start-btn">EMPEZAR RETO</button>
     </div>
 
     <div id="asistente"></div>
@@ -76,6 +84,7 @@
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
         const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83d\udce2 <b>RECUERDA</b> Estamos ubicados en Kennedy Central.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Letra Grande  ya disponibles.", "\ud83d\udcd6 <b>EL PODER DE LA ESPOSA QUE ORA:</b> Super redomendado $33.000.", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide nuestro cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Si nos sigues en Tik-Tok puedes participar en un concurso en nuestra Librer\u00eda!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
         
+        let nombreUsuario = "";
         let nivelActualIdx = 0;
         let wordsPos = {};
         let foundCount = 0;
@@ -83,18 +92,10 @@
         let isSelecting = false;
         let audioCtx;
 
-        // --- SOLUCIÓN RECUPERACIÓN DE SONIDO ---
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
-
-        // Detectar cuando el usuario vuelve a la app/pestaña
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") {
-                initAudio(); // Forzar reactivación al volver
-            }
-        });
 
         function playSound(f, d) {
             initAudio(); 
@@ -130,7 +131,19 @@
             return 0;
         }
 
+        window.onload = () => {
+            const n = localStorage.getItem('nombre_logos');
+            if(n) document.getElementById('input-nombre').value = n;
+        }
+
         document.getElementById('start-btn').addEventListener('click', () => {
+            const input = document.getElementById('input-nombre');
+            if(input.value.trim().length < 3) {
+                alert("Por favor, ingresa tu nombre para empezar.");
+                return;
+            }
+            nombreUsuario = input.value.trim();
+            localStorage.setItem('nombre_logos', nombreUsuario);
             initAudio();
             document.getElementById('overlay').style.display = 'none';
             comenzarJuego();
@@ -228,7 +241,7 @@
 
         function mostrarLogro() {
             const total = getCompletados().length;
-            document.getElementById('stats-text').innerHTML = `Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
+            document.getElementById('stats-text').innerHTML = `¡Felicidades <b>${nombreUsuario}</b>!<br>Has completado un total de <br><b>${total} Versículos Bíblicos</b>`;
             document.getElementById('ad-modal').style.display = 'flex';
             playSound(659, 0.3);
         }
