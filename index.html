@@ -296,18 +296,6 @@
             cargarRankingSemanalLogos();
         }
 
-        // Calcula cuántos días han pasado desde el año 2000 (evita bugs de zonas horarias y formatos)
-        function obtenerDiasAbsolutos(d, m, a) {
-            let diasMeses = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            // Año bisiesto simple
-            if ((a % 4 === 0 && a % 100 !== 0) || (a % 400 === 0)) diasMeses[2] = 29;
-            
-            let total = (a - 2000) * 365 + Math.floor((a - 2000) / 4);
-            for (let i = 1; i < m; i++) total += diasMeses[i];
-            total += d;
-            return total;
-        }
-
         function cargarRankingSemanalLogos() {
             const container = document.getElementById('ranking-container');
             container.innerHTML = "<p style='font-size:0.85em; color:#666;'>Cargando Tabla de Honor semanal...</p>";
@@ -320,37 +308,37 @@
                         return;
                     }
                     
-                    // Obtener día absoluto de hoy
-                    const t = new Date();
-                    const hoyAbsoluto = obtenerDiasAbsolutos(t.getDate(), t.getMonth() + 1, t.getFullYear());
+                    const hoy = new Date();
+                    const limiteSieteDias = new Date(hoy.getTime() - (7 * 24 * 60 * 60 * 1000));
+                    limiteSieteDias.setHours(0,0,0,0);
                     
                     const conteoUsuarios = {};
                     
                     data.forEach(row => {
                         if (row.Evento === "Nivel Completado" && row.Usuario && row.Fecha) {
-                            let partes = row.Fecha.trim().split('/');
-                            if(partes.length === 3) {
-                                let p0 = parseInt(partes[0], 10);
-                                let p1 = parseInt(partes[1], 10);
-                                let p2 = parseInt(partes[2], 10);
-                                
-                                let dia = p0;
-                                let mes = p1;
-                                let anio = p2;
-                                
-                                // Si viene invertido de Google Sheets (MM/DD/YYYY) lo detectamos automáticamente
-                                if (p0 > 12) { 
-                                    dia = p0; mes = p1; 
-                                } else if (p1 > 12) { 
-                                    dia = p1; mes = p0; 
+                            // Método ultra-compatible: limpia y procesa la fecha directamente
+                            let textoFecha = row.Fecha.trim();
+                            
+                            // Si la fecha viene en formato JSON o ISO de Google, la lee directo.
+                            // Si viene con texto o barras, forzamos un parseo básico.
+                            let timestampFila = Date.parse(textoFecha);
+                            
+                            // Si falla por el orden DD/MM en navegadores americanos, probamos invirtiéndolo
+                            if (isNaN(timestampFila)) {
+                                let partes = textoFecha.split('/');
+                                if (partes.length === 3) {
+                                    // Cambiar DD/MM/YYYY a MM/DD/YYYY para compatibilidad universal
+                                    timestampFila = Date.parse(`${partes[1]}/${partes[0]}/${partes[2]}`);
                                 }
+                            }
+                            
+                            if (!isNaN(timestampFila)) {
+                                let fechaFila = new Date(timestampFila);
+                                fechaFila.setHours(0,0,0,0);
                                 
-                                if (!isNaN(dia) && !isNaN(mes) && !isNaN(anio)) {
-                                    let filaAbsoluta = obtenerDiasAbsolutos(dia, mes, anio);
-                                    // Filtrar los últimos 7 días con precisión matemática
-                                    if ((hoyAbsoluto - filaAbsoluta) <= 7 && (hoyAbsoluto - filaAbsoluta) >= 0) {
-                                        conteoUsuarios[row.Usuario] = (conteoUsuarios[row.Usuario] || 0) + 1;
-                                    }
+                                // Filtrar si entra en el rango de los últimos 7 días
+                                if (fechaFila >= limiteSieteDias && fechaFila <= hoy) {
+                                    conteoUsuarios[row.Usuario] = (conteoUsuarios[row.Usuario] || 0) + 1;
                                 }
                             }
                         }
