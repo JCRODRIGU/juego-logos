@@ -310,23 +310,42 @@
                     }
                     
                     const hoy = new Date();
+                    // Margen de 7 días exactos
                     const haceSieteDias = new Date(hoy.getTime() - (7 * 24 * 60 * 60 * 1000));
                     const conteoUsuarios = {};
                     
                     data.forEach(row => {
                         if (row.Evento === "Nivel Completado" && row.Usuario && row.Fecha) {
-                            let partes = row.Fecha.split('/');
-                            let fechaFila;
+                            // Limpiamos la fecha por si viene con espacios o caracteres extra
+                            let limpiaFecha = row.Fecha.trim();
+                            let partes = limpiaFecha.split('/');
+                            let fechaFila = null;
+                            
                             if(partes.length === 3) {
-                                if(parseInt(partes[0]) > 12) {
-                                    fechaFila = new Date(partes[2], partes[1] - 1, partes[0]);
+                                let dia = parseInt(partes[0], 10);
+                                let mes = parseInt(partes[1], 10) - 1; // Los meses en JS van de 0 a 11
+                                let anio = parseInt(partes[2], 10);
+                                
+                                // Intentar interpretar como DD/MM/YYYY primero
+                                if(dia > 12) {
+                                    fechaFila = new Date(anio, mes, dia);
                                 } else {
-                                    fechaFila = new Date(partes[2], partes[0] - 1, partes[1]);
+                                    // Si hay ambigüedad (ej: 05/12), creamos una fecha estándar
+                                    // Probamos primero el formato nativo de tu Google Sheet
+                                    fechaFila = new Date(anio, mes, dia);
                                 }
                             }
                             
-                            if (fechaFila && fechaFila >= haceSieteDias) {
-                                conteoUsuarios[row.Usuario] = (conteoUsuarios[row.Usuario] || 0) + 1;
+                            // Forzar la validación de la fecha construida
+                            if (fechaFila && !isNaN(fechaFila.getTime())) {
+                                // Ponemos ambas fechas a las 00:00 para comparar solo días calendario
+                                fechaFila.setHours(0,0,0,0);
+                                let inicioRango = new Date(haceSieteDias);
+                                inicioRango.setHours(0,0,0,0);
+                                
+                                if (fechaFila >= inicioRango) {
+                                    conteoUsuarios[row.Usuario] = (conteoUsuarios[row.Usuario] || 0) + 1;
+                                }
                             }
                         }
                     });
