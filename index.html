@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,16 +42,20 @@
         .word-item { padding: 4px 8px; background: white; border-radius: 10px; font-size: 12px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .word-found { background: #2e7d32 !important; color: white !important; text-decoration: line-through; }
 
-        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .ad-card { background: white; color: #333; padding: 25px 15px; border-radius: 20px; width: 90%; max-width: 360px; text-align: center; border: 4px solid #2e7d32; }
-        .btn-next { background: #2e7d32; color: white; padding: 18px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 20px; }
+        .modal-ad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; overflow-y: auto; padding: 20px 0; }
+        .ad-card { background: white; color: #333; padding: 20px 15px; border-radius: 20px; width: 90%; max-width: 380px; text-align: center; border: 4px solid #2e7d32; margin: auto; }
+        .btn-next { background: #2e7d32; color: white; padding: 15px; border: none; border-radius: 35px; font-weight: bold; width: 100%; font-size: 1.1em; cursor: pointer; margin-top: 15px; }
         .wa-link { color: white; text-decoration: none; font-weight: bold; }
         
-        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; background: #f9f9f9; border-radius: 10px; overflow: hidden; }
-        .ranking-table th { background: #2e7d32; color: white; padding: 8px; font-weight: bold; }
-        .ranking-table td { padding: 8px; border-bottom: 1px solid #eee; color: #333; }
+        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85em; background: #f9f9f9; border-radius: 10px; overflow: hidden; }
+        .ranking-table th { background: #2e7d32; color: white; padding: 6px; font-weight: bold; }
+        .ranking-table td { padding: 6px; border-bottom: 1px solid #eee; color: #333; }
         .ranking-table tr:nth-child(even) { background: #f1f8e9; }
-        .ranking-promo { background: #fffde7; padding: 10px; border-radius: 8px; border: 1px dashed #fbc02d; font-size: 0.85em; margin-top: 15px; font-weight: bold; color: #5d4037; }
+        .ranking-promo { background: #fffde7; padding: 8px; border-radius: 8px; border: 1px dashed #fbc02d; font-size: 0.8em; margin-top: 10px; font-weight: bold; color: #5d4037; }
+
+        .catalog-promo-card { background: #e8f5e9; border: 2px solid #2e7d32; border-radius: 12px; padding: 12px; margin-top: 12px; text-align: center; }
+        .catalog-promo-card p { margin: 0 0 8px 0; font-size: 0.9em; color: #1b5e20; font-weight: bold; }
+        .catalog-btn { display: inline-block; background: #2e7d32; color: white; padding: 10px 18px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 0.9em; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -73,10 +76,16 @@
 
     <div id="ad-modal" class="modal-ad">
         <div class="ad-card">
-            <div style="font-size: 40px; margin-bottom: 5px;">🏆</div>
-            <div style="font-size: 1.4em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
-            <p id="stats-text" style="font-size: 1.05em; margin: 10px 0;"></p>
+            <div style="font-size: 35px; margin-bottom: 2px;">🏆</div>
+            <div style="font-size: 1.3em; font-weight: 800; color: #2e7d32;">¡RETO SUPERADO!</div>
+            <p id="stats-text" style="font-size: 0.95em; margin: 8px 0;"></p>
             
+            <!-- Invitación al catálogo -->
+            <div class="catalog-promo-card">
+                <p>🙏 ¡Muchas gracias por jugar! Te invitamos de todo corazón a conocer nuestro catálogo interactivo:</p>
+                <a href="https://libreria-logos-catalogo.streamlit.app/" target="_blank" class="catalog-btn">📚 Ver Catálogo Logos</a>
+            </div>
+
             <div id="ranking-container"></div> 
             
             <div class="ranking-promo">
@@ -94,7 +103,7 @@
    <script>
         const niveles = [{"v": "En descanso y en reposo sereis salvos; en quietud y en confianza sera vuestra fortaleza; mas no quisisteis.", "r": "Isaias 30:15"}, {"v": "Aunque la higuera no florezca, ni en las vides haya frutos; aunque falte el producto del olivo, y los labrados no den mantenimiento; con todo, yo me alegrare en Jehova, y me gozare en el Dios de mi salvacion.", "r": "Habacuc 3:17-18"}, {"v": "Jehova esta en medio de ti, poderoso, el salvara; se gozara sobre ti con alegria, callara de amor, se regocijara sobre ti con canticos.", "r": "Sofonias 3:17"}, {"v": "Bueno es Jehova a los que en el esperan, al alma que le busca. Bueno es esperar en silencio la salvacion de Jehova.", "r": "Lamentaciones 3:25-26"}, {"v": "Tu guardaras en completa paz a aquel cuyo pensamiento en ti persevera; because en ti ha confiado.", "r": "Isaias 26:3"}, {"v": "En la multitud de mis pensamientos dentro de mi, tus consolaciones alegraban mi alma.", "r": "Salmo 94:19"}, {"v": "Me mostraras la senda de la vida; en tu presencia hay plenitud de gozo; delicias a tu diestra para siempre.", "r": "Salmo 16:11"}, {"v": "Porque los montes se moveran, y los collados temblaran, pero no se apartara de ti mi misericordia, ni el pacto de mi paz se quebrantara.", "r": "Isaias 54:10"}, {"v": "Y Jehova va delante de ti; el estara contigo, no te dejara, ni te desamparara; no temas ni te intimides.", "r": "Deuteronomio 31:8"}, {"v": "No perdais, pues, vuestra confianza, que tiene grande galardon; porque os es necesaria la paciencia, para que habiendo hecho la voluntad de Dios, obtengais la promesa.", "r": "Hebreos 10:35-36"}, {"v": "Fortaleced las manos cansadas, afirmad las rodillas endebles. Decid a los de corazon apocado: Esforzaos, no temais.", "r": "Isaias 35:3-4"}, {"v": "Por Jehova son ordenados los pasos del hombre, y el aprueba su camino. Cuando el hombre cayere, no quedara postrado, because Jehova sostiene su mano.", "r": "Salmo 37:23-24"}, {"v": "Como el padre se compadece de los hijos, se compadece Jehova de los que le temen. Porque el conoce nuestra condicion.", "r": "Salmo 103:13-14"}, {"v": "Mas el Dios de toda gracia, que nos llamo a su gloria eterna en Jesucristo, despues que hayais padecido un poco de tiempo, el mismo os perfeccione.", "r": "1 Pedro 5:10"}, {"v": "Por tanto, Jehova esperara para tener piedad de vosotros; bienaventurados todos los que confian en el.", "r": "Isaias 30:18"}, {"v": "Cuan grande es tu bondad, que has guardado para los que te temen; en lo secreto de tu presencia los esconderas.", "r": "Salmo 31:19-20"}, {"v": "Que, pues, diremos a esto? Si Dios es por nosotros, quien contra nosotros?", "r": "Romanos 8:31"}, {"v": "Os dare corazon nuevo, y pondre espiritu nuevo dentro de vosotros; y quitare de vuestra carne el corazon de piedra.", "r": "Ezequiel 36:26"}, {"v": "Me invocara, y yo le respondere; con el estare yo en la angustia; lo librare y le glorificare.", "r": "Salmo 91:15"}, {"v": "Estando persuadido de esto, que el que comenzo en vosotros la buena obra, la perfeccionara.", "r": "Filipenses 1:6"}, {"v": "Cercano esta Jehova a los quebrantados de corazon; y salva a los contritos de espiritu.", "r": "Salmo 34:18"}, {"v": "No os acordeis de las cosas pasadas; he aqui que yo hago cosa nueva; pronto saldra a luz.", "r": "Isaias 43:18-19"}, {"v": "Aunque mi padre y mi madre me dejaran, con todo, Jehova me recogera.", "r": "Salmo 27:10"}, {"v": "Pero fiel es el Senor, que os afirmara y guardara del mal.", "r": "2 Tesalonicenses 3:3"}, {"v": "Jehova sera refugio del pobre, refugio para el tiempo de angustia.", "r": "Salmo 99:9"}, {"v": "Porque Dios no es injusto para olvidar vuestra obra y el trabajo de amor.", "r": "Hebreos 6:10"}, {"v": "Tu encenderas mi lampara; Jehova mi Dios alumbrara mis tinieblas.", "r": "Salmo 18:28"}, {"v": "Paraos en los caminos, y mirad, y preguntad por las sendas antiguas; y hallareis descanso para vuestra alma.", "r": "Jeremias 6:16"}, {"v": "Te hare entender, y te ensenare el camino en que debes andar; sobre ti fijare mis ojos.", "r": "Salmo 32:8"}, {"v": "Entonces invocaras, y te oira Jehova; clamaras, y dira el: Heme aqui.", "r": "Isaias 58:9"}, {"v": "Haz que tu rostro resplandezca sobre tu siervo, y ensename tus estatutos.", "r": "Salmo 119:135"}, {"v": "Y les dare un corazon, y un camino, para que me teman perpetuamente.", "r": "Jeremias 32:39"}, {"v": "Tendran perpetuo gozo en lugar de confusion.", "r": "Isaias 61:7"}, {"v": "El dia que clame, me respondiste; me fortaleciste con vigor en mi alma.", "r": "Salmo 138:3"}, {"v": "Mas la senda de los justos es como la luz de la aurora.", "r": "Proverbios 4:18"}, {"v": "Porque sol y escudo es Jehova Dios; no quitara el bien a los que andan en integridad.", "r": "Salmo 84:11"}, {"v": "Clama a mi, y yo te respondere, y te ensenare cosas grandes y ocultas que tu no conoces.", "r": "Jeremias 33:3"}, {"v": "Pero la salvacion de los justos es de Jehova, y el es su fortaleza en el tiempo de la angustia.", "r": "Salmo 37:39"}, {"v": "Nuevas son cada manana; grande es tu fidelidad.", "r": "Lamentaciones 3:23"}, {"v": "Es, pues, la fe la certeza de lo que se espera, la conviccion de lo que no se ve.", "r": "Hebreos 11:1"}];
         const rellenoLogos = ["DIOS", "AMOR", "FE", "GRACIA", "PERDON", "SALVACION", "MISERICORDIA", "JUSTICIA", "VERDAD", "VIDA", "LUZ", "ESPIRITU", "CRUZ", "REINO", "EVANGELIO", "PALABRA", "PROMESA", "OBEDIENCIA", "SABIDURIA", "ESPERANZA", "GOZO", "PAZ", "FORTALEZA", "BENDICION", "SANTIDAD", "HUMILDAD", "IGLESIA", "ADORACION", "ORACION", "VICTORIA", "ETERNIDAD", "CIELO", "BONDAD", "GLORIA", "BIBLIA", "CRISTO", "LOGOS", "KENNEDY", "BOGOTA"];
-        const promos = ["\ud83d\udce2 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "\ud83d\udce2 <b>RECUERDA</b> Estamos ubicados en Kennedy Central.", "\ud83c\udf81 <b>\u00a1REGALO!</b> Separador gratis por compras superiores a $100.000.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> Biblias de Letra Grande ya disponibles.", "\ud83d\udcd6 <b>NUEVA LLEGADA:</b> En nuestra Librer\u00eda en Kennedy hay algo nuevo, descubre qu\u00e9 es y gana un premio.", "\ud83d\udcd6 <b>EL PODER DE LA ESPOSA QUE ORA:</b> Super recomendado $33.000.", "\ud83d\udcd6 <b>MES DE LA MADRE:</b> En el mes de la madre, si compras un pocillo recibes gratis, un sobre para regalar dinero", "\ud83d\udcf1 <b>WHATSAPP:</b> Pide nuestro cat\u00e1logo al 312-5756581.", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Dios tiene un prop\u00f3sito grande contigo hoy!", "\ud83d\ude4f <b>MARTES:</b> \u00a1Descubre qu\u00e9 oferta especial hay los martes!", "\ud83d\ude4f <b>RECUERDA:</b> \u00a1Si nos sigues en Tik-Tok puedes participar en un concurso en nuestra Librer\u00eda!", "\u2728 <b>LIBRER\u00cdA LOGOS:</b> Nutriendo tu fe d\u00eda a d\u00eda."];
+        const promos = ["📢 <b>10% DCTO</b> en Biblias Reina Valera todos los Lunes.", "📢 <b>RECUERDA</b> Estamos ubicados en Kennedy Central.", "🎁 <b>¡REGALO!</b> Separador gratis por compras superiores a $100.000.", "📖 <b>NUEVA LLEGADA:</b> Biblias de Letra Grande ya disponibles.", "📖 <b>NUEVA LLEGADA:</b> En nuestra Librería en Kennedy hay algo nuevo, descubre qué es y gana un premio.", "📖 <b>EL PODER DE LA ESPOSA QUE ORA:</b> Super recomendado $33.000.", "📖 <b>MES DE LA MADRE:</b> En el mes de la madre, si compras un pocillo recibes gratis, un sobre para regalar dinero", "📱 <b>WHATSAPP:</b> Pide nuestro catálogo al 312-5756581.", "🙏 <b>RECUERDA:</b> ¡Dios tiene un propósito grande contigo hoy!", "🙏 <b>MARTES:</b> ¡Descubre qué oferta especial hay los martes!", "🙏 <b>RECUERDA:</b> ¡Si nos sigues en Tik-Tok puedes participar en un concurso en nuestra Librería!", "✨ <b>LIBRERÍA LOGOS:</b> Nutriendo tu fe día a día."];
         
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxy6QkHrhZ_puEN1kAEeNajEVb8DkbaMdIUAo4ZJ8Z5_rMHE4p9lQ-thRunb_P8tZdJ/exec";
         
@@ -258,8 +267,8 @@
         function check() {
             for(let word in wordsPos) {
                 if(!document.getElementById('w-'+word).classList.contains('word-found') && 
-                   wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
-                   document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
+                    wordsPos[word].every(p => document.querySelector(`[data-pos="${p}"]`).classList.contains('sel') || 
+                    document.querySelector(`[data-pos="${p}"]`).classList.contains('found'))) {
                     
                     wordsPos[word].forEach(p => document.querySelector(`[data-pos="${p}"]`).classList.add('found'));
                     document.getElementById('w-'+word).classList.add('word-found');
@@ -316,18 +325,12 @@
                     
                     data.forEach(row => {
                         if (row.Evento === "Nivel Completado" && row.Usuario && row.Fecha) {
-                            // Método ultra-compatible: limpia y procesa la fecha directamente
                             let textoFecha = row.Fecha.trim();
-                            
-                            // Si la fecha viene en formato JSON o ISO de Google, la lee directo.
-                            // Si viene con texto o barras, forzamos un parseo básico.
                             let timestampFila = Date.parse(textoFecha);
                             
-                            // Si falla por el orden DD/MM en navegadores americanos, probamos invirtiéndolo
                             if (isNaN(timestampFila)) {
                                 let partes = textoFecha.split('/');
                                 if (partes.length === 3) {
-                                    // Cambiar DD/MM/YYYY a MM/DD/YYYY para compatibilidad universal
                                     timestampFila = Date.parse(`${partes[1]}/${partes[0]}/${partes[2]}`);
                                 }
                             }
@@ -336,7 +339,6 @@
                                 let fechaFila = new Date(timestampFila);
                                 fechaFila.setHours(0,0,0,0);
                                 
-                                // Filtrar si entra en el rango de los últimos 7 días
                                 if (fechaFila >= limiteSieteDias && fechaFila <= hoy) {
                                     conteoUsuarios[row.Usuario] = (conteoUsuarios[row.Usuario] || 0) + 1;
                                 }
@@ -354,7 +356,7 @@
                     }
                     
                     let htmlTabla = `
-                        <div style="font-weight: bold; font-size: 0.9em; margin-top: 10px; color: #2e7d32;">🏆 TOP 5 DE LA SEMANA 🏆</div>
+                        <div style="font-weight: bold; font-size: 0.85em; margin-top: 8px; color: #2e7d32;">🏆 TOP 5 DE LA SEMANA 🏆</div>
                         <table class="ranking-table">
                             <tr>
                                 <th>Puesto</th>
